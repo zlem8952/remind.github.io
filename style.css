@@ -66,7 +66,8 @@
     height: 200px;
     border-radius: 50%;
     object-fit: cover;
-}
+    
+/* 소개 섹션 스타일 추가 */
 .about-content {
     display: flex;
     justify-content: space-between;
@@ -116,6 +117,7 @@
     object-fit: cover;
 }
 
+/* 반응형 디자인 개선 */
 @media (max-width: 768px) {
     .about-content {
         flex-direction: column-reverse;
@@ -124,6 +126,9 @@
     .about-image {
         margin-bottom: 20px;
     }
+
+    .profile-image {
+        width: 200px;
+        height: 200px;
+    }
 }
-
-
