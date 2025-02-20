@@ -1,104 +1,52 @@
-:root {
-    --primary-color: #3498db;
-    --secondary-color: #2c3e50;
-    --text-color: #333;
-    --bg-color: #f4f4f4;
-}
-
 /* 소개 섹션 스타일 */
 .about-content {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 40px; /* 텍스트와 이미지 사이의 간격 */
+    gap: 40px;
 }
 
 .about-text {
-    flex: 1; /* 텍스트가 이미지와 동일한 비율로 공간을 차지 */
-}
-
-.about-text h3 {
-    font-size: 1.8rem;
-    margin-bottom: 15px;
-    color: var(--secondary-color);
-}
-
-.about-text p {
-    margin-bottom: 20px;
-}
-
-.about-text h4 {
-    font-size: 1.4rem;
-    margin-bottom: 10px;
-    color: var(--secondary-color);
-}
-
-.about-text ul {
-    list-style-type: none; /* 기본 리스트 스타일 제거 */
-    padding-left: 0;
-}
-
-.about-text li {
-    margin-bottom: 10px; /* 리스트 항목 간격 */
+    flex: 1;
+    padding-right: 20px;
 }
 
 .about-image {
-    flex: 1; /* 이미지가 텍스트와 동일한 비율로 공간을 차지 */
+    flex: 1;
     display: flex;
-    justify-content: center; /* 이미지를 중앙 정렬 */
+    justify-content: center;
+    align-items: center;
 }
 
 .profile-image {
-    width: 300px; /* 이미지의 너비 */
-    height: 300px; /* 이미지의 높이 */
-    border-radius: 50%; /* 원형 이미지 */
-    object-fit: cover; /* 이미지가 잘리지 않고 영역에 맞게 조정 */
-}
-
-/* 연락처 버튼 스타일 */
-.contact-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.contact-btn {
-    display: inline-flex;
-    align-items: center;
-    padding: 10px 20px;
-    font-size: 1rem;
-    text-decoration: none;
-    color: #fff;
-    background-color: var(--primary-color);
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.contact-btn:hover {
-    background-color: #2980b9;
-}
-
-.contact-btn i {
-    margin-right: 10px; /* 아이콘과 텍스트 간격 */
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
 }
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
     .about-content {
-        flex-direction: column-reverse; /* 모바일에서 텍스트가 위로, 이미지가 아래로 배치 */
-        align-items: center; /* 중앙 정렬 */
-        text-align: center; /* 텍스트 중앙 정렬 */
-        gap: 20px; /* 간격 축소 */
+        flex-direction: column-reverse;
+        align-items: center;
+        text-align: center;
+    }
+
+    .about-text {
+        padding-right: 0;
+    }
+
+    .about-image {
+        margin-bottom: 20px;
     }
 
     .profile-image {
-        width: 200px; /* 모바일에서 이미지 크기 축소 */
-        height: 200px;
-        margin-bottom: 20px; /* 텍스트와 이미지 사이 간격 추가 */
+        max-width: 200px;
     }
 
     .about-text ul {
-        text-align: left; /* 리스트는 왼쪽 정렬 유지 */
-        padding-left: 20px; /* 모바일에서도 보기 좋게 약간의 들여쓰기 추가 */
+        text-align: left;
+        padding-left: 20px;
     }
 }
