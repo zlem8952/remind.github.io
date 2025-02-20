@@ -6,87 +6,89 @@
     <title>내 포트폴리오</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2c3e50;
-            --text-color: #333;
-            --bg-color: #f4f4f4;
-        }
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --text-color: #333;
+    --bg-color: #f4f4f4;
+}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--bg-color);
-        }
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
 
-        header {
-            background-color: var(--secondary-color);
-            color: #fff;
-            padding: 20px 0;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-        }
+header {
+    background-color: var(--secondary-color);
+    color: #fff;
+    padding: 20px 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
 
-        nav ul {
-            display: flex;
-            justify-content: flex-end;
-            list-style: none;
-        }
+nav ul {
+    display: flex;
+    justify-content: flex-end;
+    list-style: none;
+}
 
-        nav ul li {
-            margin-left: 20px;
-        }
+nav ul li {
+    margin-left: 20px;
+}
 
-        nav ul li a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 300;
-            transition: color 0.3s ease;
-        }
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 300;
+    transition: color 0.3s ease;
+}
 
-        nav ul li a:hover {
-            color: var(--primary-color);
-        }
-    
+nav ul li a:hover {
+    color: var(--primary-color);
+}
+
 .hero {
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTAyMTNfMTQ0%2FMDAxNzM5NDAzODk5NDgx.DRa-3omaD7CNBC1UclUI0sRMkDrlpdaPb__x-wU36J8g.DxR79e8Pe6bV6kGQCAZu8vC9K7wpoD12j6waivU9cyog.GIF%2Fezgif.com-video-to-gif-converter.gif&type=sc960_832_gif');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('여기에_GIF_파일의_URL을_넣으세요');
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
     color: #fff;
 }
 
-        .hero-content h1 {
-            font-size: 4rem;
-            margin-bottom: 20px;
-        }
+.hero-content h1 {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
 
-        .hero-content p {
-            font-size: 1.5rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+.hero-content p {
+    font-size: 1.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* 나머지 CSS 코드는 그대로 유지 */
+
 
         .section {
             padding: 80px 0;
