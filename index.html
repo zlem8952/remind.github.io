@@ -3,12 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>웹사이트 제목</title>
+    <title>내 웹사이트</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>안녕하세요!</h1>
-    <p>이것은 기본적인 웹페이지입니다.</p>
-    <script src="script.js"></script>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#home">홈</a></li>
+                <li><a href="#login">로그인</a></li>
+                <li><a href="#signup">회원가입</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home">
+            <h1>환영합니다</h1>
+            <p>이곳은 홈페이지 내용이 들어갑니다.</p>
+        </section>
+
+        <section id="login">
+            <h2>로그인</h2>
+            <form>
+                <input type="email" placeholder="이메일" required>
+                <input type="password" placeholder="비밀번호" required>
+                <button type="submit">로그인</button>
+            </form>
+        </section>
+
+        <section id="signup">
+            <h2>회원가입</h2>
+            <form>
+                <input type="text" placeholder="이름" required>
+                <input type="email" placeholder="이메일" required>
+                <input type="password" placeholder="비밀번호" required>
+                <input type="password" placeholder="비밀번호 확인" required>
+                <button type="submit">가입하기</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 내 웹사이트. All rights reserved.</p>
+    </footer>
 </body>
 </html>
