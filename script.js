@@ -1,17 +1,34 @@
-function login() {
-    var username = document.getElementById('username').value;
-    var password = document.getElementById('password').value;
-    
-    // 실제로는 서버에서 확인해야 하지만, 여기서는 간단히 처리합니다.
-    if (username === "user" && password === "password") {
-        document.getElementById('loginForm').style.display = 'none';
-        document.getElementById('content').style.display = 'block';
-    } else {
-        alert("로그인 실패. 사용자 이름 또는 비밀번호를 확인해주세요.");
-    }
-}
+// 앵커 링크를 위한 부드러운 스크롤
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
 
-function logout() {
-    document.getElementById('loginForm').style.display = 'block';
-    document.getElementById('content').style.display = 'none';
-}
+// 스크롤 시 헤더 스타일 변경
+window.addEventListener('scroll', () => {
+    const header = document.querySelector('header');
+    header.style.backgroundColor = window.scrollY > 100 ? 'rgba(44, 62, 80, 0.9)' : 'var(--secondary-color)';
+});
+
+// 이미지 지연 로딩
+document.addEventListener('DOMContentLoaded', () => {
+    const lazyImages = document.querySelectorAll('img[data-src]');
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.removeAttribute('data-src');
+                observer.unobserve(img);
+            }
+        });
+    });
+
+    lazyImages.forEach(image => {
+        imageObserver.observe(image);
+    });
+});
