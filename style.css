@@ -41,7 +41,6 @@
             width: 100%;
             top: 0;
             z-index: 1000;
-            transition: background-color 0.3s ease;
         }
 
         nav ul {
@@ -65,37 +64,14 @@
             color: var(--primary-color);
         }
 
-      .hero {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F421%2F2025%2F02%2F15%2F0008078334_001_20250215142819735.jpg&type=sc960_832');
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
-    color: #fff;
-}
-
-.hero-content {
-    z-index: 1;
-}
-
-.hero-content h1 {
-    font-size: 4rem;
-    margin-bottom: 20px;
-}
-
-.hero-content p {
-    font-size: 1.5rem;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-
-        .hero-content {
-            z-index: 1;
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://source.unsplash.com/random/1920x1080') no-repeat center center/cover;
+            color: #fff;
         }
 
         .hero-content h1 {
@@ -170,6 +146,49 @@
             height: auto;
             border-radius: 10px;
             object-fit: cover;
+        }
+
+        .about-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .about-card {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .about-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .about-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .about-card-content {
+            padding: 20px;
+        }
+
+        .about-card-content h3 {
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+        }
+
+        .about-card-content ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .about-card-content li {
+            margin-bottom: 5px;
         }
 
         .projects {
