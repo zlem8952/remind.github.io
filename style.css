@@ -1,88 +1,35 @@
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    margin: 0;
-    padding: 0;
-    color: #333;
-}
-
-header {
-    background-color: rgba(0, 0, 0, 0.8);
-    padding: 10px 0;
-}
-
-nav ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+    font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
 }
 
-nav ul li {
-    margin: 0 15px;
-}
-
-nav ul li a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 14px;
-}
-
-nav ul li.right {
-    margin-left: auto;
-}
-
-.logo {
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.hero {
-    background-color: #f5f5f7;
-    text-align: center;
-    padding: 100px 20px;
-}
-
-.hero h1 {
-    font-size: 48px;
-    margin-bottom: 20px;
-}
-
-.hero p {
-    font-size: 24px;
-    margin-bottom: 30px;
-}
-
-.cta-button {
-    background-color: #0071e3;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 20px;
-    text-decoration: none;
-    font-size: 18px;
-}
-
-.products {
-    display: flex;
-    justify-content: center;
-    padding: 50px 20px;
-}
-
-.product-item {
-    text-align: center;
-    margin: 0 20px;
-}
-
-.product-item img {
-    width: 200px;
-    height: auto;
-    margin-bottom: 20px;
-}
-
-footer {
-    background-color: #f5f5f7;
-    text-align: center;
+#loginForm, #content {
+    background-color: white;
     padding: 20px;
-    font-size: 12px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+input, button {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
 }
