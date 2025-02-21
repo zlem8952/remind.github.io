@@ -32,3 +32,17 @@ document.addEventListener('DOMContentLoaded', () => {
         imageObserver.observe(image);
     });
 });
+
+// 다크모드 토글 기능
+const themeToggle = document.getElementById('themeToggle');
+const body = document.body;
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
+});
+
+// 페이지 로드 시 저장된 테마 적용
+if (localStorage.getItem('darkMode') === 'true') {
+    body.classList.add('dark-mode');
+}
