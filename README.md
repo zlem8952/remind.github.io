@@ -44,9 +44,5 @@
 
 ## 유머
 ![Jokes Card](https://readme-jokes.vercel.app/api)
-  Coffee         Code
-    |\__/|      /}
-   (-  ͜ - )     / }
-  ( >☕️< )    / /
- (__(m)__)__/ /
-/☕️ /☕️ /☕️ /☕️ /|
+![Joke](https://api.chucknorris.io/jokes/random?category=dev)
+![xkcd Comic](https://imgs.xkcd.com/comics/compiling.png)
