@@ -2,7 +2,7 @@
 
 ## 포트폴리오 & 방문자 수
 [![포트폴리오](https://img.shields.io/badge/포트폴리오-FF4088?style=for-the-badge&logo=GitHub&logoColor=white)](https://zlem8952.github.io/remind.github.io/)
-![방문자 수](https://visitor-badge.glitch.me/badge?page_id=zlem8952.remind.github.io)
+![방문자 수](https://visitor-badge.glitch.me/badge?page_id=zlem8952)
 
 ## GitHub 통계
 ![GitHub 통계](https://github-readme-stats.vercel.app/api?username=zlem8952&show_icons=true&theme=radical)
