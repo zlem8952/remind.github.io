@@ -42,5 +42,7 @@
 ![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=zlem8952&layout=compact)
 
 
-## 개발자 유머
+## 유머
 ![Jokes Card](https://readme-jokes.vercel.app/api)
+![Random Meme](https://random-memer.herokuapp.com/)
+[![Commit Message](https://img.shields.io/badge/dynamic/json?url=https://whatthecommit.com/index.json&query=$.commit_message&label=Commit%20Message&color=blue&style=for-the-badge)](https://whatthecommit.com/)
