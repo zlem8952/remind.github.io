@@ -12,6 +12,15 @@
             --secondary-color: #2c3e50;
             --text-color: #333;
             --bg-color: #f4f4f4;
+            --card-bg-color: #fff;
+        }
+
+        .dark-mode {
+            --primary-color: #2980b9;
+            --secondary-color: #34495e;
+            --text-color: #f4f4f4;
+            --bg-color: #333;
+            --card-bg-color: #2c3e50;
         }
 
         * {
@@ -25,6 +34,7 @@
             line-height: 1.6;
             color: var(--text-color);
             background-color: var(--bg-color);
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .container {
@@ -63,39 +73,31 @@
         nav ul li a:hover {
             color: var(--primary-color);
         }
-        
-        .hero {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
-    color: #fff;
-        }
 
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-color: var(--secondary-color);
+            color: #fff;
+        }
 
         .hero-content h1 {
             font-size: 4rem;
-            margin-bottom: 20px;
         }
 
         .hero-content p {
             font-size: 1.5rem;
-            max-width: 600px;
-            margin: 0 auto;
         }
 
         .section {
             padding: 80px 0;
         }
 
-        .section-title {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
         .section-title h2 {
+            text-align: center;
             font-size: 2.5rem;
             color: var(--secondary-color);
         }
@@ -107,12 +109,33 @@
         }
 
         .project-card {
-            background-color: #fff;
+            background-color: var(--card-bg-color);
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
         }
+
+        footer {
+            background-color: var(--secondary-color);
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        /* 다크 모드 토글 버튼 스타일 */
+        #themeToggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            padding: 10px 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border-radius: 5px;
+            border-style:none ;
+cursor:pointer;
+
+transition:border
 
         .project-card:hover {
             transform: translateY(-5px);
