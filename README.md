@@ -3,6 +3,10 @@
 ## 포트폴리오 
 [![포트폴리오](https://img.shields.io/badge/포트폴리오-FF4088?style=for-the-badge&logo=GitHub&logoColor=white)](https://zlem8952.github.io/remind.github.io/)
 
+## 내가 좋아하는 영상 G-DRAGON - CROOKED MV
+
+[![G-DRAGON - CROOKED MV](https://img.youtube.com/vi/RKhsHGfrFmY/0.jpg)](https://www.youtube.com/watch?v=RKhsHGfrFmY "G-DRAGON - CROOKED MV")
+
 ## GitHub 통계
 ![GitHub 통계](https://github-readme-stats.vercel.app/api?username=zlem8952&show_icons=true&theme=radical)
 
@@ -14,12 +18,28 @@
 <!--END_SECTION:activity-->
 
 ## 기술 스택
-![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)
-![JavaScript](https://img.shields.io/badge/-JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
-![React](https://img.shields.io/badge/-React-61DAFB?style=flat-square&logo=react&logoColor=black)
+![iOS](https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=ios&logoColor=white)
+![iOS](https://img.shields.io/badge/Skill-70%25-brightgreen?style=for-the-badge&labelColor=000000)
+
+![Swift](https://img.shields.io/badge/Swift-FA7343?style=for-the-badge&logo=swift&logoColor=white)
+![Swift](https://img.shields.io/badge/Skill-75%25-brightgreen?style=for-the-badge&labelColor=FA7343)
+
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=Python&logoColor=white)
+![Python](https://img.shields.io/badge/Skill-85%25-brightgreen?style=for-the-badge&labelColor=3776AB)
+
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![JavaScript](https://img.shields.io/badge/Skill-80%25-brightgreen?style=for-the-badge&labelColor=F7DF1E)
+
+![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![PHP](https://img.shields.io/badge/Skill-60%25-brightgreen?style=for-the-badge&labelColor=777BB4)
+
 
 ## GitHub 트로피
 [![trophy](https://github-profile-trophy.vercel.app/?username=zlem8952)](https://github.com/ryo-ma/github-profile-trophy)
 
 ## 주요 사용 언어
 ![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=zlem8952&layout=compact)
+
+
+## 개발자 유머
+![Jokes Card](https://readme-jokes.vercel.app/api)
