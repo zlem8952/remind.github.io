@@ -340,7 +340,24 @@
             <p>&copy; 2025 [천재 개발자]. All rights reserved.</p>
         </div>
     </footer>
+    
+<script src="script.js"></script>
+<script>
+// 다크모드 토글 기능
+const themeToggle = document.getElementById('themeToggle');
+const body = document.body;
 
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
+});
+
+// 페이지 로드 시 저장된 테마 적용
+if (localStorage.getItem('darkMode') === 'true') {
+    body.classList.add('dark-mode');
+}
+</script>
+    
     <script>
         // 스크롤 애니메이션
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
