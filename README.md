@@ -3,9 +3,10 @@
 ## 포트폴리오 
 [![포트폴리오](https://img.shields.io/badge/포트폴리오-FF4088?style=for-the-badge&logo=GitHub&logoColor=white)](https://zlem8952.github.io/remind.github.io/)
 
-## 내가 좋아하는 영상 G-DRAGON - CROOKED MV
+## 내가 좋아하는 영상 [G-DRAGON]
 
-[![G-DRAGON]([https://img.youtube.com/vi/RKhsHGfrFmY/0.jpg](https://i.ytimg.com/vi/Ox29z5Nf1Uk/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLCKEWHs2-UnrKeRRPaagXX0pCFLjA))](https://youtu.be/jNjmTYxeIgU?feature=shared "무제(Untitled, 2014)+POWER+HOME SWEET HOME+뱅뱅뱅+FANTASTIC BABY")
+[![G-DRAGON - 2024 MAMA AWARDS ICONIC STAGE](https://img.youtube.com/vi/jNjmTYxeIgU/0.jpg)](https://www.youtube.com/watch?v=jNjmTYxeIgU "G-DRAGON - 2024 MAMA AWARDS ICONIC STAGE")
+
 
 ## GitHub 통계
 ![GitHub 통계](https://github-readme-stats.vercel.app/api?username=zlem8952&show_icons=true&theme=radical)
