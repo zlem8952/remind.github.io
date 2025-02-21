@@ -20,19 +20,19 @@
 
 ## 기술 스택
 ![iOS](https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=ios&logoColor=white)
-![iOS](https://img.shields.io/badge/Skill-70%25-brightgreen?style=for-the-badge&labelColor=000000)
+![iOS](https://img.shields.io/badge/Skill-30%25-brightgreen?style=for-the-badge&labelColor=000000)
 
 ![Swift](https://img.shields.io/badge/Swift-FA7343?style=for-the-badge&logo=swift&logoColor=white)
-![Swift](https://img.shields.io/badge/Skill-75%25-brightgreen?style=for-the-badge&labelColor=FA7343)
+![Swift](https://img.shields.io/badge/Skill-10%25-brightgreen?style=for-the-badge&labelColor=FA7343)
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=Python&logoColor=white)
-![Python](https://img.shields.io/badge/Skill-85%25-brightgreen?style=for-the-badge&labelColor=3776AB)
+![Python](https://img.shields.io/badge/Skill-50%25-brightgreen?style=for-the-badge&labelColor=3776AB)
 
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![JavaScript](https://img.shields.io/badge/Skill-80%25-brightgreen?style=for-the-badge&labelColor=F7DF1E)
+![JavaScript](https://img.shields.io/badge/Skill-10%25-brightgreen?style=for-the-badge&labelColor=F7DF1E)
 
 ![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
-![PHP](https://img.shields.io/badge/Skill-60%25-brightgreen?style=for-the-badge&labelColor=777BB4)
+![PHP](https://img.shields.io/badge/Skill-0%25-brightgreen?style=for-the-badge&labelColor=777BB4)
 
 
 ## GitHub 트로피
