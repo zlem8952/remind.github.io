@@ -2,16 +2,35 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>PY to EXE 변환기</title>
-    <link rel="stylesheet" href="style.css">
+    <title>간단 변환기</title>
+    <style>
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            text-align: center; 
+            padding: 50px; 
+        }
+        .box {
+            border: 2px dashed #3498db;
+            padding: 30px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        a { color: #3498db; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>PY to EXE 변환기</h1>
-        <input type="file" id="pythonFile" accept=".py">
-        <button onclick="convert()">변환 시작</button>
-        <a id="downloadLink" style="display:none;">EXE 다운로드</a>
+    <div class="box">
+        <h1>🐍 PY→EXE 변환기</h1>
+        <p>1. 아래 배치 파일을 다운받으세요<br>
+        <a href="converter.bat" download>📥 변환기 배치 파일</a></p>
+        
+        <p>2. 변환할 .py 파일을 이 배치 파일 위로 드래그하세요!</p>
+        
+        <img src="https://i.imgur.com/3pZJ9Ej.gif" 
+             alt="사용법 예시" 
+             style="width:300px; margin:20px 0;">
+        
+        <p>📢 주의사항: 반드시 Python이 설치되어 있어야 합니다</p>
     </div>
-    <script src="converter.js"></script>
 </body>
 </html>
