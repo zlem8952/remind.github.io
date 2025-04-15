@@ -1,66 +1,137 @@
-// 앵커 링크를 위한 부드러운 스크롤
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
+// ==================== 공통 유틸리티 ====================
+const safeQuerySelector = (selector) => {
+  const el = document.querySelector(selector);
+  if (!el) console.error(`${selector} 요소를 찾을 수 없음`);
+  return el;
+};
+
+// ==================== 부드러운 스크롤 ====================
+const initSmoothScroll = () => {
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    if (anchor.hash) {
+      anchor.addEventListener('click', function(e) {
         e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
-        });
-    });
-});
-
-// 스크롤 시 헤더 스타일 변경
-window.addEventListener('scroll', () => {
-    const header = document.querySelector('header');
-    header.style.backgroundColor = window.scrollY > 100 ? 'rgba(44, 62, 80, 0.9)' : 'var(--secondary-color)';
-});
-
-// 이미지 지연 로딩
-document.addEventListener('DOMContentLoaded', () => {
-    const lazyImages = document.querySelectorAll('img[data-src]');
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.removeAttribute('data-src');
-                observer.unobserve(img);
-            }
-        });
-    });
-
-    lazyImages.forEach(image => {
-        imageObserver.observe(image);
-    });
-});
-
-// 다크모드 토글 기능
-const themeToggle = document.getElementById('themeToggle');
-const body = document.body;
-
-themeToggle.addEventListener('click', () => {
-    body.classList.toggle('dark-mode');
-    localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-});
-
-// 페이지 로드 시 저장된 테마 적용
-if (localStorage.getItem('darkMode') === 'true') {
-    body.classList.add('dark-mode');
-}
-// 추가된 JavaScript 기능
-function openNav() {
-    document.getElementById("sideNav").style.width = "250px";
-}
-
-function closeNav() {
-    document.getElementById("sideNav").style.width = "0";
-}
-
-// 외부 클릭 시 메뉴 닫기
-document.addEventListener('click', function(event) {
-    const sideNav = document.getElementById('sideNav');
-    const hamburger = document.getElementById('hamburger');
-    
-    if (!sideNav.contains(event.target) && !hamburger.contains(event.target)) {
-        closeNav();
+        const target = safeQuerySelector(this.hash);
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      });
     }
+  });
+};
+
+// ==================== 헤더 스크롤 효과 ====================
+const initHeaderScroll = () => {
+  const header = safeQuerySelector('header');
+  let isScrolling;
+
+  window.addEventListener('scroll', () => {
+    clearTimeout(isScrolling);
+    isScrolling = setTimeout(() => {
+      header.style.backgroundColor = window.scrollY > 100 
+        ? 'rgba(44, 62, 80, 0.9)' 
+        : 'var(--secondary-color)';
+    }, 50);
+  });
+};
+
+// ==================== 이미지 지연 로딩 ====================
+const initLazyLoading = () => {
+  const lazyImages = document.querySelectorAll('img[data-src]');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+        observer.unobserve(img);
+      }
+    });
+  });
+
+  lazyImages.forEach(img => observer.observe(img));
+};
+
+// ==================== 다크 모드 토글 ====================
+const initDarkMode = () => {
+  const themeToggle = safeQuerySelector('#themeToggle');
+  const body = document.body;
+
+  const updateTheme = (isDark) => {
+    body.classList.toggle('dark-mode', isDark);
+    document.documentElement.style.setProperty(
+      '--primary-color', 
+      isDark ? '#ffffff' : '#2c3e50'
+    );
+    localStorage.setItem('darkMode', isDark);
+  };
+
+  themeToggle.addEventListener('click', () => 
+    updateTheme(!body.classList.contains('dark-mode'))
+  );
+
+  // 초기 테마 설정
+  updateTheme(localStorage.getItem('darkMode') === 'true');
+};
+
+// ==================== 네비게이션 시스템 ====================
+const initNavigation = () => {
+  const Navigation = {
+    elements: {
+      sideNav: null,
+      hamburger: null
+    },
+
+    init() {
+      this.cacheElements();
+      this.bindEvents();
+      this.initTouch();
+    },
+
+    cacheElements() {
+      this.elements.sideNav = safeQuerySelector('#sideNav');
+      this.elements.hamburger = safeQuerySelector('#hamburger');
+    },
+
+    bindEvents() {
+      this.elements.hamburger.addEventListener('click', () => this.openNav());
+      document.addEventListener('click', (e) => this.handleClick(e));
+    },
+
+    openNav() {
+      this.elements.sideNav.style.width = '250px';
+      this.elements.hamburger.setAttribute('aria-expanded', 'true');
+    },
+
+    closeNav() {
+      this.elements.sideNav.style.width = '0';
+      this.elements.hamburger.setAttribute('aria-expanded', 'false');
+    },
+
+    handleClick(e) {
+      if (!e.target.closest('#sideNav, #hamburger')) this.closeNav();
+    },
+
+    initTouch() {
+      let touchStartX = 0;
+      
+      document.addEventListener('touchstart', e => {
+        touchStartX = e.touches[0].clientX;
+      });
+
+      document.addEventListener('touchend', e => {
+        const touchEndX = e.changedTouches[0].clientX;
+        if (touchEndX - touchStartX > 50) this.openNav();
+      });
+    }
+  };
+
+  Navigation.init();
+};
+
+// ==================== 초기화 ====================
+document.addEventListener('DOMContentLoaded', () => {
+  initSmoothScroll();
+  initHeaderScroll();
+  initLazyLoading();
+  initDarkMode();
+  initNavigation();
 });
