@@ -180,7 +180,7 @@ footer {
     background: none;
     border: none;
     padding: 0;
-    display: none;
+    display: block;
 }
 /* 사이드 네비게이션 스타일 */
 .sidenav {
@@ -216,82 +216,79 @@ footer {
     color: var(--text-color);
 }
 
-/* 반응형 미디어 쿼리 */
-@media (max-width: 1024px) {
-    .container {
-        max-width: 900px;
-    }
-    .hero-content h1 {
-        font-size: 3rem;
-    }
-    .section-title h2 {
-        font-size: 2rem;
-    }
+/* ----------- 소개(about) 카드 스타일 ----------- */
+.about-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 32px;
 }
-@media (max-width: 768px) {
-    .container {
-        max-width: 100%;
-        padding: 0 10px;
-    }
-    header {
-        padding: 12px 0;
-    }
-    nav ul {
-        display: none;
-    }
-    #hamburger {
-        display: block;
-    }
-    .hero {
-        height: 60vh;
-        padding-top: 60px;
-    }
-    .hero-content h1 {
-        font-size: 2rem;
-    }
-    .hero-content p {
-        font-size: 1rem;
-    }
-    .section {
-        padding: 40px 0;
-    }
-    .projects {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-    .project-card img {
-        height: 140px;
-    }
-    .about-cards {
-        flex-direction: column;
-        gap: 15px;
-    }
-    .contact-buttons {
-        flex-direction: column;
-        gap: 10px;
-    }
-    .sidenav {
-        width: 0;
-        padding-top: 80px;
-    }
-    .sidenav.active {
-        width: 80% !important;
-    }
+.about-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--card-bg-color);
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 32px 24px 24px 24px;
+    max-width: 350px;
+    width: 100%;
+    margin-bottom: 16px;
 }
-@media (max-width: 480px) {
-    .hero-content h1 {
-        font-size: 1.3rem;
-    }
-    .section-title h2 {
-        font-size: 1.1rem;
-    }
-    .project-card img {
-        height: 100px;
-    }
-    .btn, .contact-btn {
-        font-size: 0.9rem;
-        padding: 8px 12px;
-    }
+.profile-image {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 16px;
+    border: 3px solid var(--primary-color);
+}
+.about-profile h3 {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+}
+.about-profile p {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    text-align: center;
+}
+.about-cards {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.about-card {
+    background: var(--card-bg-color);
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 24px 20px;
+    min-width: 220px;
+    max-width: 300px;
+    flex: 1 1 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.about-card h4 {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+.about-card ul {
+    padding-left: 18px;
+    text-align: left;
+}
+.about-card p {
+    text-align: center;
+    font-size: 1.05rem;
+    color: var(--text-color);
+}
+
+/* ----------- 기술 스택 시각화 ----------- */
 .skills-visual {
     max-width: 500px;
     margin: 40px auto 0 auto;
@@ -331,7 +328,73 @@ footer {
     border-radius: 8px;
     transition: width 1s;
 }
+
+/* ----------- 반응형 미디어 쿼리 ----------- */
+@media (max-width: 1024px) {
+    .container {
+        max-width: 900px;
+    }
+    .hero-content h1 {
+        font-size: 3rem;
+    }
+    .section-title h2 {
+        font-size: 2rem;
+    }
+}
+@media (max-width: 900px) {
+    .about-cards {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+    .about-card {
+        max-width: 100%;
+        min-width: 0;
+        width: 100%;
+    }
+}
 @media (max-width: 768px) {
+    .container {
+        max-width: 100%;
+        padding: 0 10px;
+    }
+    header {
+        padding: 12px 0;
+    }
+    nav ul {
+        display: none;
+    }
+    .hero {
+        height: 60vh;
+        padding-top: 60px;
+    }
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+    .hero-content p {
+        font-size: 1rem;
+    }
+    .section {
+        padding: 40px 0;
+    }
+    .projects {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    .project-card img {
+        height: 140px;
+    }
+    .contact-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .sidenav {
+        width: 0;
+        padding-top: 80px;
+    }
+    .sidenav.active {
+        width: 80% !important;
+    }
     .skills-visual {
         padding: 15px 5px;
         max-width: 100%;
@@ -339,4 +402,18 @@ footer {
     .skill { font-size: 1rem; }
     .skill i { font-size: 1.2em; }
 }
+@media (max-width: 480px) {
+    .hero-content h1 {
+        font-size: 1.3rem;
+    }
+    .section-title h2 {
+        font-size: 1.1rem;
+    }
+    .project-card img {
+        height: 100px;
+    }
+    .btn, .contact-btn {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
 }
