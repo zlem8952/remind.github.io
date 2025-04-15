@@ -92,6 +92,117 @@
             font-size: 2.5rem;
             color: var(--secondary-color);
         }
+        /* ----------- 소개(about) 카드 스타일 ----------- */
+        .about-main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+        .about-profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--card-bg-color);
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 32px 24px 24px 24px;
+            max-width: 350px;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+        .profile-image {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 16px;
+            border: 3px solid var(--primary-color);
+        }
+        .about-profile h3 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+        .about-profile p {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            text-align: center;
+        }
+        .about-cards {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .about-card {
+            background: var(--card-bg-color);
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 24px 20px;
+            min-width: 220px;
+            max-width: 300px;
+            flex: 1 1 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .about-card h4 {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        .about-card ul {
+            padding-left: 18px;
+            text-align: left;
+        }
+        .about-card p {
+            text-align: center;
+            font-size: 1.05rem;
+            color: var(--text-color);
+        }
+        /* ----------- 기술 스택 시각화 ----------- */
+        .skills-visual {
+            max-width: 500px;
+            margin: 40px auto 0 auto;
+            padding: 30px 20px;
+            background: var(--card-bg-color);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+        .skills-visual h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        .skill {
+            margin-bottom: 18px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .skill i {
+            font-size: 1.5em;
+            width: 32px;
+            text-align: center;
+        }
+        .skill-bar {
+            flex: 1;
+            height: 16px;
+            background: #e0e0e0;
+            border-radius: 8px;
+            margin-left: 12px;
+            overflow: hidden;
+        }
+        .skill-level {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), #6dd5fa);
+            border-radius: 8px;
+            transition: width 1s;
+        }
         .projects {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -185,7 +296,7 @@
             background: none;
             border: none;
             padding: 0;
-            display: none;
+            display: block;
         }
         /* 사이드 네비게이션 스타일 */
         .sidenav {
@@ -220,60 +331,92 @@
             font-size: 2rem;
             color: var(--text-color);
         }
-        /* 기술 스택 시각화 */
-        .skills-visual {
-            max-width: 500px;
-            margin: 40px auto 0 auto;
-            padding: 30px 20px;
-            background: var(--card-bg-color);
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        @media (max-width: 1024px) {
+            .container {
+                max-width: 900px;
+            }
+            .hero-content h1 {
+                font-size: 3rem;
+            }
+            .section-title h2 {
+                font-size: 2rem;
+            }
         }
-        .skills-visual h3 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-        }
-        .skill {
-            margin-bottom: 18px;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .skill i {
-            font-size: 1.5em;
-            width: 32px;
-            text-align: center;
-        }
-        .skill-bar {
-            flex: 1;
-            height: 16px;
-            background: #e0e0e0;
-            border-radius: 8px;
-            margin-left: 12px;
-            overflow: hidden;
-        }
-        .skill-level {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), #6dd5fa);
-            border-radius: 8px;
-            transition: width 1s;
+        @media (max-width: 900px) {
+            .about-cards {
+                flex-direction: column;
+                align-items: center;
+                gap: 16px;
+            }
+            .about-card {
+                max-width: 100%;
+                min-width: 0;
+                width: 100%;
+            }
         }
         @media (max-width: 768px) {
-            .hero-content h1 { font-size: 3rem; }
-            .hero-content p { font-size: 1.2rem; }
-            .section-title h2 { font-size: 2rem; }
-            #hamburger { display: block; }
-            header nav ul { display: none; }
-            .sidenav { width: 0; padding-top: 80px; }
-            .sidenav.active { width: 80% !important; }
+            .container {
+                max-width: 100%;
+                padding: 0 10px;
+            }
+            header {
+                padding: 12px 0;
+            }
+            nav ul {
+                display: none;
+            }
+            .hero {
+                height: 60vh;
+                padding-top: 60px;
+            }
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            .hero-content p {
+                font-size: 1rem;
+            }
+            .section {
+                padding: 40px 0;
+            }
+            .projects {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .project-card img {
+                height: 140px;
+            }
+            .contact-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .sidenav {
+                width: 0;
+                padding-top: 80px;
+            }
+            .sidenav.active {
+                width: 80% !important;
+            }
             .skills-visual {
                 padding: 15px 5px;
                 max-width: 100%;
             }
             .skill { font-size: 1rem; }
             .skill i { font-size: 1.2em; }
+        }
+        @media (max-width: 480px) {
+            .hero-content h1 {
+                font-size: 1.3rem;
+            }
+            .section-title h2 {
+                font-size: 1.1rem;
+            }
+            .project-card img {
+                height: 100px;
+            }
+            .btn, .contact-btn {
+                font-size: 0.9rem;
+                padding: 8px 12px;
+            }
         }
     </style>
 </head>
@@ -316,38 +459,27 @@
             <div class="section-title">
                 <h2>소개</h2>
             </div>
-            <div class="about-content">
-                <div class="about-text">
-                    <h3>끄적</h3>
-                    <p>그냥 끄적이는데 여러기능을 추가하고 싶은 그런 싶은 그런 사이트입니다. </p>
-                </div>
-                <div class="about-image">
+            <div class="about-main">
+                <div class="about-profile">
                     <img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F016%2F2025%2F02%2F18%2F0002430677_002_20250218172420878.jpg&type=a340" alt="프로필 사진" class="profile-image">
+                    <h3>끄적</h3>
+                    <p>그냥 끄적이는데 여러기능을 추가하고 싶은 그런 사이트입니다.</p>
                 </div>
-            </div>
-            <div class="about-cards">
-                <div class="about-card">
-                    <img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDEyMTlfOTQg%2FMDAxNzM0NTM0ODMyNjQ3.HyorcfjIm9r_6n09941O1QlF97nrZ0exjb128epzJLog.4rRo8pMd1t1nc0NXYnhmojNYRCPPChB-Uhrd-9f3acMg.JPEG%2FAwesome_Peaceminusone_Wallpapers_-_WallpaperAccess.jpeg&type=l340_165" alt="경력 이미지">
-                    <div class="about-card-content">
-                        <h3>경력</h3>
+                <div class="about-cards">
+                    <div class="about-card">
+                        <h4>경력</h4>
                         <ul>
                             <li>2020 - 현재: 대구가톨릭대학교 컴퓨터 소프트웨어학부 재학</li>
                             <li>2020 - 2020: 비바리퍼블리카 ios 개발자</li>
                             <li>2022 - 취미로 백수생활</li>
                         </ul>
                     </div>
-                </div>
-                <div class="about-card">
-                    <img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzAxMTdfMTI5%2FMDAxNjczOTYwMDAyNzI1.UXKXP7deV1UX4Dfo8Os1NvZmURyRCx46eNHEPt4R8QIg.OCwHu6SuzHMKq4zGID0nbe8c1i6PdPcaPeRMyyOVND0g.PNG.zpfhfhqn%2F3.png&type=a340" alt="기술 스택 이미지">
-                    <div class="about-card-content">
-                        <h3>기술 스택</h3>
+                    <div class="about-card">
+                        <h4>기술스택</h4>
                         <p>JavaScript, React, Node.js, Python, HTML5, CSS3, Git</p>
                     </div>
-                </div>
-                <div class="about-card">
-                    <img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F433%2F2025%2F02%2F04%2F0000113329_001_20250204140008696.jpeg&type=l340_165" alt="목표 이미지">
-                    <div class="about-card-content">
-                        <h3>목표</h3>
+                    <div class="about-card">
+                        <h4>목표</h4>
                         <p>끄적끄적</p>
                     </div>
                 </div>
@@ -463,42 +595,40 @@
         });
 
         // 다크모드 토글
-        const themeToggle = document.getElementById('themeToggle');
-        const body = document.body;
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-        });
-        if (localStorage.getItem('darkMode') === 'true') {
-            body.classList.add('dark-mode');
-        }
+const themeToggle = document.getElementById('themeToggle');
+const body = document.body;
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
+});
+if (localStorage.getItem('darkMode') === 'true') {
+    body.classList.add('dark-mode');
+}
 
-        // 햄버거/사이드 메뉴
-        function openNav() {
-            document.getElementById("sideNav").style.width = "250px";
-            document.getElementById("hamburger").setAttribute('aria-expanded', 'true');
-        }
-        function closeNav() {
-            document.getElementById("sideNav").style.width = "0";
-            document.getElementById("hamburger").setAttribute('aria-expanded', 'false');
-        }
-        const sideNav = document.getElementById('sideNav');
-        const hamburger = document.getElementById('hamburger');
-        hamburger.addEventListener('click', openNav);
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('#sideNav, #hamburger')) closeNav();
-        });
-        // 터치 제스처로 메뉴 열기(모바일)
-        let touchStartX = 0;
-        document.addEventListener('touchstart', e => {
-            if (e.touches.length === 1) touchStartX = e.touches[0].clientX;
-        });
-        document.addEventListener('touchend', e => {
-            if (e.changedTouches.length === 1) {
-                const touchEndX = e.changedTouches[0].clientX;
-                if (touchEndX - touchStartX > 50) openNav();
-            }
-        });
-    </script>
-</body>
-</html>
+// 햄버거/사이드 메뉴
+function openNav() {
+    document.getElementById("sideNav").style.width = "250px";
+    document.getElementById("hamburger").setAttribute('aria-expanded', 'true');
+}
+function closeNav() {
+    document.getElementById("sideNav").style.width = "0";
+    document.getElementById("hamburger").setAttribute('aria-expanded', 'false');
+}
+const sideNav = document.getElementById('sideNav');
+const hamburger = document.getElementById('hamburger');
+hamburger.addEventListener('click', openNav);
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('#sideNav, #hamburger')) closeNav();
+});
+// 터치 제스처로 메뉴 열기(모바일)
+let touchStartX = 0;
+document.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) touchStartX = e.touches[0].clientX;
+});
+document.addEventListener('touchend', e => {
+    if (e.changedTouches.length === 1) {
+        const touchEndX = e.changedTouches[0].clientX;
+        if (touchEndX - touchStartX > 50) openNav();
+    }
+});
+
