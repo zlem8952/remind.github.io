@@ -506,6 +506,7 @@
         </div>
     </footer>
     <script>
+    document.addEventListener('DOMContentLoaded', function() {
         // 부드러운 스크롤
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             if (anchor.hash) {
@@ -516,7 +517,7 @@
                 });
             }
         });
-
+    
         // 헤더 스크롤 효과
         const header = document.querySelector('header');
         let isScrolling;
@@ -528,7 +529,7 @@
                     : 'var(--secondary-color)';
             }, 50);
         });
-        
+    
         // 다크모드 토글
         const themeToggle = document.getElementById('themeToggle');
         const body = document.body;
@@ -539,7 +540,7 @@
         if (localStorage.getItem('darkMode') === 'true') {
             body.classList.add('dark-mode');
         }
-        
+    
         // 햄버거/사이드 메뉴
         function openNav() {
             document.getElementById("sideNav").style.width = "250px";
@@ -551,24 +552,23 @@
         }
         const sideNav = document.getElementById('sideNav');
         const hamburger = document.getElementById('hamburger');
-        hamburger.addEventListener('click', (e) => {
+        hamburger.addEventListener('click', function(e) {
             e.stopPropagation();
             openNav();
         });
-        document.addEventListener('click', (e) => {
+        document.addEventListener('click', function(e) {
             if (!e.target.closest('#sideNav, #hamburger')) closeNav();
         });
         // 터치 제스처로 메뉴 열기(모바일)
         let touchStartX = 0;
-        document.addEventListener('touchstart', e => {
+        document.addEventListener('touchstart', function(e) {
             if (e.touches.length === 1) touchStartX = e.touches[0].clientX;
         });
-        document.addEventListener('touchend', e => {
+        document.addEventListener('touchend', function(e) {
             if (e.changedTouches.length === 1) {
                 const touchEndX = e.changedTouches[0].clientX;
                 if (touchEndX - touchStartX > 50) openNav();
             }
         });
-        
-
-        
+    });
+    
