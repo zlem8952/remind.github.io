@@ -29,7 +29,7 @@
             line-height: 1.6;
             color: var(--text-color);
             background-color: var(--bg-color);
-            transition: background-color 0.3s, color 0.3s;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
         }
         .container {
             max-width: 1200px;
@@ -44,7 +44,7 @@
             width: 100%;
             top: 0;
             z-index: 1000;
-            transition: background-color 0.3s;
+            transition: background-color var(--transition-speed);
         }
         nav ul {
             display: flex;
@@ -58,7 +58,7 @@
             color: #fff;
             text-decoration: none;
             font-weight: 300;
-            transition: color 0.3s ease;
+            transition: color var(--transition-speed);
         }
         nav ul li a:hover {
             color: var(--primary-color);
@@ -69,7 +69,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5));
             color: #fff;
         }
         .hero-content h1 {
@@ -92,12 +92,11 @@
             font-size: 2.5rem;
             color: var(--secondary-color);
         }
-        /* ----------- 소개(about) 카드 스타일 ----------- */
+        /* 소개(about) 카드 스타일 */
         .about-main {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             gap: 32px;
             margin-bottom: 32px;
         }
@@ -111,7 +110,6 @@
             padding: 32px 24px 24px 24px;
             max-width: 350px;
             width: 100%;
-            margin-bottom: 16px;
         }
         .profile-image {
             width: 110px;
@@ -163,7 +161,7 @@
             font-size: 1.05rem;
             color: var(--text-color);
         }
-        /* ----------- 기술 스택 시각화 ----------- */
+        /* 기술 스택 시각화 */
         .skills-visual {
             max-width: 500px;
             margin: 40px auto 0 auto;
@@ -212,8 +210,8 @@
             background-color: var(--card-bg-color);
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, background-color 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform var(--transition-speed), background-color var(--transition-speed);
         }
         .project-card:hover {
             transform: translateY(-5px);
@@ -230,36 +228,23 @@
             margin-bottom: 10px;
             color: var(--secondary-color);
         }
-        .btn {
+        .btn, .contact-btn {
             display: inline-block;
             background-color: var(--primary-color);
             color: #fff;
             padding: 10px 20px;
             text-decoration: none;
             border-radius: 5px;
-            transition: background-color 0.3s ease;
+            transition: background-color var(--transition-speed);
+            font-size: 1rem;
         }
-        .btn:hover {
+        .btn:hover, .contact-btn:hover {
             background-color: #2980b9;
         }
         .contact-buttons {
             display: flex;
             justify-content: center;
             gap: 20px;
-        }
-        .contact-btn {
-            display: inline-flex;
-            align-items: center;
-            padding: 10px 20px;
-            font-size: 1rem;
-            text-decoration: none;
-            color: #fff;
-            background-color: var(--primary-color);
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .contact-btn:hover {
-            background-color: #2980b9;
         }
         .contact-btn i {
             margin-right: 10px;
@@ -269,7 +254,7 @@
             color: #fff;
             text-align: center;
             padding: 20px 0;
-            transition: background-color 0.3s;
+            transition: background-color var(--transition-speed);
         }
         #themeToggle {
             position: fixed;
@@ -282,9 +267,8 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s, color 0.3s;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
         }
-        /* 햄버거 버튼 */
         #hamburger {
             font-size: 30px;
             cursor: pointer;
@@ -298,7 +282,6 @@
             padding: 0;
             display: block;
         }
-        /* 사이드 네비게이션 스타일 */
         .sidenav {
             height: 100%;
             width: 0;
@@ -332,15 +315,9 @@
             color: var(--text-color);
         }
         @media (max-width: 1024px) {
-            .container {
-                max-width: 900px;
-            }
-            .hero-content h1 {
-                font-size: 3rem;
-            }
-            .section-title h2 {
-                font-size: 2rem;
-            }
+            .container { max-width: 900px; }
+            .hero-content h1 { font-size: 3rem; }
+            .section-title h2 { font-size: 2rem; }
         }
         @media (max-width: 900px) {
             .about-cards {
@@ -355,68 +332,27 @@
             }
         }
         @media (max-width: 768px) {
-            .container {
-                max-width: 100%;
-                padding: 0 10px;
-            }
-            header {
-                padding: 12px 0;
-            }
-            nav ul {
-                display: none;
-            }
-            .hero {
-                height: 60vh;
-                padding-top: 60px;
-            }
-            .hero-content h1 {
-                font-size: 2rem;
-            }
-            .hero-content p {
-                font-size: 1rem;
-            }
-            .section {
-                padding: 40px 0;
-            }
-            .projects {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            .project-card img {
-                height: 140px;
-            }
-            .contact-buttons {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .sidenav {
-                width: 0;
-                padding-top: 80px;
-            }
-            .sidenav.active {
-                width: 80% !important;
-            }
-            .skills-visual {
-                padding: 15px 5px;
-                max-width: 100%;
-            }
+            .container { max-width: 100%; padding: 0 10px; }
+            header { padding: 12px 0; }
+            nav ul { display: none; }
+            .hero { height: 60vh; padding-top: 60px; }
+            .hero-content h1 { font-size: 2rem; }
+            .hero-content p { font-size: 1rem; }
+            .section { padding: 40px 0; }
+            .projects { grid-template-columns: 1fr; gap: 15px; }
+            .project-card img { height: 140px; }
+            .contact-buttons { flex-direction: column; gap: 10px; }
+            .sidenav { width: 0; padding-top: 80px; }
+            .sidenav.active { width: 80% !important; }
+            .skills-visual { padding: 15px 5px; max-width: 100%; }
             .skill { font-size: 1rem; }
             .skill i { font-size: 1.2em; }
         }
         @media (max-width: 480px) {
-            .hero-content h1 {
-                font-size: 1.3rem;
-            }
-            .section-title h2 {
-                font-size: 1.1rem;
-            }
-            .project-card img {
-                height: 100px;
-            }
-            .btn, .contact-btn {
-                font-size: 0.9rem;
-                padding: 8px 12px;
-            }
+            .hero-content h1 { font-size: 1.3rem; }
+            .section-title h2 { font-size: 1.1rem; }
+            .project-card img { height: 100px; }
+            .btn, .contact-btn { font-size: 0.9rem; padding: 8px 12px; }
         }
     </style>
 </head>
@@ -424,8 +360,8 @@
     <!-- 햄버거 메뉴 -->
     <button id="hamburger" aria-label="메뉴 열기">&#9776;</button>
     <!-- 사이드 네비게이션 -->
-    <div id="sideNav" class="sidenav">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <div id="sideNav" class="sidenav" aria-label="사이드 메뉴">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" aria-label="메뉴 닫기">&times;</a>
         <a href="#home">홈</a>
         <a href="#about">소개</a>
         <a href="#projects">프로젝트</a>
@@ -484,7 +420,6 @@
                     </div>
                 </div>
             </div>
-            <!-- 기술 스택 시각화 추가 -->
             <div class="skills-visual">
                 <h3>기술 스택</h3>
                 <div class="skill">
@@ -593,42 +528,47 @@
                     : 'var(--secondary-color)';
             }, 50);
         });
-
+        
         // 다크모드 토글
-const themeToggle = document.getElementById('themeToggle');
-const body = document.body;
-themeToggle.addEventListener('click', () => {
-    body.classList.toggle('dark-mode');
-    localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-});
-if (localStorage.getItem('darkMode') === 'true') {
-    body.classList.add('dark-mode');
-}
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
+        });
+        if (localStorage.getItem('darkMode') === 'true') {
+            body.classList.add('dark-mode');
+        }
+        
+        // 햄버거/사이드 메뉴
+        function openNav() {
+            document.getElementById("sideNav").style.width = "250px";
+            document.getElementById("hamburger").setAttribute('aria-expanded', 'true');
+        }
+        function closeNav() {
+            document.getElementById("sideNav").style.width = "0";
+            document.getElementById("hamburger").setAttribute('aria-expanded', 'false');
+        }
+        const sideNav = document.getElementById('sideNav');
+        const hamburger = document.getElementById('hamburger');
+        hamburger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openNav();
+        });
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#sideNav, #hamburger')) closeNav();
+        });
+        // 터치 제스처로 메뉴 열기(모바일)
+        let touchStartX = 0;
+        document.addEventListener('touchstart', e => {
+            if (e.touches.length === 1) touchStartX = e.touches[0].clientX;
+        });
+        document.addEventListener('touchend', e => {
+            if (e.changedTouches.length === 1) {
+                const touchEndX = e.changedTouches[0].clientX;
+                if (touchEndX - touchStartX > 50) openNav();
+            }
+        });
+        
 
-// 햄버거/사이드 메뉴
-function openNav() {
-    document.getElementById("sideNav").style.width = "250px";
-    document.getElementById("hamburger").setAttribute('aria-expanded', 'true');
-}
-function closeNav() {
-    document.getElementById("sideNav").style.width = "0";
-    document.getElementById("hamburger").setAttribute('aria-expanded', 'false');
-}
-const sideNav = document.getElementById('sideNav');
-const hamburger = document.getElementById('hamburger');
-hamburger.addEventListener('click', openNav);
-document.addEventListener('click', (e) => {
-    if (!e.target.closest('#sideNav, #hamburger')) closeNav();
-});
-// 터치 제스처로 메뉴 열기(모바일)
-let touchStartX = 0;
-document.addEventListener('touchstart', e => {
-    if (e.touches.length === 1) touchStartX = e.touches[0].clientX;
-});
-document.addEventListener('touchend', e => {
-    if (e.changedTouches.length === 1) {
-        const touchEndX = e.changedTouches[0].clientX;
-        if (touchEndX - touchStartX > 50) openNav();
-    }
-});
-
+        
