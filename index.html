@@ -224,18 +224,29 @@
     <button id="themeToggle">🌓 테마 변경</button>
     <div class="background-image"></div>
     <header>
-        <div class="container">
-            <nav>
-                <ul>
-        <li><a href="#home">홈</a></li>
-        <li><a href="#about">소개</a></li>
-        <li><a href="#projects">프로젝트</a></li>
-        <li><a href="#contact">연락처</a></li>
-        <li><a href="converter.html">PY→EXE 변환기</a></li> <!-- 새 버튼 추가 -->
-                </ul>
-            </nav>
-        </div>
-    </header>
+    <div class="container">
+        <nav>
+            <ul>
+                <li><a href="#home">홈</a></li>
+                <li><a href="#about">소개</a></li>
+                <li><a href="#projects">프로젝트</a></li>
+                <li><a href="#contact">연락처</a></li>
+                <!-- 기존 PY→EXE 변환기 링크 제거 -->
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!-- 추가된 햄버거 메뉴 및 사이드 네비게이션 -->
+<div id="hamburger" onclick="openNav()">&#9776;</div>
+<div id="sideNav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="#home">홈</a>
+    <a href="#about">소개</a>
+    <a href="#projects">프로젝트</a>
+    <a href="#contact">연락처</a>
+    <a href="converter.html">PY→EXE 변환기</a>
+</div>
 
     <section id="home" class="hero">
         <div class="hero-content">
