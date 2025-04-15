@@ -215,23 +215,81 @@ footer {
     font-size: 2rem;
     color: var(--text-color);
 }
-@media (max-width: 768px) {
+
+/* 반응형 미디어 쿼리 */
+@media (max-width: 1024px) {
+    .container {
+        max-width: 900px;
+    }
     .hero-content h1 {
         font-size: 3rem;
-    }
-    .hero-content p {
-        font-size: 1.2rem;
     }
     .section-title h2 {
         font-size: 2rem;
     }
-    #hamburger { display: block; }
-    header nav ul { display: none; }
+}
+@media (max-width: 768px) {
+    .container {
+        max-width: 100%;
+        padding: 0 10px;
+    }
+    header {
+        padding: 12px 0;
+    }
+    nav ul {
+        display: none;
+    }
+    #hamburger {
+        display: block;
+    }
+    .hero {
+        height: 60vh;
+        padding-top: 60px;
+    }
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+    .hero-content p {
+        font-size: 1rem;
+    }
+    .section {
+        padding: 40px 0;
+    }
+    .projects {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    .project-card img {
+        height: 140px;
+    }
+    .about-cards {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .contact-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
     .sidenav {
         width: 0;
         padding-top: 80px;
     }
     .sidenav.active {
         width: 80% !important;
+    }
+}
+@media (max-width: 480px) {
+    .hero-content h1 {
+        font-size: 1.3rem;
+    }
+    .section-title h2 {
+        font-size: 1.1rem;
+    }
+    .project-card img {
+        height: 100px;
+    }
+    .btn, .contact-btn {
+        font-size: 0.9rem;
+        padding: 8px 12px;
     }
 }
