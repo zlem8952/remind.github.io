@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>첫 번째 블로그 글 제목</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .blog-post-container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: var(--card-bg-color);
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 32px 24px;
+        }
+        .blog-post-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .blog-post-date {
+            color: #888;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        .blog-post-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .blog-nav {
+            text-align: center;
+            margin: 30px 0 0 0;
+        }
+        .blog-nav a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin: 0 10px;
+        }
+        .blog-nav a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .blog-post-container { padding: 16px 4px; }
+            .blog-post-title { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="blog-post-container">
+        <div class="blog-post-title">첫 번째 블로그 글 제목</div>
+        <div class="blog-post-date">2025-04-15</div>
+        <div class="blog-post-content">
+            <p>
+                이 글은 블로그 기능을 소개하는 예시입니다.<br>
+                HTML, CSS, JS로 쉽게 블로그를 만들 수 있습니다.<br>
+                <br>
+                <b>포인트:</b>
+                <ul>
+                    <li>글 목록은 <code>blog/index.html</code>에서 관리</li>
+                    <li>각 글은 <code>blog/post1.html</code> 등 별도 파일로 작성</li>
+                    <li>스타일은 포트폴리오와 통일</li>
+                </ul>
+            </p>
+        </div>
+    </div>
+    <div class="blog-nav">
+        <a href="index.html"><i class="fas fa-list"></i> 블로그 목록</a>
+        <a href="../index.html"><i class="fas fa-home"></i> 메인으로</a>
+    </div>
+</body>
+</html>
