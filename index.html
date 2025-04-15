@@ -220,6 +220,46 @@
             font-size: 2rem;
             color: var(--text-color);
         }
+        /* 기술 스택 시각화 */
+        .skills-visual {
+            max-width: 500px;
+            margin: 40px auto 0 auto;
+            padding: 30px 20px;
+            background: var(--card-bg-color);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+        .skills-visual h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        .skill {
+            margin-bottom: 18px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .skill i {
+            font-size: 1.5em;
+            width: 32px;
+            text-align: center;
+        }
+        .skill-bar {
+            flex: 1;
+            height: 16px;
+            background: #e0e0e0;
+            border-radius: 8px;
+            margin-left: 12px;
+            overflow: hidden;
+        }
+        .skill-level {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), #6dd5fa);
+            border-radius: 8px;
+            transition: width 1s;
+        }
         @media (max-width: 768px) {
             .hero-content h1 { font-size: 3rem; }
             .hero-content p { font-size: 1.2rem; }
@@ -228,6 +268,12 @@
             header nav ul { display: none; }
             .sidenav { width: 0; padding-top: 80px; }
             .sidenav.active { width: 80% !important; }
+            .skills-visual {
+                padding: 15px 5px;
+                max-width: 100%;
+            }
+            .skill { font-size: 1rem; }
+            .skill i { font-size: 1.2em; }
         }
     </style>
 </head>
@@ -242,6 +288,7 @@
         <a href="#projects">프로젝트</a>
         <a href="#contact">연락처</a>
         <a href="converter.html">PY→EXE 변환기</a>
+        <a href="blog/index.html">블로그</a>
     </div>
     <!-- 다크모드 토글 버튼 -->
     <button id="themeToggle" aria-label="테마 전환">🌓</button>
@@ -303,6 +350,34 @@
                         <h3>목표</h3>
                         <p>끄적끄적</p>
                     </div>
+                </div>
+            </div>
+            <!-- 기술 스택 시각화 추가 -->
+            <div class="skills-visual">
+                <h3>기술 스택</h3>
+                <div class="skill">
+                    <i class="fab fa-js-square"></i> JavaScript
+                    <div class="skill-bar"><div class="skill-level" style="width: 85%"></div></div>
+                </div>
+                <div class="skill">
+                    <i class="fab fa-python"></i> Python
+                    <div class="skill-bar"><div class="skill-level" style="width: 80%"></div></div>
+                </div>
+                <div class="skill">
+                    <i class="fab fa-html5"></i> HTML5
+                    <div class="skill-bar"><div class="skill-level" style="width: 90%"></div></div>
+                </div>
+                <div class="skill">
+                    <i class="fab fa-css3-alt"></i> CSS3
+                    <div class="skill-bar"><div class="skill-level" style="width: 80%"></div></div>
+                </div>
+                <div class="skill">
+                    <i class="fab fa-react"></i> React
+                    <div class="skill-bar"><div class="skill-level" style="width: 70%"></div></div>
+                </div>
+                <div class="skill">
+                    <i class="fab fa-git-alt"></i> Git
+                    <div class="skill-bar"><div class="skill-level" style="width: 75%"></div></div>
                 </div>
             </div>
         </div>
