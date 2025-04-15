@@ -174,7 +174,8 @@ footer {
     cursor: pointer;
     position: fixed;
     top: 20px;
-    left: 20px;
+    right: 20px;   /* ← 오른쪽 상단으로 이동 */
+    /* left: 20px;  ← 이 줄은 삭제 또는 주석 처리 */
     z-index: 1002;
     color: var(--text-color);
     background: none;
