@@ -1,1 +1,94 @@
-dd
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>블로그 - 내 포트폴리오</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .blog-header {
+            background: var(--secondary-color);
+            color: #fff;
+            padding: 30px 0 20px 0;
+            text-align: center;
+        }
+        .blog-list {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 0 10px;
+        }
+        .blog-post-link {
+            display: block;
+            background: var(--card-bg-color);
+            border-radius: 10px;
+            margin-bottom: 24px;
+            padding: 24px 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            text-decoration: none;
+            color: var(--text-color);
+            transition: box-shadow 0.2s, background 0.2s;
+        }
+        .blog-post-link:hover {
+            background: var(--primary-color);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(52,152,219,0.15);
+        }
+        .blog-post-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .blog-post-date {
+            font-size: 0.95rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        .blog-post-desc {
+            font-size: 1.05rem;
+        }
+        .blog-nav {
+            text-align: center;
+            margin: 30px 0 0 0;
+        }
+        .blog-nav a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin: 0 10px;
+        }
+        .blog-nav a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .blog-list { padding: 0 2px; }
+            .blog-post-link { padding: 16px 8px; }
+            .blog-header { padding: 20px 0 10px 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="blog-header">
+        <h1><i class="fas fa-pen-nib"></i> 블로그</h1>
+        <p>개발, 공부, 일상, 생각을 기록합니다.</p>
+    </div>
+    <div class="blog-nav">
+        <a href="../index.html"><i class="fas fa-home"></i> 메인으로</a>
+    </div>
+    <div class="blog-list">
+        <a class="blog-post-link" href="post1.html">
+            <div class="blog-post-title">첫 번째 블로그 글 제목</div>
+            <div class="blog-post-date">2025-04-15</div>
+            <div class="blog-post-desc">이 글은 블로그 기능을 소개하는 예시입니다. HTML, CSS, JS로 쉽게 블로그를 만들 수 있습니다.</div>
+        </a>
+        <a class="blog-post-link" href="post2.html">
+            <div class="blog-post-title">두 번째 글: 포트폴리오에 블로그 추가하기</div>
+            <div class="blog-post-date">2025-04-10</div>
+            <div class="blog-post-desc">포트폴리오에 블로그를 연동하는 방법과 폴더 구조, 코드 예시를 정리합니다.</div>
+        </a>
+        <!-- 필요에 따라 글을 계속 추가하세요 -->
+    </div>
+</body>
+</html>
