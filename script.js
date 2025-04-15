@@ -46,3 +46,21 @@ themeToggle.addEventListener('click', () => {
 if (localStorage.getItem('darkMode') === 'true') {
     body.classList.add('dark-mode');
 }
+// 추가된 JavaScript 기능
+function openNav() {
+    document.getElementById("sideNav").style.width = "250px";
+}
+
+function closeNav() {
+    document.getElementById("sideNav").style.width = "0";
+}
+
+// 외부 클릭 시 메뉴 닫기
+document.addEventListener('click', function(event) {
+    const sideNav = document.getElementById('sideNav');
+    const hamburger = document.getElementById('hamburger');
+    
+    if (!sideNav.contains(event.target) && !hamburger.contains(event.target)) {
+        closeNav();
+    }
+});
