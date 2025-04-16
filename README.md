@@ -3,7 +3,7 @@
 ## 포트폴리오 
 [![포트폴리오](https://img.shields.io/badge/포트폴리오-FF4088?style=for-the-badge&logo=GitHub&logoColor=white)](https://zlem8952.github.io/remind.github.io/)
 
-## 내가 좋아하는 영상 [G-DRAGON]
+## 추천 영상 [G-DRAGON]
 
 [![G-DRAGON - 2024 MAMA AWARDS ICONIC STAGE](https://img.youtube.com/vi/jNjmTYxeIgU/0.jpg)](https://www.youtube.com/watch?v=jNjmTYxeIgU "G-DRAGON - 2024 MAMA AWARDS ICONIC STAGE")
 
