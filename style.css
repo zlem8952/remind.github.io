@@ -58,7 +58,10 @@ nav ul li a {
 nav ul li a:hover {
     color: var(--primary-color);
 }
+
+/* ======== HERO SECTION (GIF 배경 꽉 차게) ======== */
 .hero {
+    position: relative;
     height: 100vh;
     display: flex;
     align-items: center;
@@ -66,6 +69,21 @@ nav ul li a:hover {
     text-align: center;
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
     color: #fff;
+    overflow: hidden;
+}
+.hero-bg-gif {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -1;
+    pointer-events: none;
+}
+.hero-content {
+    position: relative;
+    z-index: 1;
 }
 .hero-content h1 {
     font-size: 4rem;
@@ -76,6 +94,8 @@ nav ul li a:hover {
     max-width: 600px;
     margin: 0 auto;
 }
+
+/* ======== 이하 기존 코드 유지 ======== */
 .section {
     padding: 80px 0;
 }
@@ -174,8 +194,7 @@ footer {
     cursor: pointer;
     position: fixed;
     top: 20px;
-    right: 20px;   /* ← 오른쪽 상단으로 이동 */
-    /* left: 20px;  ← 이 줄은 삭제 또는 주석 처리 */
+    right: 20px;
     z-index: 1002;
     color: var(--text-color);
     background: none;
@@ -216,7 +235,6 @@ footer {
     font-size: 2rem;
     color: var(--text-color);
 }
-
 /* ----------- 소개(about) 카드 스타일 ----------- */
 .about-main {
     display: flex;
@@ -288,7 +306,6 @@ footer {
     font-size: 1.05rem;
     color: var(--text-color);
 }
-
 /* ----------- 기술 스택 시각화 ----------- */
 .skills-visual {
     max-width: 500px;
@@ -329,7 +346,6 @@ footer {
     border-radius: 8px;
     transition: width 1s;
 }
-
 /* ----------- 반응형 미디어 쿼리 ----------- */
 @media (max-width: 1024px) {
     .container {
@@ -368,6 +384,9 @@ footer {
     .hero {
         height: 60vh;
         padding-top: 60px;
+    }
+    .hero-bg-gif {
+        height: 60vh;
     }
     .hero-content h1 {
         font-size: 2rem;
