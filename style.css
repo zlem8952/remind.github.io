@@ -59,7 +59,7 @@ nav ul li a:hover {
     color: var(--primary-color);
 }
 
-/* ======== HERO SECTION (GIF 배경 꽉 차게, 텍스트 오버레이) ======== */
+/* ======== HERO SECTION (GIF 배경 꽉 차게) ======== */
 .hero {
     position: relative;
     height: 100vh;
@@ -68,6 +68,7 @@ nav ul li a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 400px;
 }
 .hero-bg-gif {
     position: absolute;
@@ -75,10 +76,15 @@ nav ul li a:hover {
     left: 0;
     width: 100vw;
     height: 100vh;
+    min-width: 100%;
+    min-height: 100%;
     object-fit: cover;
     z-index: -1;
     pointer-events: none;
+    background: #222;
 }
+
+/* HERO 텍스트 오버레이(필요없으면 삭제) */
 .hero-content {
     position: absolute;
     top: 50%;
@@ -99,7 +105,6 @@ nav ul li a:hover {
     margin: 0 auto;
 }
 
-/* ======== 이하 기존 코드 유지 ======== */
 .section {
     padding: 80px 0;
 }
@@ -198,7 +203,7 @@ footer {
     cursor: pointer;
     position: fixed;
     top: 20px;
-    right: 20px;
+    left: 20px;
     z-index: 1002;
     color: var(--text-color);
     background: none;
@@ -387,10 +392,12 @@ footer {
     }
     .hero {
         height: 60vh;
+        min-height: 250px;
         padding-top: 60px;
     }
     .hero-bg-gif {
         height: 60vh;
+        min-height: 250px;
     }
     .hero-content h1 {
         font-size: 2rem;
