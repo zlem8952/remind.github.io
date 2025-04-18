@@ -380,9 +380,10 @@
             </nav>
         </div>
     </header>
-    <!-- HERO SECTION (텍스트 완전히 제거) -->
+    <!-- HERO SECTION (텍스트 완전히 제거, GIF 코드 수정) -->
     <section id="home" class="hero">
-        <img src="<a href="https://imgbb.com/"><img src="https://imgur.com/a/9wodhan'>temporary image upload</a><br />"
+        <!-- 아래 src에 원하는 GIF의 이미지 주소를 넣으세요 -->
+        <img src="https://i.ibb.co/ZR9gD0kx/gdragon-con.gif"
              alt="배경 GIF"
              class="hero-bg-gif">
     </section>
@@ -513,7 +514,7 @@
                 });
             }
         });
-    
+
         // 헤더 스크롤 효과
         const header = document.querySelector('header');
         let isScrolling;
@@ -525,7 +526,7 @@
                     : 'var(--secondary-color)';
             }, 50);
         });
-    
+
         // 다크모드 토글
         const themeToggle = document.getElementById('themeToggle');
         const body = document.body;
@@ -536,7 +537,7 @@
         if (localStorage.getItem('darkMode') === 'true') {
             body.classList.add('dark-mode');
         }
-    
+
         // 햄버거/사이드 메뉴
         function openNav() {
             document.getElementById("sideNav").style.width = "250px";
