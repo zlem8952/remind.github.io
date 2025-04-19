@@ -14,23 +14,31 @@
     --bg-color: #333;
     --card-bg-color: #2c3e50;
 }
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+
+/* ====== Reset & Common ====== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
 body {
     font-family: 'Noto Sans KR', sans-serif;
     line-height: 1.6;
     color: var(--text-color);
     background-color: var(--bg-color);
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
 }
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--transition-speed);
+}
+a:hover {
+    color: var(--primary-color);
+}
+
+/* ====== Header & Navigation ====== */
 header {
     background-color: var(--secondary-color);
     color: #fff;
@@ -39,7 +47,7 @@ header {
     width: 100%;
     top: 0;
     z-index: 1000;
-    transition: background-color 0.3s;
+    transition: background-color var(--transition-speed);
 }
 nav ul {
     display: flex;
@@ -51,15 +59,30 @@ nav ul li {
 }
 nav ul li a {
     color: #fff;
-    text-decoration: none;
     font-weight: 300;
-    transition: color 0.3s ease;
-}
-nav ul li a:hover {
-    color: var(--primary-color);
 }
 
-/* ======== HERO SECTION (GIF 배경 꽉 차게) ======== */
+/* ====== Buttons ====== */
+.btn, .contact-btn {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+    text-decoration: none;
+}
+.btn:hover, .contact-btn:hover {
+    background-color: #2980b9;
+}
+.contact-btn i {
+    margin-right: 10px;
+}
+
+/* ====== Hero Section ====== */
 .hero {
     position: relative;
     height: 100vh;
@@ -72,8 +95,7 @@ nav ul li a:hover {
 }
 .hero-bg-gif {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
     width: 100vw;
     height: 100vh;
     min-width: 100%;
@@ -84,27 +106,7 @@ nav ul li a:hover {
     background: #222;
 }
 
-/* HERO 텍스트 오버레이(필요없으면 삭제) */
-.hero-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #fff;
-    text-align: center;
-    z-index: 1;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.6);
-}
-.hero-content h1 {
-    font-size: 4rem;
-    margin-bottom: 20px;
-}
-.hero-content p {
-    font-size: 1.5rem;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
+/* ====== Section Common ====== */
 .section {
     padding: 80px 0;
 }
@@ -116,151 +118,25 @@ nav ul li a:hover {
     font-size: 2.5rem;
     color: var(--secondary-color);
 }
-.projects {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-}
-.project-card {
-    background-color: var(--card-bg-color);
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, background-color 0.3s;
-}
-.project-card:hover {
-    transform: translateY(-5px);
-}
-.project-card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-.project-card-content {
-    padding: 20px;
-}
-.project-card-content h3 {
-    margin-bottom: 10px;
-    color: var(--secondary-color);
-}
-.btn {
-    display: inline-block;
-    background-color: var(--primary-color);
-    color: #fff;
-    padding: 10px 20px;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-.btn:hover {
-    background-color: #2980b9;
-}
-.contact-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-.contact-btn {
-    display: inline-flex;
-    align-items: center;
-    padding: 10px 20px;
-    font-size: 1rem;
-    text-decoration: none;
-    color: #fff;
-    background-color: var(--primary-color);
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-.contact-btn:hover {
-    background-color: #2980b9;
-}
-.contact-btn i {
-    margin-right: 10px;
-}
-footer {
-    background-color: var(--secondary-color);
-    color: #fff;
-    text-align: center;
-    padding: 20px 0;
-    transition: background-color 0.3s;
-}
-#themeToggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1001;
-    padding: 10px;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-}
-/* 햄버거 버튼 */
-#hamburger {
-    font-size: 30px;
-    cursor: pointer;
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1002;
-    color: var(--text-color);
-    background: none;
-    border: none;
-    padding: 0;
-    display: block;
-}
-/* 사이드 네비게이션 스타일 */
-.sidenav {
-    height: 100%;
-    width: 0;
-    position: fixed;
-    z-index: 1000;
-    top: 0;
-    left: 0;
-    background-color: var(--card-bg-color);
-    overflow-x: hidden;
-    transition: width var(--transition-speed);
-    padding-top: 60px;
-    box-shadow: 3px 0 15px rgba(0,0,0,0.1);
-}
-.sidenav a {
-    padding: 15px 25px;
-    text-decoration: none;
-    font-size: 1.1rem;
-    color: var(--text-color);
-    display: block;
-    transition: background-color var(--transition-speed);
-}
-.sidenav a:hover {
-    background-color: var(--primary-color);
-    color: #fff;
-}
-.sidenav .closebtn {
-    position: absolute;
-    top: 15px;
-    right: 25px;
-    font-size: 2rem;
-    color: var(--text-color);
-}
-/* ----------- 소개(about) 카드 스타일 ----------- */
+
+/* ====== About Section ====== */
 .about-main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     gap: 32px;
     margin-bottom: 32px;
 }
-.about-profile {
+.about-profile, .about-card, .skills-visual {
+    background: var(--card-bg-color);
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: var(--card-bg-color);
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    padding: 32px 24px 24px 24px;
+}
+.about-profile {
+    padding: 32px 24px 24px;
     max-width: 350px;
     width: 100%;
     margin-bottom: 16px;
@@ -278,7 +154,8 @@ footer {
     margin-bottom: 8px;
     color: var(--primary-color);
 }
-.about-profile p {
+.about-profile p,
+.about-card p {
     font-size: 1.1rem;
     color: var(--text-color);
     text-align: center;
@@ -290,16 +167,10 @@ footer {
     flex-wrap: wrap;
 }
 .about-card {
-    background: var(--card-bg-color);
-    border-radius: 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
     padding: 24px 20px;
     min-width: 220px;
     max-width: 300px;
     flex: 1 1 220px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 .about-card h4 {
     font-size: 1.2rem;
@@ -310,19 +181,13 @@ footer {
     padding-left: 18px;
     text-align: left;
 }
-.about-card p {
-    text-align: center;
-    font-size: 1.05rem;
-    color: var(--text-color);
-}
-/* ----------- 기술 스택 시각화 ----------- */
+
+/* ====== Skills Visual ====== */
 .skills-visual {
     max-width: 500px;
-    margin: 40px auto 0 auto;
+    margin: 40px auto 0;
     padding: 30px 20px;
-    background: var(--card-bg-color);
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
 }
 .skills-visual h3 {
     text-align: center;
@@ -355,17 +220,117 @@ footer {
     border-radius: 8px;
     transition: width 1s;
 }
-/* ----------- 반응형 미디어 쿼리 ----------- */
+
+/* ====== Projects Section ====== */
+.projects {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+.project-card {
+    background-color: var(--card-bg-color);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform var(--transition-speed), background-color var(--transition-speed);
+}
+.project-card:hover {
+    transform: translateY(-5px);
+}
+.project-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+.project-card-content {
+    padding: 20px;
+}
+.project-card-content h3 {
+    margin-bottom: 10px;
+    color: var(--secondary-color);
+}
+
+/* ====== Contact Section ====== */
+.contact-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* ====== Footer ====== */
+footer {
+    background-color: var(--secondary-color);
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+    transition: background-color var(--transition-speed);
+}
+
+/* ====== Theme Toggle & Hamburger ====== */
+#themeToggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1001;
+    padding: 10px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+#hamburger {
+    font-size: 30px;
+    cursor: pointer;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1002;
+    color: var(--text-color);
+    background: none;
+    border: none;
+    padding: 0;
+    display: block;
+}
+
+/* ====== Sidenav ====== */
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    background-color: var(--card-bg-color);
+    overflow-x: hidden;
+    transition: width var(--transition-speed);
+    padding-top: 60px;
+    box-shadow: 3px 0 15px rgba(0,0,0,0.1);
+}
+.sidenav a {
+    padding: 15px 25px;
+    font-size: 1.1rem;
+    color: var(--text-color);
+    display: block;
+    transition: background-color var(--transition-speed);
+}
+.sidenav a:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+.sidenav .closebtn {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 2rem;
+    color: var(--text-color);
+}
+
+/* ====== Responsive ====== */
 @media (max-width: 1024px) {
-    .container {
-        max-width: 900px;
-    }
-    .hero-content h1 {
-        font-size: 3rem;
-    }
-    .section-title h2 {
-        font-size: 2rem;
-    }
+    .container { max-width: 900px; }
+    .section-title h2 { font-size: 2rem; }
 }
 @media (max-width: 900px) {
     .about-cards {
@@ -380,71 +345,23 @@ footer {
     }
 }
 @media (max-width: 768px) {
-    .container {
-        max-width: 100%;
-        padding: 0 10px;
-    }
-    header {
-        padding: 12px 0;
-    }
-    nav ul {
-        display: none;
-    }
-    .hero {
-        height: 60vh;
-        min-height: 250px;
-        padding-top: 60px;
-    }
-    .hero-bg-gif {
-        height: 60vh;
-        min-height: 250px;
-    }
-    .hero-content h1 {
-        font-size: 2rem;
-    }
-    .hero-content p {
-        font-size: 1rem;
-    }
-    .section {
-        padding: 40px 0;
-    }
-    .projects {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-    .project-card img {
-        height: 140px;
-    }
-    .contact-buttons {
-        flex-direction: column;
-        gap: 10px;
-    }
-    .sidenav {
-        width: 0;
-        padding-top: 80px;
-    }
-    .sidenav.active {
-        width: 80% !important;
-    }
-    .skills-visual {
-        padding: 15px 5px;
-        max-width: 100%;
-    }
+    .container { max-width: 100%; padding: 0 10px; }
+    header { padding: 12px 0; }
+    nav ul { display: none; }
+    .hero { height: 60vh; min-height: 250px; padding-top: 60px; }
+    .hero-bg-gif { height: 60vh; min-height: 250px; }
+    .section { padding: 40px 0; }
+    .projects { grid-template-columns: 1fr; gap: 15px; }
+    .project-card img { height: 140px; }
+    .contact-buttons { flex-direction: column; gap: 10px; }
+    .sidenav { width: 0; padding-top: 80px; }
+    .sidenav.active { width: 80% !important; }
+    .skills-visual { padding: 15px 5px; max-width: 100%; }
     .skill { font-size: 1rem; }
     .skill i { font-size: 1.2em; }
 }
 @media (max-width: 480px) {
-    .hero-content h1 {
-        font-size: 1.3rem;
-    }
-    .section-title h2 {
-        font-size: 1.1rem;
-    }
-    .project-card img {
-        height: 100px;
-    }
-    .btn, .contact-btn {
-        font-size: 0.9rem;
-        padding: 8px 12px;
-    }
+    .section-title h2 { font-size: 1.1rem; }
+    .project-card img { height: 100px; }
+    .btn, .contact-btn { font-size: 0.9rem; padding: 8px 12px; }
 }
