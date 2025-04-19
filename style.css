@@ -414,3 +414,37 @@ footer {
     }
     .project-card img {
         height: 140px;
+    }
+    .contact-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .sidenav {
+        width: 0;
+        padding-top: 80px;
+    }
+    .sidenav.active {
+        width: 80% !important;
+    }
+    .skills-visual {
+        padding: 15px 5px;
+        max-width: 100%;
+    }
+    .skill { font-size: 1rem; }
+    .skill i { font-size: 1.2em; }
+}
+@media (max-width: 480px) {
+    .hero-content h1 {
+        font-size: 1.3rem;
+    }
+    .section-title h2 {
+        font-size: 1.1rem;
+    }
+    .project-card img {
+        height: 100px;
+    }
+    .btn, .contact-btn {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+}
