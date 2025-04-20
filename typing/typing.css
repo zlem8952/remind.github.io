@@ -5,7 +5,6 @@
     padding: 24px 0 8px 0;
     justify-content: flex-start;
 }
-
 .home-btn {
     display: inline-flex;
     align-items: center;
@@ -33,14 +32,12 @@
     margin: 0 0 0 14px;
     font-weight: 700;
 }
-
 .typing-container {
     max-width: 800px;
     margin: 2rem auto;
     padding: 20px;
     text-align: center;
 }
-
 .mode-select {
     margin-bottom: 28px;
     display: flex;
@@ -77,96 +74,70 @@
     margin-top: 6px;
     color: #cbe6ff;
 }
-
-#song-search {
+#song-input-area {
     margin: 20px 0;
 }
-#song-search input {
-    padding: 10px;
-    margin: 5px;
-    width: 250px;
+#song-lyrics-input {
+    width: 90%;
+    min-width: 250px;
+    max-width: 600px;
     font-size: 1.1em;
     border-radius: 6px;
     border: 1px solid #b0c4de;
+    padding: 10px;
+    margin-bottom: 12px;
 }
-#song-search button {
-    padding: 10px 24px;
-    background: #2196F3;
+#challenge-btn {
+    padding: 12px 32px;
+    background: #4CAF50;
     color: #fff;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 1.1em;
     cursor: pointer;
     margin-left: 8px;
-}
-#song-search button:hover {
-    background: #1976D2;
-}
-#song-results {
-    margin-top: 18px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 9px;
-}
-.song-result-btn {
-    background: #f5f7fa;
-    color: #222;
-    border: 1px solid #b0c4de;
-    border-radius: 8px;
-    padding: 10px 18px;
-    font-size: 1.05em;
-    cursor: pointer;
-    width: 100%;
-    max-width: 420px;
-    text-align: left;
+    font-weight: 600;
     transition: background 0.2s;
 }
-.song-result-btn:hover, .song-result-btn:focus {
-    background: #e3f0ff;
-    color: #1976D2;
-    border-color: #2196F3;
+#challenge-btn:hover {
+    background: #388e3c;
 }
-
 #test-area {
     background: #f5f5f5;
     padding: 20px;
     border-radius: 10px;
     margin-top: 20px;
 }
-
-#text-display {
+#example-display {
     font-size: 1.2em;
     line-height: 1.6;
-    margin: 20px 0;
+    margin: 20px 0 10px 0;
     padding: 15px;
-    background: white;
+    background: #fff;
     border-radius: 5px;
-    min-height: 100px;
+    min-height: 60px;
     word-break: break-all;
     text-align: left;
+    box-shadow: 0 2px 8px rgba(33,150,243,0.06);
 }
-
 #input-field {
     width: 100%;
-    height: 150px;
+    height: 60px;
     padding: 10px;
     font-size: 1.1em;
-    margin: 20px 0;
+    margin: 10px 0 20px 0;
     border: 2px solid #ddd;
     border-radius: 5px;
-    resize: vertical;
+    resize: none;
 }
-
 #stats {
     display: flex;
     justify-content: space-around;
     margin: 20px 0;
     font-size: 1.1em;
 }
-
 #restart-btn {
-    background: #4CAF50;
+    background: #2196F3;
     color: white;
     padding: 10px 25px;
     border: none;
@@ -177,23 +148,18 @@
     transition: background 0.2s;
 }
 #restart-btn:hover {
-    background: #45a049;
+    background: #1976D2;
 }
-
-#loading {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 2000;
-    background: rgba(255,255,255,0.85);
-    padding: 30px 40px;
-    border-radius: 14px;
-    box-shadow: 0 2px 16px rgba(33,150,243,0.12);
-}
-#loading img {
-    width: 48px;
-    height: 48px;
+#start-message {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    border-radius: 8px;
+    padding: 32px 0;
+    margin: 30px auto;
+    max-width: 400px;
+    font-size: 1.3em;
+    font-weight: 600;
 }
 
 @media (max-width: 700px) {
@@ -214,8 +180,7 @@
         font-size: 1em;
         padding: 7px 12px;
     }
-    #song-search input {
-        width: 120px;
+    #song-lyrics-input {
         font-size: 1em;
     }
 }
