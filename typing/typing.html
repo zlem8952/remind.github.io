@@ -3,28 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>타자 속도 테스트 - Remind</title>
+    <title>타자 속도 테스트 - Remind Portfolio</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="typing.css">
+    <!-- Font Awesome for Home Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
-    <nav>
-        <a href="../index.html">← 홈으로</a>
-        <h1>타자 속도 테스트</h1>
+    <nav class="typing-nav">
+        <a href="../index.html" class="home-btn">
+            <i class="fas fa-home"></i> 홈으로
+        </a>
+        <h1>타자속도 테스트</h1>
     </nav>
 
     <main class="typing-container">
-        <!-- 언어 선택 섹션 -->
+        <!-- 모드 선택 -->
         <div class="mode-select">
-            <button class="mode-btn active" data-mode="ko">한글</button>
-            <button class="mode-btn" data-mode="en">영어</button>
-            <button class="mode-btn" data-mode="song">노래 가사</button>
+            <button class="mode-btn active" data-mode="ko">
+                한글<br><span class="mode-desc">랜덤 한글 문장 연습</span>
+            </button>
+            <button class="mode-btn" data-mode="en">
+                영어<br><span class="mode-desc">랜덤 영어 문장 연습</span>
+            </button>
+            <button class="mode-btn" data-mode="song">
+                노래가사<br><span class="mode-desc">노래 제목으로 가사 검색 후 연습</span>
+            </button>
         </div>
 
         <!-- 노래 검색 섹션 -->
         <div id="song-search" style="display:none;">
-            <input type="text" id="song-title" placeholder="노래 제목">
-            <input type="text" id="artist-name" placeholder="가수 이름">
+            <input type="text" id="song-title" placeholder="노래 제목을 입력하세요">
             <button id="search-lyrics">검색</button>
             <div id="song-results"></div>
         </div>
