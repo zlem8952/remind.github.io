@@ -1,1 +1,29 @@
-dd
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>반응속도 테스트 - Remind Portfolio</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="reaction.css">
+</head>
+<body>
+    <nav>
+        <a href="../index.html">← 홈으로</a>
+        <h1>반응속도 테스트</h1>
+    </nav>
+    
+    <main class="reaction-container">
+        <div id="reaction-area">
+            <p id="instruction">시작하려면 화면을 클릭하세요</p>
+        </div>
+        <div id="result-panel">
+            <p>최근 기록: <span id="current">-</span>ms</p>
+            <p>평균 기록: <span id="average">-</span>ms</p>
+            <button id="reset-btn">초기화</button>
+        </div>
+    </main>
+
+    <script src="reaction.js"></script>
+</body>
+</html>
