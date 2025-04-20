@@ -1,144 +1,201 @@
-let currentText = '';
-let startTime, timer;
-let totalChars = 0, correctChars = 0, errors = 0;
-const MODE = { KO: 'ko', EN: 'en', SONG: 'song' };
-let currentMode = MODE.KO;
-
-// 예시 문장
+// 예시문 데이터 (줄 단위)
 const sampleTexts = {
     ko: [
-        "타자 연습을 통해 빠른 속도와 정확성을 기를 수 있습니다.",
-        "꾸준한 연습은 실력 향상에 큰 도움이 됩니다.",
-        "오늘도 열심히 연습해서 목표를 달성해 봅시다.",
-        "정확한 타이핑은 실수를 줄이고 효율을 높입니다.",
-        "한글 타자 연습을 시작해 보세요."
+        ["동해물과 백두산이 마르고 닳도록", "하느님이 보우하사 우리나라 만세"],
+        ["우리 모두 다 함께 손을 잡고 나아가자", "희망찬 미래를 향해 힘차게 달리자"],
+        ["아침 햇살이 밝게 비추는 이 길 위에서", "새로운 하루를 시작해 봅시다"]
     ],
     en: [
-        "Practice makes perfect. Keep typing to improve your speed.",
-        "Accuracy is more important than speed in typing.",
-        "Consistent training will help you reach your goals.",
-        "Typing is a valuable skill in the digital age.",
-        "Try to reduce your mistakes while increasing your speed."
+        ["The quick brown fox jumps over the lazy dog.", "Practice typing to improve your skills."],
+        ["Typing is fun and helps you work faster.", "Accuracy is more important than speed."],
+        ["Consistent practice makes perfect.", "Never give up and keep trying!"]
     ]
 };
 
-// 요소 선택자
-const modeButtons = document.querySelectorAll('.mode-btn');
-const songSearch = document.getElementById('song-search');
-const textDisplay = document.getElementById('text-display');
+let mode = "ko";
+let lines = [];
+let currentLine = 0;
+let startTime = null;
+let correctChars = 0;
+let totalTyped = 0;
+let errors = 0;
+let testStarted = false;
+
+// 요소
+const modeBtns = document.querySelectorAll('.mode-btn');
+const songInputArea = document.getElementById('song-input-area');
+const songLyricsInput = document.getElementById('song-lyrics-input');
+const challengeBtn = document.getElementById('challenge-btn');
+const testArea = document.getElementById('test-area');
+const exampleDisplay = document.getElementById('example-display');
 const inputField = document.getElementById('input-field');
-const loading = document.getElementById('loading');
-const songResults = document.getElementById('song-results');
+const wpmSpan = document.getElementById('wpm');
+const accuracySpan = document.getElementById('accuracy');
+const errorsSpan = document.getElementById('errors');
+const restartBtn = document.getElementById('restart-btn');
+const startMessage = document.getElementById('start-message');
 
 // 모드 변경
-modeButtons.forEach(btn => {
+modeBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-        modeButtons.forEach(b => b.classList.remove('active'));
+        modeBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        currentMode = btn.dataset.mode;
-        songSearch.style.display = currentMode === MODE.SONG ? 'block' : 'none';
-        resetTest();
-        if(currentMode !== MODE.SONG) {
-            currentText = getRandomSample(currentMode);
-            textDisplay.textContent = currentText;
-            inputField.disabled = false;
+        mode = btn.dataset.mode;
+        resetAll();
+        if (mode === "song") {
+            songInputArea.style.display = "";
+            testArea.style.display = "none";
         } else {
-            textDisplay.textContent = '';
-            inputField.disabled = true;
+            songInputArea.style.display = "none";
+            lines = getRandomSample(mode);
+            startTest();
         }
     });
 });
 
-// 한글/영어 랜덤 문장
+// 한글/영어 랜덤 예시문 줄 배열 반환
 function getRandomSample(mode) {
     const arr = sampleTexts[mode];
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// 노래 검색(Spotify API로 곡 리스트, Lyrics.ovh로 가사)
-document.getElementById('search-lyrics').addEventListener('click', async () => {
-    const query = document.getElementById('song-title').value.trim();
-    songResults.innerHTML = '';
-    if(!query) {
-        alert('노래 제목을 입력하세요!');
+// 노래가사 도전 버튼
+challengeBtn.addEventListener('click', () => {
+    const raw = songLyricsInput.value.trim();
+    if (!raw) {
+        alert("노래 가사를 줄마다 입력해 주세요!");
         return;
     }
-    loading.style.display = 'block';
-    try {
-        // Spotify 공개 검색 API (토큰 없이도 일부 동작)
-        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=10`);
-        const data = await res.json();
-        if(data.results && data.results.length > 0) {
-            data.results.forEach(song => {
-                const btn = document.createElement('button');
-                btn.className = 'song-result-btn';
-                btn.textContent = `${song.trackName} - ${song.artistName}`;
-                btn.onclick = async () => {
-                    loading.style.display = 'block';
-                    try {
-                        // Lyrics.ovh API: /v1/{artist}/{title}
-                        const lyricsRes = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(song.artistName)}/${encodeURIComponent(song.trackName)}`);
-                        const lyricsData = await lyricsRes.json();
-                        if(lyricsData.lyrics) {
-                            currentText = lyricsData.lyrics.replace(/(\r\n|\n|\r)/gm, "\n");
-                            textDisplay.textContent = currentText;
-                            inputField.disabled = false;
-                            resetTest();
-                        } else {
-                            textDisplay.textContent = '';
-                            alert('가사를 찾을 수 없습니다!');
-                        }
-                    } catch (e) {
-                        textDisplay.textContent = '';
-                        alert('가사 불러오기 실패!');
-                    }
-                    loading.style.display = 'none';
-                };
-                songResults.appendChild(btn);
-            });
-        } else {
-            songResults.innerHTML = '<div style="color:#f44336;">검색 결과가 없습니다.</div>';
-        }
-    } catch (error) {
-        songResults.innerHTML = '<div style="color:#f44336;">검색 실패!</div>';
+    lines = raw.split(/\r?\n/).filter(line => line.trim().length > 0);
+    if (lines.length === 0) {
+        alert("한 줄 이상 입력해 주세요!");
+        return;
     }
-    loading.style.display = 'none';
+    songInputArea.style.display = "none";
+    startMessage.style.display = "";
+    testArea.style.display = "none";
+    setTimeout(() => {
+        startMessage.style.display = "none";
+        startTest();
+    }, 5000);
 });
 
-// 테스트 시작 및 통계
-inputField.addEventListener('input', () => {
-    if(!startTime) startTime = Date.now();
-    const typed = inputField.value;
-    totalChars = typed.length;
-    correctChars = 0; errors = 0;
-    for(let i = 0; i < typed.length; i++) {
-        if(typed[i] === currentText[i]) correctChars++;
-        else errors++;
-    }
-    const elapsed = (Date.now() - startTime) / 60000;
-    const wpm = elapsed > 0 ? Math.round((correctChars / 5) / elapsed) : 0;
-    const accuracy = totalChars === 0 ? 100 : Math.round((correctChars / totalChars) * 100);
-    document.getElementById('wpm').textContent = wpm;
-    document.getElementById('accuracy').textContent = accuracy;
-    document.getElementById('errors').textContent = errors;
-});
-
-// 재시작
-document.getElementById('restart-btn').addEventListener('click', resetTest);
-
-function resetTest() {
-    inputField.value = '';
-    inputField.disabled = currentMode === MODE.SONG && !currentText;
+// 테스트 준비 및 첫 줄 표시
+function startTest() {
+    testArea.style.display = "";
+    inputField.disabled = false;
+    inputField.value = "";
+    currentLine = 0;
+    showLine();
+    resetStats();
+    testStarted = false;
     startTime = null;
-    totalChars = correctChars = errors = 0;
-    document.getElementById('wpm').textContent = 0;
-    document.getElementById('accuracy').textContent = 100;
-    document.getElementById('errors').textContent = 0;
+    inputField.focus();
 }
 
-// 초기 설정
+// 줄 표시 (한글자씩 span으로)
+function showLine(typed = "") {
+    if (currentLine >= lines.length) {
+        exampleDisplay.innerHTML = "🎉 연습이 끝났습니다! 다시 시작하려면 [다시 시작]을 누르세요.";
+        inputField.disabled = true;
+        return;
+    }
+    const target = lines[currentLine];
+    let html = "";
+    for (let i = 0; i < target.length; i++) {
+        if (i < typed.length) {
+            if (typed[i] === target[i]) {
+                html += `<span class="char-correct">${target[i]}</span>`;
+            } else {
+                html += `<span class="char-wrong">${target[i]}</span>`;
+            }
+        } else {
+            html += `<span class="char-default">${target[i]}</span>`;
+        }
+    }
+    exampleDisplay.innerHTML = html;
+    if (typed.length > target.length) {
+        // 초과 입력된 부분도 붉은색으로
+        for (let i = target.length; i < typed.length; i++) {
+            exampleDisplay.innerHTML += `<span class="char-wrong">${typed[i]}</span>`;
+        }
+    }
+}
+
+// 입력 이벤트
+inputField.addEventListener('input', () => {
+    if (!testStarted && inputField.value.length > 0) {
+        testStarted = true;
+        startTime = Date.now();
+    }
+    const target = lines[currentLine] || "";
+    const typed = inputField.value;
+    showLine(typed);
+
+    // 실시간 오타/정확도/WPM 계산
+    let correct = 0, err = 0;
+    for (let i = 0; i < typed.length; i++) {
+        if (typed[i] === target[i]) correct++;
+        else err++;
+    }
+    correctChars = correct;
+    totalTyped = typed.length;
+    errors = err;
+    const elapsed = startTime ? (Date.now() - startTime) / 60000 : 1;
+    const wpm = elapsed > 0 ? Math.round((correctChars / 5) / elapsed) : 0;
+    const accuracy = totalTyped === 0 ? 100 : Math.round((correctChars / totalTyped) * 100);
+    wpmSpan.textContent = wpm;
+    accuracySpan.textContent = accuracy;
+    errorsSpan.textContent = errors;
+});
+
+// 엔터로 다음 줄 이동
+inputField.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        const target = lines[currentLine] || "";
+        if (inputField.value.trim() === target.trim()) {
+            currentLine++;
+            inputField.value = "";
+            showLine("");
+        }
+    }
+});
+
+// 다시 시작
+restartBtn.addEventListener('click', () => {
+    resetAll();
+    if (mode === "song") {
+        songInputArea.style.display = "";
+        testArea.style.display = "none";
+    } else {
+        lines = getRandomSample(mode);
+        startTest();
+    }
+});
+
+function resetStats() {
+    wpmSpan.textContent = 0;
+    accuracySpan.textContent = 100;
+    errorsSpan.textContent = 0;
+    correctChars = 0;
+    totalTyped = 0;
+    errors = 0;
+    testStarted = false;
+    startTime = null;
+}
+
+function resetAll() {
+    inputField.value = "";
+    exampleDisplay.innerHTML = "";
+    resetStats();
+    startMessage.style.display = "none";
+    testArea.style.display = "none";
+    songLyricsInput.value = "";
+}
+
+// 최초 진입시 한글 예시문
 window.onload = () => {
-    currentText = getRandomSample(MODE.KO);
-    textDisplay.textContent = currentText;
-    inputField.disabled = false;
+    lines = getRandomSample("ko");
+    startTest();
 };
