@@ -55,7 +55,7 @@ function getRandomSample(mode) {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// 노래 검색(뮤직스매치 API 프록시 활용)
+// 노래 검색(Spotify API로 곡 리스트, Lyrics.ovh로 가사)
 document.getElementById('search-lyrics').addEventListener('click', async () => {
     const query = document.getElementById('song-title').value.trim();
     songResults.innerHTML = '';
@@ -65,18 +65,19 @@ document.getElementById('search-lyrics').addEventListener('click', async () => {
     }
     loading.style.display = 'block';
     try {
-        // MusicMatch API 프록시 (https://musicmatch-api.vercel.app/)
-        const res = await fetch(`https://musicmatch-api.vercel.app/search?q=${encodeURIComponent(query)}`);
+        // Spotify 공개 검색 API (토큰 없이도 일부 동작)
+        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=10`);
         const data = await res.json();
-        if(data.result && data.result.length > 0) {
-            data.result.slice(0, 10).forEach(song => {
+        if(data.results && data.results.length > 0) {
+            data.results.forEach(song => {
                 const btn = document.createElement('button');
                 btn.className = 'song-result-btn';
-                btn.textContent = `${song.title} - ${song.artist}`;
+                btn.textContent = `${song.trackName} - ${song.artistName}`;
                 btn.onclick = async () => {
                     loading.style.display = 'block';
                     try {
-                        const lyricsRes = await fetch(`https://musicmatch-api.vercel.app/lyrics?track_id=${song.id}`);
+                        // Lyrics.ovh API: /v1/{artist}/{title}
+                        const lyricsRes = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(song.artistName)}/${encodeURIComponent(song.trackName)}`);
                         const lyricsData = await lyricsRes.json();
                         if(lyricsData.lyrics) {
                             currentText = lyricsData.lyrics.replace(/(\r\n|\n|\r)/gm, "\n");
@@ -84,9 +85,11 @@ document.getElementById('search-lyrics').addEventListener('click', async () => {
                             inputField.disabled = false;
                             resetTest();
                         } else {
+                            textDisplay.textContent = '';
                             alert('가사를 찾을 수 없습니다!');
                         }
                     } catch (e) {
+                        textDisplay.textContent = '';
                         alert('가사 불러오기 실패!');
                     }
                     loading.style.display = 'none';
