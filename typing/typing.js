@@ -1,33 +1,157 @@
-const sampleTexts = {
-    ko: {
-        short: [
-            ["동해물과 백두산이 마르고 닳도록", "하느님이 보우하사 우리나라 만세", "무궁화 삼천리 화려강산"],
-            ["우리 모두 다 함께 손을 잡고 나아가자", "희망찬 미래를 향해 힘차게 달리자", "오늘도 열심히 연습해요"]
-        ],
-        medium: [
-            ["아침 햇살이 밝게 비추는 이 길 위에서", "새로운 하루를 시작해 봅시다", "작은 성공도 소중히 여기며", "꾸준히 노력하는 우리가 되자", "포기하지 말고 끝까지 도전하자"],
-            ["건강한 몸과 마음을 위해", "매일 조금씩 운동을 해보자", "책을 읽으며 지식을 쌓고", "친구들과 함께 즐거운 시간을 보내자", "행복은 가까이에 있어요"]
-        ],
-        long: [
-            ["세상에 쉬운 일은 하나도 없지만", "노력하면 언젠가 반드시 보답을 받는다", "오늘의 실패는 내일의 성공을 위한 밑거름이 된다", "실수를 두려워하지 말고", "도전하는 용기를 내자", "함께하는 친구들이 있어", "우리는 언제나 힘이 된다"],
-            ["꿈을 이루기 위해서는", "꾸준한 연습과 노력이 필요하다", "작은 목표부터 차근차근 달성해 나가자", "실패를 두려워하지 말고", "다시 일어나는 용기를 가지자", "내일의 나는 오늘보다 더 성장할 것이다", "포기하지 말고 끝까지 도전하자"]
-        ]
-    },
-    en: {
-        short: [
-            ["The quick brown fox jumps over the lazy dog.", "Practice typing to improve your skills.", "Keep going!"],
-            ["Typing is fun and helps you work faster.", "Accuracy is more important than speed.", "Try your best!"]
-        ],
-        medium: [
-            ["Consistent practice makes perfect.", "Never give up and keep trying!", "Typing every day will help you improve.", "Focus on accuracy before speed.", "You can do it!"],
-            ["Learning to type is a valuable skill.", "It helps you in school and at work.", "Make sure to sit up straight.", "Keep your fingers on the home row.", "Don't look at the keyboard!"]
-        ],
-        long: [
-            ["Typing is a skill that everyone should learn.", "It helps you finish your work faster and more accurately.", "Start by learning the correct finger positions.", "Practice regularly and you will see improvement.", "Remember to take breaks to rest your hands.", "Stay motivated and keep challenging yourself.", "Soon you will be a typing master!"],
-            ["When you practice typing, focus on both speed and accuracy.", "Don't rush, but try to avoid making mistakes.", "Set small goals and celebrate your progress.", "Typing games can make practice more fun.", "Share your results with your friends.", "Keep practicing every day.", "Success will follow!"]
-        ]
-    }
-};
+// 한국어/영어 주제별 긴글/중간글/짧은글 데이터
+const korTexts = [
+  {
+    title: "애국가",
+    short: [
+      "동해물과 백두산이 마르고 닳도록",
+      "하느님이 보우하사 우리나라 만세",
+      "무궁화 삼천리 화려강산",
+      "대한 사람 대한으로 길이 보전하세"
+    ],
+    medium: [
+      "동해물과 백두산이 마르고 닳도록",
+      "하느님이 보우하사 우리나라 만세",
+      "무궁화 삼천리 화려강산",
+      "대한 사람 대한으로 길이 보전하세",
+      "남산 위에 저 소나무 철갑을 두른 듯",
+      "바람 서리 불변함은 우리 기상일세",
+      "무궁화 삼천리 화려강산",
+      "대한 사람 대한으로 길이 보전하세"
+    ],
+    long: [
+      "동해물과 백두산이 마르고 닳도록",
+      "하느님이 보우하사 우리나라 만세",
+      "무궁화 삼천리 화려강산",
+      "대한 사람 대한으로 길이 보전하세",
+      "남산 위에 저 소나무 철갑을 두른 듯",
+      "바람 서리 불변함은 우리 기상일세",
+      "무궁화 삼천리 화려강산",
+      "대한 사람 대한으로 길이 보전하세",
+      "가을 하늘 공활한데 높고 구름 없이",
+      "밝은 달은 우리 가슴 일편단심일세",
+      "무궁화 삼천리 화려강산",
+      "대한 사람 대한으로 길이 보전하세",
+      "이 기상과 이 맘으로 충성을 다하여",
+      "괴로우나 즐거우나 나라 사랑하세",
+      "무궁화 삼천리 화려강산",
+      "대한 사람 대한으로 길이 보전하세"
+    ]
+  },
+  {
+    title: "별 헤는 밤",
+    short: [
+      "계절이 지나가는 하늘에는",
+      "가을로 가득 차 있습니다",
+      "나는 아무 걱정도 없이",
+      "가을 속의 별들을 다 헤일 듯합니다"
+    ],
+    medium: [
+      "계절이 지나가는 하늘에는",
+      "가을로 가득 차 있습니다",
+      "나는 아무 걱정도 없이",
+      "가을 속의 별들을 다 헤일 듯합니다",
+      "가슴속에 하나 둘 새겨지는 별을",
+      "이제 다 못 헤는 것은",
+      "쉬이 아침이 오는 까닭이요",
+      "내일 밤이 남은 까닭이요"
+    ],
+    long: [
+      "계절이 지나가는 하늘에는",
+      "가을로 가득 차 있습니다",
+      "나는 아무 걱정도 없이",
+      "가을 속의 별들을 다 헤일 듯합니다",
+      "가슴속에 하나 둘 새겨지는 별을",
+      "이제 다 못 헤는 것은",
+      "쉬이 아침이 오는 까닭이요",
+      "내일 밤이 남은 까닭이요",
+      "아직 나의 청춘이 다하지 않은 까닭입니다",
+      "별 하나에 추억과",
+      "별 하나에 사랑과",
+      "별 하나에 쓸쓸함과",
+      "별 하나에 동경과",
+      "별 하나에 시와",
+      "별 하나에 어머니, 어머니"
+    ]
+  },
+  {
+    title: "청춘예찬",
+    short: [
+      "청춘! 이는 듣기만 하여도 가슴이 설레는 말이다.",
+      "청춘이란 인생의 황금시대다.",
+      "청춘의 특권은 도전과 실패다."
+    ],
+    medium: [
+      "청춘! 이는 듣기만 하여도 가슴이 설레는 말이다.",
+      "청춘이란 인생의 황금시대다.",
+      "청춘의 특권은 도전과 실패다.",
+      "청춘은 한 번 지나가면 다시 오지 않는다.",
+      "청춘의 아름다움은 용기에서 비롯된다."
+    ],
+    long: [
+      "청춘! 이는 듣기만 하여도 가슴이 설레는 말이다.",
+      "청춘이란 인생의 황금시대다.",
+      "청춘의 특권은 도전과 실패다.",
+      "청춘은 한 번 지나가면 다시 오지 않는다.",
+      "청춘의 아름다움은 용기에서 비롯된다.",
+      "청춘은 자기 자신을 믿는 데서 출발한다.",
+      "청춘이여, 두려워 말고 도전하라."
+    ]
+  }
+  // ...12개 이상 추가
+];
+
+const engTexts = [
+  {
+    title: "The Great Gatsby",
+    short: [
+      "So we beat on, boats against the current, borne back ceaselessly into the past."
+    ],
+    medium: [
+      "I hope she'll be a fool — that's the best thing a girl can be in this world, a beautiful little fool.",
+      "Gatsby believed in the green light, the orgastic future that year by year recedes before us."
+    ],
+    long: [
+      "Whenever you feel like criticizing any one, just remember that all the people in this world haven't had the advantages that you've had.",
+      "So we beat on, boats against the current, borne back ceaselessly into the past.",
+      "Gatsby believed in the green light, the orgastic future that year by year recedes before us."
+    ]
+  },
+  {
+    title: "Steve Jobs' Stanford Speech",
+    short: [
+      "Your time is limited, so don't waste it living someone else's life."
+    ],
+    medium: [
+      "Don't let the noise of others' opinions drown out your own inner voice.",
+      "Have the courage to follow your heart and intuition."
+    ],
+    long: [
+      "Remembering that you are going to die is the best way I know to avoid the trap of thinking you have something to lose.",
+      "You are already naked. There is no reason not to follow your heart."
+    ]
+  },
+  {
+    title: "Martin Luther King Jr.",
+    short: [
+      "I have a dream that one day this nation will rise up and live out the true meaning of its creed."
+    ],
+    medium: [
+      "I have a dream that my four little children will one day live in a nation where they will not be judged by the color of their skin but by the content of their character."
+    ],
+    long: [
+      "Let us not wallow in the valley of despair, I say to you today, my friends.",
+      "And so even though we face the difficulties of today and tomorrow, I still have a dream."
+    ]
+  }
+  // ...12개 이상 추가
+];
+
+// 노래가사 txt 파일 목록 (수동 관리)
+let songList = [
+  {name: "오늘 밤은 삐딱하게", file: "오늘 밤은 삐딱하게.txt"},
+  {name: "사랑은 늘 도망가", file: "사랑은 늘 도망가.txt"}
+  // ...더 추가
+];
 
 let mode = "ko";
 let lines = [];
@@ -38,12 +162,23 @@ let totalTyped = 0;
 let errors = 0;
 let testStarted = false;
 let selectedLength = "short";
-let songList = []; // 노래 파일 목록
+let selectedSubject = 0;
 
 // 요소
 const modeBtns = document.querySelectorAll('.mode-btn');
 const lengthSelectArea = document.getElementById('length-select-area');
 const lengthSelect = document.getElementById('length-select');
+const subjectSelectArea = document.createElement('div');
+subjectSelectArea.id = "subject-select-area";
+subjectSelectArea.style.margin = "20px 0";
+subjectSelectArea.innerHTML = `
+  <label>주제 선택:
+    <select id="subject-select"></select>
+  </label>
+`;
+document.querySelector(".typing-container").insertBefore(subjectSelectArea, lengthSelectArea.nextSibling);
+const subjectSelect = subjectSelectArea.querySelector("#subject-select");
+
 const songSelectArea = document.getElementById('song-select-area');
 const songSelect = document.getElementById('song-select');
 const songChallengeBtn = document.getElementById('song-challenge-btn');
@@ -68,14 +203,17 @@ modeBtns.forEach(btn => {
         resetAll();
         if (mode === "song") {
             lengthSelectArea.style.display = "none";
+            subjectSelectArea.style.display = "none";
             songSelectArea.style.display = "";
             songInputArea.style.display = "none";
             fetchSongList();
         } else {
             lengthSelectArea.style.display = "";
+            subjectSelectArea.style.display = "";
             songSelectArea.style.display = "none";
             songInputArea.style.display = "none";
-            lines = getRandomSample(mode, selectedLength);
+            fillSubjectSelect();
+            lines = getSampleLines(mode, selectedSubject, selectedLength);
             startTest();
         }
     });
@@ -85,25 +223,41 @@ modeBtns.forEach(btn => {
 lengthSelect.addEventListener('change', () => {
     selectedLength = lengthSelect.value;
     if (mode === "ko" || mode === "en") {
-        lines = getRandomSample(mode, selectedLength);
+        lines = getSampleLines(mode, selectedSubject, selectedLength);
         startTest();
     }
 });
 
-// 한글/영어 랜덤 예시문 줄 배열 반환
-function getRandomSample(mode, length) {
-    const arr = sampleTexts[mode][length];
-    return arr[Math.floor(Math.random() * arr.length)];
+// 주제 선택
+subjectSelect.addEventListener('change', () => {
+    selectedSubject = subjectSelect.value;
+    lines = getSampleLines(mode, selectedSubject, selectedLength);
+    startTest();
+});
+
+// 한글/영어 주제/분량별 예시문 줄 배열 반환
+function getSampleLines(mode, subjectIdx, length) {
+    let arr = mode === "ko" ? korTexts : engTexts;
+    subjectIdx = parseInt(subjectIdx) || 0;
+    let item = arr[subjectIdx];
+    return item && item[length] ? item[length] : ["데이터가 없습니다."];
+}
+
+// 주제 셀렉트 박스 채우기
+function fillSubjectSelect() {
+    let arr = mode === "ko" ? korTexts : engTexts;
+    subjectSelect.innerHTML = "";
+    arr.forEach((item, idx) => {
+        let opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = item.title;
+        subjectSelect.appendChild(opt);
+    });
+    selectedSubject = 0;
 }
 
 // 노래가사 폴더의 파일 목록 불러오기 (정적 파일이라면 수동으로 리스트 작성 필요)
 function fetchSongList() {
-    // 아래 배열을 실제 가사 파일명에 맞게 수정하세요.
-    // 예: [{name:"사랑은 늘 도망가", file:"song1.txt"}, ...]
-    songList = [
-        {name: "사랑은 늘 도망가", file: "song1.txt"},
-        {name: "아로하", file: "song2.txt"}
-    ];
     songSelect.innerHTML = '<option value="">노래를 선택하세요</option>';
     songList.forEach(song => {
         const opt = document.createElement('option');
@@ -250,7 +404,8 @@ restartBtn.addEventListener('click', () => {
         testArea.style.display = "none";
         fetchSongList();
     } else {
-        lines = getRandomSample(mode, selectedLength);
+        fillSubjectSelect();
+        lines = getSampleLines(mode, selectedSubject, selectedLength);
         startTest();
     }
 });
@@ -275,8 +430,9 @@ function resetAll() {
     songLyricsInput.value = "";
 }
 
-// 최초 진입시 한글 예시문(짧은글)
+// 최초 진입시 한글 예시문(짧은글, 첫 주제)
 window.onload = () => {
-    lines = getRandomSample("ko", "short");
+    fillSubjectSelect();
+    lines = getSampleLines("ko", 0, "short");
     startTest();
 };
