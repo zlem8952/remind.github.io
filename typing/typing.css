@@ -1,3 +1,39 @@
+.typing-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 0 8px 0;
+    justify-content: flex-start;
+}
+
+.home-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #2196F3;
+    color: #fff !important;
+    font-weight: 500;
+    padding: 10px 26px;
+    border-radius: 24px;
+    text-decoration: none;
+    font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(33,150,243,0.08);
+    transition: background 0.2s, box-shadow 0.2s;
+    border: none;
+    outline: none;
+}
+.home-btn:hover, .home-btn:focus {
+    background: #1976D2;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(33,150,243,0.13);
+}
+.typing-nav h1 {
+    font-size: 1.6rem;
+    color: #333;
+    margin: 0 0 0 14px;
+    font-weight: 700;
+}
+
 .typing-container {
     max-width: 800px;
     margin: 2rem auto;
@@ -6,32 +42,97 @@
 }
 
 .mode-select {
-    margin-bottom: 20px;
+    margin-bottom: 28px;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
 }
-
 .mode-btn {
-    padding: 10px 20px;
-    margin: 0 5px;
+    padding: 32px 36px;
+    margin: 0 8px;
     background: #2196F3;
-    color: white;
+    color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 18px;
     cursor: pointer;
-    transition: background 0.3s;
+    font-size: 1.25em;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(33,150,243,0.08);
+    transition: background 0.3s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 130px;
 }
-
 .mode-btn.active {
     background: #1976D2;
+    transform: scale(1.07);
+}
+.mode-btn:hover, .mode-btn:focus {
+    background: #1760a0;
+}
+.mode-desc {
+    font-size: 0.95em;
+    font-weight: 400;
+    margin-top: 6px;
+    color: #cbe6ff;
 }
 
 #song-search {
     margin: 20px 0;
 }
-
 #song-search input {
-    padding: 8px;
+    padding: 10px;
     margin: 5px;
-    width: 200px;
+    width: 250px;
+    font-size: 1.1em;
+    border-radius: 6px;
+    border: 1px solid #b0c4de;
+}
+#song-search button {
+    padding: 10px 24px;
+    background: #2196F3;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin-left: 8px;
+}
+#song-search button:hover {
+    background: #1976D2;
+}
+#song-results {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+}
+.song-result-btn {
+    background: #f5f7fa;
+    color: #222;
+    border: 1px solid #b0c4de;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 1.05em;
+    cursor: pointer;
+    width: 100%;
+    max-width: 420px;
+    text-align: left;
+    transition: background 0.2s;
+}
+.song-result-btn:hover, .song-result-btn:focus {
+    background: #e3f0ff;
+    color: #1976D2;
+    border-color: #2196F3;
+}
+
+#test-area {
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
 }
 
 #text-display {
@@ -39,9 +140,11 @@
     line-height: 1.6;
     margin: 20px 0;
     padding: 15px;
-    background: #f5f5f5;
+    background: white;
     border-radius: 5px;
     min-height: 100px;
+    word-break: break-all;
+    text-align: left;
 }
 
 #input-field {
@@ -62,9 +165,57 @@
     font-size: 1.1em;
 }
 
+#restart-btn {
+    background: #4CAF50;
+    color: white;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    margin-top: 20px;
+    transition: background 0.2s;
+}
+#restart-btn:hover {
+    background: #45a049;
+}
+
 #loading {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    z-index: 2000;
+    background: rgba(255,255,255,0.85);
+    padding: 30px 40px;
+    border-radius: 14px;
+    box-shadow: 0 2px 16px rgba(33,150,243,0.12);
+}
+#loading img {
+    width: 48px;
+    height: 48px;
+}
+
+@media (max-width: 700px) {
+    .typing-container {
+        max-width: 98vw;
+        padding: 10px;
+    }
+    .mode-btn {
+        padding: 18px 8px;
+        font-size: 1em;
+        min-width: 90px;
+    }
+    .typing-nav h1 {
+        font-size: 1.1rem;
+        margin-left: 8px;
+    }
+    .home-btn {
+        font-size: 1em;
+        padding: 7px 12px;
+    }
+    #song-search input {
+        width: 120px;
+        font-size: 1em;
+    }
 }
