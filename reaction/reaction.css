@@ -1,1 +1,59 @@
+.reaction-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 20px;
+    text-align: center;
+}
 
+#reaction-area {
+    background: #f0f0f0;
+    border-radius: 10px;
+    padding: 50px;
+    margin: 20px 0;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    user-select: none;
+}
+
+#reaction-area.waiting {
+    background: #ffeb3b !important;
+}
+
+#reaction-area.ready {
+    background: #4CAF50 !important;
+    color: #fff;
+}
+
+#reaction-area.too-fast {
+    background: #f44336 !important;
+    color: #fff;
+}
+
+#result-panel {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+#result-panel p {
+    margin: 10px 0;
+    font-size: 1.2em;
+}
+
+#reset-btn {
+    background: #2196F3;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 10px;
+    transition: background 0.2s;
+}
+
+#reset-btn:hover {
+    background: #1976D2;
+}
