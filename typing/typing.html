@@ -1,1 +1,52 @@
-dd
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>타자 속도 테스트 - Remind</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="typing.css">
+</head>
+<body>
+    <nav>
+        <a href="../index.html">← 홈으로</a>
+        <h1>타자 속도 테스트</h1>
+    </nav>
+
+    <main class="typing-container">
+        <!-- 언어 선택 섹션 -->
+        <div class="mode-select">
+            <button class="mode-btn active" data-mode="ko">한글</button>
+            <button class="mode-btn" data-mode="en">영어</button>
+            <button class="mode-btn" data-mode="song">노래 가사</button>
+        </div>
+
+        <!-- 노래 검색 섹션 -->
+        <div id="song-search" style="display:none;">
+            <input type="text" id="song-title" placeholder="노래 제목">
+            <input type="text" id="artist-name" placeholder="가수 이름">
+            <button id="search-lyrics">검색</button>
+            <div id="song-results"></div>
+        </div>
+
+        <!-- 테스트 영역 -->
+        <div id="test-area">
+            <div id="text-display"></div>
+            <textarea id="input-field" placeholder="여기에 입력하세요"></textarea>
+            <div id="stats">
+                <span>WPM: <span id="wpm">0</span></span>
+                <span>정확도: <span id="accuracy">100</span>%</span>
+                <span>오타: <span id="errors">0</span></span>
+            </div>
+            <button id="restart-btn">다시 시작</button>
+        </div>
+
+        <!-- 로딩 표시 -->
+        <div id="loading" style="display:none;">
+            <img src="assets/loading.gif" alt="로딩 중">
+        </div>
+    </main>
+
+    <script src="typing.js"></script>
+</body>
+</html>
