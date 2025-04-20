@@ -119,6 +119,21 @@
     word-break: break-all;
     text-align: left;
     box-shadow: 0 2px 8px rgba(33,150,243,0.06);
+    font-family: 'Noto Sans KR', 'Nanum Gothic Coding', 'Consolas', 'monospace';
+    letter-spacing: 1px;
+}
+.char-correct {
+    color: #43a047;
+    font-weight: bold;
+}
+.char-wrong {
+    color: #e53935;
+    font-weight: bold;
+    background: #ffd6d6;
+    border-radius: 3px;
+}
+.char-default {
+    color: #222;
 }
 #input-field {
     width: 100%;
