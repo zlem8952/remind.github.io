@@ -571,7 +571,7 @@ const engTexts = [
 
 // 노래가사 txt 파일 목록 (lyrics 폴더에 txt 파일로 저장, 파일명=노래제목)
 let songList = [
-  {name: "오늘 밤은 삐딱하게", file: "오늘 밤은 삐딱하게.txt"},
+  {name: "지드래곤 - 삐딱하게", file: "삐딱하게.txt"},
   {name: "사랑은 늘 도망가", file: "사랑은 늘 도망가.txt"},
   {name: "아로하", file: "아로하.txt"},
   {name: "봄날", file: "봄날.txt"},
