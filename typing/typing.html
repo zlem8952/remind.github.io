@@ -6,7 +6,6 @@
     <title>타자 속도 테스트 - Remind Portfolio</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="typing.css">
-    <!-- Font Awesome for Home Icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
@@ -18,7 +17,6 @@
     </nav>
 
     <main class="typing-container">
-        <!-- 모드 선택 -->
         <div class="mode-select">
             <button class="mode-btn active" data-mode="ko">
                 한글<br><span class="mode-desc">랜덤 한글 문장 연습</span>
@@ -27,21 +25,19 @@
                 영어<br><span class="mode-desc">랜덤 영어 문장 연습</span>
             </button>
             <button class="mode-btn" data-mode="song">
-                노래가사<br><span class="mode-desc">노래 제목으로 가사 검색 후 연습</span>
+                노래가사<br><span class="mode-desc">직접 입력한 노래 가사로 연습</span>
             </button>
         </div>
 
-        <!-- 노래 검색 섹션 -->
-        <div id="song-search" style="display:none;">
-            <input type="text" id="song-title" placeholder="노래 제목을 입력하세요">
-            <button id="search-lyrics">검색</button>
-            <div id="song-results"></div>
+        <!-- 노래가사 입력 및 도전 버튼 -->
+        <div id="song-input-area" style="display:none;">
+            <textarea id="song-lyrics-input" rows="6" placeholder="여기에 노래 가사를 줄마다 입력하세요"></textarea>
+            <button id="challenge-btn">도전</button>
         </div>
 
-        <!-- 테스트 영역 -->
-        <div id="test-area">
-            <div id="text-display"></div>
-            <textarea id="input-field" placeholder="여기에 입력하세요"></textarea>
+        <div id="test-area" style="display:none;">
+            <div id="example-display"></div>
+            <textarea id="input-field" placeholder="여기에 입력하세요" disabled></textarea>
             <div id="stats">
                 <span>WPM: <span id="wpm">0</span></span>
                 <span>정확도: <span id="accuracy">100</span>%</span>
@@ -50,9 +46,8 @@
             <button id="restart-btn">다시 시작</button>
         </div>
 
-        <!-- 로딩 표시 -->
-        <div id="loading" style="display:none;">
-            <img src="assets/loading.gif" alt="로딩 중">
+        <div id="start-message" style="display:none;">
+            <h2>5초 후에 시작합니다. 준비하세요!</h2>
         </div>
     </main>
 
