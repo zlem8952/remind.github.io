@@ -5,66 +5,118 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>전국 병원 정보 검색</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <style>
+    /* 메인 사이트와 통일된 디자인 */
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f7fa;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    input[type="text"], button {
+      padding: 12px;
+      border: 2px solid #4472c4;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      background: #4472c4;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #365ca3;
+    }
+
+    .hospital-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .hospital-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(68,114,196,0.1);
+    }
+
+    .hospital-card h3 {
+      color: #4472c4;
+      margin: 0 0 10px 0;
+    }
+  </style>
 </head>
 <body>
-  <!-- 헤더 (메인과 통일된 디자인) -->
-  <header class="main-header">
-    <button class="hamburger">☰</button>
-    <h1>병원 정보 검색</h1>
-    <nav class="top-nav">
-      <a href="../index.html">메인</a>
-      <a href="#">마이페이지</a>
-      <a href="#">고객지원</a>
-    </nav>
-  </header>
+  <h1>전국 병원 정보 검색</h1>
+  
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="병원명을 입력하세요">
+    <button onclick="searchHospitals()">검색</button>
+  </div>
 
-  <!-- 검색 섹션 -->
-  <section class="search-section">
-    <div class="search-container">
-      <input type="text" placeholder="지역명 또는 병원명 입력" class="search-input">
-      <select class="filter-select">
-        <option value="">전체 진료과목</option>
-        <option>내과</option>
-        <option>외과</option>
-        <option>소아과</option>
-      </select>
-      <button class="search-btn">검색</button>
-    </div>
-  </section>
-
-  <!-- 검색 결과 그리드 -->
-  <main class="results-grid">
-    <!-- API 연동 시 동적 생성 -->
-    <article class="hospital-card">
-      <div class="card-header">
-        <h2>○○대학교 병원</h2>
-        <span class="badge emergency">응급실 운영</span>
-      </div>
-      <div class="card-body">
-        <p class="location">📍 대구광역시 중구 동덕로 88</p>
-        <p class="phone">☎ 053-123-4567</p>
-        <div class="info-row">
-          <span class="department">진료과목: 내과, 외과</span>
-          <span class="time">운영시간: 08:30 ~ 17:30</span>
-        </div>
-      </div>
-      <button class="detail-btn">상세정보 보기</button>
-    </article>
-
-    <!-- 추가 카드 템플릿 -->
-  </main>
-
-  <!-- 푸터 (메인과 동일) -->
-  <footer class="main-footer">
-    <p>&copy; 2025 공공의료정보 통합 서비스. All rights reserved.</p>
-  </footer>
+  <div id="loading" style="display:none;">검색 중...</div>
+  <div class="hospital-grid" id="results"></div>
 
   <script>
-    // 햄버거 메뉴 토글
-    document.querySelector('.hamburger').addEventListener('click', () => {
-      document.querySelector('.top-nav').classList.toggle('active');
-    });
+    // API 기본 설정
+    const SERVICE_KEY = '발급받은_서비스키'; // 실제 키로 교체
+    const API_URL = 'https://apis.data.go.kr/B551182/hospInfoServicev2/getHospBasisList';
+
+    async function searchHospitals() {
+      const keyword = document.getElementById('searchInput').value;
+      const loading = document.getElementById('loading');
+      const results = document.getElementById('results');
+
+      try {
+        loading.style.display = 'block';
+        results.innerHTML = '';
+
+        const response = await fetch(
+          `${API_URL}?serviceKey=${SERVICE_KEY}&pageNo=1&numOfRows=10&yadmNm=${encodeURIComponent(keyword)}&_type=json`
+        );
+
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+        const data = await response.json();
+        displayResults(data.response.body.items.item);
+      } catch (error) {
+        console.error('Error:', error);
+        results.innerHTML = `<p style="color:red">오류 발생: ${error.message}</p>`;
+      } finally {
+        loading.style.display = 'none';
+      }
+    }
+
+    function displayResults(hospitals) {
+      const container = document.getElementById('results');
+      
+      if (!hospitals || hospitals.length === 0) {
+        container.innerHTML = '<p>검색 결과가 없습니다.</p>';
+        return;
+      }
+
+      container.innerHTML = hospitals.map(hospital => `
+        <div class="hospital-card">
+          <h3>${hospital.yadmNm}</h3>
+          <p>📍 ${hospital.addr}</p>
+          <p>☎ ${hospital.telno || '전화번호 없음'}</p>
+          <p>종류: ${hospital.clCdNm}</p>
+          <p>개설일: ${hospital.estbDd}</p>
+        </div>
+      `).join('');
+    }
   </script>
 </body>
 </html>
