@@ -4,21 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>의료정보 통합 서비스</title>
+  <!-- Noto Sans KR 폰트 적용 -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+  <!-- medical 폴더 내부의 style.css를 반드시 medical/style.css로 둘 것 -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="sub-header">
     <div class="container">
-      <a href="../index.html" class="logo">← 메인으로</a>
+      <!-- 메인 페이지가 루트(index.html)에 있다면 ../index.html로, medical/index.html에서 정상 이동 -->
+      <a href="../index.html" class="logo" aria-label="메인으로 이동">← 메인으로</a>
       <h1>의료정보 통합 서비스</h1>
-      <nav class="sub-nav">
-        <a href="#">병원 정보</a>
-        <a href="#">약국 정보</a>
-        <a href="#">응급의료기관</a>
-        <a href="#">의약품 정보</a>
-        <a href="#">기관평가</a>
-        <a href="#">진료과목</a>
+      <nav class="sub-nav" aria-label="의료정보 서비스 메뉴">
+        <a href="javascript:void(0)">병원 정보</a>
+        <a href="javascript:void(0)">약국 정보</a>
+        <a href="javascript:void(0)">응급의료기관</a>
+        <a href="javascript:void(0)">의약품 정보</a>
+        <a href="javascript:void(0)">기관평가</a>
+        <a href="javascript:void(0)">진료과목</a>
       </nav>
     </div>
   </header>
@@ -27,45 +30,45 @@
       <div class="hero-content">
         <h2>전국 의료정보, 한눈에!</h2>
         <p>공공데이터 기반으로 병원, 약국, 응급, 의약품, 평가 등 다양한 의료정보를 쉽고 빠르게 확인하세요.</p>
-        <img src="https://i.namu.wiki/i/ypCYH_E6WCxZc4VJbeXosUVcnzBXmxb_pu45S-zopgZiYM-IPuYWNOhxekKvjhi2Sk1e_lQA8KutM8v0BFA9qoeNfMHVLKYCaHtUWXIBZ26L4Tc52hjUJ_oXpq6U77Dhokj42MSpk1Lb129inbWG_Q.webp" alt="의료정보 메인" class="hero-img">
+        <img src="https://i.namu.wiki/i/ypCYH_E6WCxZc4VJbeXosUVcnzBXmxb_pu45S-zopgZiYM-IPuYWNOhxekKvjhi2Sk1e_lQA8KutM8v0BFA9qoeNfMHVLKYCaHtUWXIBZ26L4Tc52hjUJ_oXpq6U77Dhokj42MSpk1Lb129inbWG_Q.webp" alt="의료정보 메인 이미지" class="hero-img">
       </div>
     </section>
     <section class="card-section">
       <div class="info-card">
-        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png" alt="병원" />
+        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png" alt="병원 아이콘" />
         <h3>병원 정보</h3>
         <p>전국 병원 위치, 진료과목, 운영시간 등 실시간 정보 제공</p>
-        <a href="#" class="card-btn">자세히 보기</a>
+        <a href="javascript:void(0)" class="card-btn" aria-label="병원 정보 자세히 보기">자세히 보기</a>
       </div>
       <div class="info-card">
-        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965564.png" alt="약국" />
+        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965564.png" alt="약국 아이콘" />
         <h3>약국 정보</h3>
         <p>운영시간, 야간/공휴일 약국, 위치 등 편리하게 검색</p>
-        <a href="#" class="card-btn">자세히 보기</a>
+        <a href="javascript:void(0)" class="card-btn" aria-label="약국 정보 자세히 보기">자세히 보기</a>
       </div>
       <div class="info-card">
-        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965570.png" alt="응급" />
+        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965570.png" alt="응급의료기관 아이콘" />
         <h3>응급의료기관</h3>
         <p>응급실 운영 병원, 실시간 자원현황, 진료과목 안내</p>
-        <a href="#" class="card-btn">자세히 보기</a>
+        <a href="javascript:void(0)" class="card-btn" aria-label="응급의료기관 자세히 보기">자세히 보기</a>
       </div>
       <div class="info-card">
-        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965562.png" alt="의약품" />
+        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965562.png" alt="의약품 아이콘" />
         <h3>의약품 정보</h3>
         <p>의약품 효능, 성분, 제조사, 부작용 등 상세 정보</p>
-        <a href="#" class="card-btn">자세히 보기</a>
+        <a href="javascript:void(0)" class="card-btn" aria-label="의약품 정보 자세히 보기">자세히 보기</a>
       </div>
       <div class="info-card">
-        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965566.png" alt="평가" />
+        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965566.png" alt="기관평가 아이콘" />
         <h3>기관평가</h3>
         <p>병원·약국 평가, 인증, 진료내역 등 신뢰 정보 제공</p>
-        <a href="#" class="card-btn">자세히 보기</a>
+        <a href="javascript:void(0)" class="card-btn" aria-label="기관평가 자세히 보기">자세히 보기</a>
       </div>
       <div class="info-card">
-        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965569.png" alt="진료과목" />
+        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965569.png" alt="진료과목 아이콘" />
         <h3>진료과목</h3>
         <p>의료기관별 진료과목, 전문분야, 진료 가능 정보</p>
-        <a href="#" class="card-btn">자세히 보기</a>
+        <a href="javascript:void(0)" class="card-btn" aria-label="진료과목 자세히 보기">자세히 보기</a>
       </div>
     </section>
   </main>
