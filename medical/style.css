@@ -141,4 +141,133 @@ body {
   transition: background 0.17s, color 0.17s;
   margin-top: auto;
 }
-.card-btn
+
+/* ------------------- 반응형 미디어 쿼리 ------------------- */
+@media (max-width: 800px) {
+  .container {
+    padding: 0 10px;
+  }
+  .sub-header .container {
+    padding: 12px 10px 0 10px;
+  }
+  .sub-header h1 {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+  }
+  .sub-nav {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .sub-nav a {
+    font-size: 0.95rem;
+    padding: 6px 12px;
+  }
+  .hero-section {
+    padding: 28px 0 18px 0;
+  }
+  .hero-content h2 {
+    font-size: 1.4rem;
+  }
+  .hero-img {
+    width: 220px;
+    border-radius: 14px;
+  }
+  .card-section {
+    gap: 16px;
+    padding-bottom: 24px;
+    margin-top: 20px;
+  }
+  .info-card {
+    width: 170px;
+    min-height: 170px;
+    padding: 18px 8px 16px 8px;
+  }
+  .info-card img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+  }
+  .info-card h3 {
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+  .info-card p {
+    font-size: 0.92rem;
+    min-height: 30px;
+    margin-bottom: 10px;
+  }
+  .card-btn {
+    font-size: 0.95rem;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 500px) {
+  .container {
+    padding: 0 5px;
+  }
+  .sub-header .container {
+    padding: 8px 5px 0 5px;
+  }
+  .sub-header h1 {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+  .sub-nav {
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .sub-nav a {
+    font-size: 0.88rem;
+    padding: 5px 8px;
+    border-radius: 16px;
+  }
+  .hero-section {
+    padding: 14px 0 10px 0;
+  }
+  .hero-content h2 {
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+  }
+  .hero-content p {
+    font-size: 0.97rem;
+    margin-bottom: 14px;
+  }
+  .hero-img {
+    width: 120px;
+    border-radius: 10px;
+  }
+  .card-section {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 8px;
+    margin-top: 10px;
+  }
+  .info-card {
+    width: 96vw;
+    min-width: 0;
+    min-height: 120px;
+    padding: 10px 4vw 10px 4vw;
+    margin: 0 auto;
+  }
+  .info-card img {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 6px;
+  }
+  .info-card h3 {
+    font-size: 0.97rem;
+    margin-bottom: 4px;
+  }
+  .info-card p {
+    font-size: 0.85rem;
+    min-height: 18px;
+    margin-bottom: 6px;
+  }
+  .card-btn {
+    font-size: 0.88rem;
+    padding: 5px 8px;
+    border-radius: 12px;
+  }
+}
