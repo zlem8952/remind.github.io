@@ -2,69 +2,77 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>전국 병원 정보 검색</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>의료정보 통합 서비스</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- 헤더 (메인과 통일된 디자인) -->
-  <header class="main-header">
-    <button class="hamburger">☰</button>
-    <h1>병원 정보 검색</h1>
-    <nav class="top-nav">
-      <a href="../index.html">메인</a>
-      <a href="#">마이페이지</a>
-      <a href="#">고객지원</a>
-    </nav>
-  </header>
-
-  <!-- 검색 섹션 -->
-  <section class="search-section">
-    <div class="search-container">
-      <input type="text" placeholder="지역명 또는 병원명 입력" class="search-input">
-      <select class="filter-select">
-        <option value="">전체 진료과목</option>
-        <option>내과</option>
-        <option>외과</option>
-        <option>소아과</option>
-      </select>
-      <button class="search-btn">검색</button>
+  <header class="sub-header">
+    <div class="container">
+      <a href="../index.html" class="logo">← 메인으로</a>
+      <h1>의료정보 통합 서비스</h1>
+      <nav class="sub-nav">
+        <a href="#">병원 정보</a>
+        <a href="#">약국 정보</a>
+        <a href="#">응급의료기관</a>
+        <a href="#">의약품 정보</a>
+        <a href="#">기관평가</a>
+        <a href="#">진료과목</a>
+      </nav>
     </div>
-  </section>
-
-  <!-- 검색 결과 그리드 -->
-  <main class="results-grid">
-    <!-- API 연동 시 동적 생성 -->
-    <article class="hospital-card">
-      <div class="card-header">
-        <h2>○○대학교 병원</h2>
-        <span class="badge emergency">응급실 운영</span>
+  </header>
+  <main>
+    <section class="hero-section">
+      <div class="hero-content">
+        <h2>전국 의료정보, 한눈에!</h2>
+        <p>공공데이터 기반으로 병원, 약국, 응급, 의약품, 평가 등 다양한 의료정보를 쉽고 빠르게 확인하세요.</p>
+        <img src="https://cdn.pixabay.com/photo/2017/08/06/10/36/people-2596158_1280.jpg" alt="의료정보 메인" class="hero-img">
       </div>
-      <div class="card-body">
-        <p class="location">📍 대구광역시 중구 동덕로 88</p>
-        <p class="phone">☎ 053-123-4567</p>
-        <div class="info-row">
-          <span class="department">진료과목: 내과, 외과</span>
-          <span class="time">운영시간: 08:30 ~ 17:30</span>
-        </div>
+    </section>
+    <section class="card-section">
+      <div class="info-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png" alt="병원" />
+        <h3>병원 정보</h3>
+        <p>전국 병원 위치, 진료과목, 운영시간 등 실시간 정보 제공</p>
+        <a href="#" class="card-btn">자세히 보기</a>
       </div>
-      <button class="detail-btn">상세정보 보기</button>
-    </article>
-
-    <!-- 추가 카드 템플릿 -->
+      <div class="info-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965564.png" alt="약국" />
+        <h3>약국 정보</h3>
+        <p>운영시간, 야간/공휴일 약국, 위치 등 편리하게 검색</p>
+        <a href="#" class="card-btn">자세히 보기</a>
+      </div>
+      <div class="info-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965570.png" alt="응급" />
+        <h3>응급의료기관</h3>
+        <p>응급실 운영 병원, 실시간 자원현황, 진료과목 안내</p>
+        <a href="#" class="card-btn">자세히 보기</a>
+      </div>
+      <div class="info-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965562.png" alt="의약품" />
+        <h3>의약품 정보</h3>
+        <p>의약품 효능, 성분, 제조사, 부작용 등 상세 정보</p>
+        <a href="#" class="card-btn">자세히 보기</a>
+      </div>
+      <div class="info-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965566.png" alt="평가" />
+        <h3>기관평가</h3>
+        <p>병원·약국 평가, 인증, 진료내역 등 신뢰 정보 제공</p>
+        <a href="#" class="card-btn">자세히 보기</a>
+      </div>
+      <div class="info-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965569.png" alt="진료과목" />
+        <h3>진료과목</h3>
+        <p>의료기관별 진료과목, 전문분야, 진료 가능 정보</p>
+        <a href="#" class="card-btn">자세히 보기</a>
+      </div>
+    </section>
   </main>
-
-  <!-- 푸터 (메인과 동일) -->
-  <footer class="main-footer">
-    <p>&copy; 2025 공공의료정보 통합 서비스. All rights reserved.</p>
+  <footer class="sub-footer">
+    <div class="container">
+      <p>&copy; 2024 의료정보 통합 서비스</p>
+    </div>
   </footer>
-
-  <script>
-    // 햄버거 메뉴 토글
-    document.querySelector('.hamburger').addEventListener('click', () => {
-      document.querySelector('.top-nav').classList.toggle('active');
-    });
-  </script>
 </body>
 </html>
