@@ -3,87 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>의료정보 통합 서비스</title>
+  <title>전국 병원 정보 검색</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- 헤더 영역 -->
+  <!-- 헤더 (메인과 통일된 디자인) -->
   <header class="main-header">
-    <div class="container">
-      <a href="../index.html" class="logo" aria-label="메인으로 이동">
-        <span class="arrow">←</span> 메인으로
-      </a>
-      <h1>의료정보 통합 서비스</h1>
-      
-      <!-- 햄버거 메뉴 (모바일) -->
-      <button class="hamburger" aria-label="메뉴 열기">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-
-      <!-- 네비게이션 메뉴 -->
-      <nav class="main-nav" aria-label="주요 서비스">
-        <ul>
-          <li><a href="hospital/index.html">병원 정보</a></li>
-          <li><a href="pharmacy/index.html">약국 정보</a></li>
-          <li><a href="emergency/index.html">응급의료기관</a></li>
-          <li><a href="medicine/index.html">의약품 정보</a></li>
-          <li><a href="evaluation/index.html">기관평가</a></li>
-          <li><a href="department/index.html">진료과목</a></li>
-        </ul>
-      </nav>
-    </div>
+    <button class="hamburger">☰</button>
+    <h1>병원 정보 검색</h1>
+    <nav class="top-nav">
+      <a href="../index.html">메인</a>
+      <a href="#">마이페이지</a>
+      <a href="#">고객지원</a>
+    </nav>
   </header>
 
-  <!-- 메인 콘텐츠 -->
-  <main>
-    <!-- 히어로 섹션 -->
-    <section class="hero-section">
-      <div class="hero-overlay">
-        <div class="hero-content">
-          <h2>전국 의료정보, 한눈에!</h2>
-          <p>공공데이터 기반 실시간 의료정보 서비스</p>
+  <!-- 검색 섹션 -->
+  <section class="search-section">
+    <div class="search-container">
+      <input type="text" placeholder="지역명 또는 병원명 입력" class="search-input">
+      <select class="filter-select">
+        <option value="">전체 진료과목</option>
+        <option>내과</option>
+        <option>외과</option>
+        <option>소아과</option>
+      </select>
+      <button class="search-btn">검색</button>
+    </div>
+  </section>
+
+  <!-- 검색 결과 그리드 -->
+  <main class="results-grid">
+    <!-- API 연동 시 동적 생성 -->
+    <article class="hospital-card">
+      <div class="card-header">
+        <h2>○○대학교 병원</h2>
+        <span class="badge emergency">응급실 운영</span>
+      </div>
+      <div class="card-body">
+        <p class="location">📍 대구광역시 중구 동덕로 88</p>
+        <p class="phone">☎ 053-123-4567</p>
+        <div class="info-row">
+          <span class="department">진료과목: 내과, 외과</span>
+          <span class="time">운영시간: 08:30 ~ 17:30</span>
         </div>
       </div>
-    </section>
+      <button class="detail-btn">상세정보 보기</button>
+    </article>
 
-    <!-- 서비스 카드 그리드 -->
-    <section class="card-grid">
-      <article class="service-card">
-        <a href="hospital/index.html">
-          <img src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png" alt="병원 정보">
-          <div class="card-content">
-            <h3>병원 정보</h3>
-            <p>전국 병원 위치/진료시간 실시간 조회</p>
-            <span class="link-text">바로가기 →</span>
-          </div>
-        </a>
-      </article>
-
-      <!-- 다른 서비스 카드 동일 구조로 추가 -->
-      
-    </section>
+    <!-- 추가 카드 템플릿 -->
   </main>
 
-  <!-- 푸터 영역 -->
+  <!-- 푸터 (메인과 동일) -->
   <footer class="main-footer">
-    <div class="container">
-      <p>© 2025 의료정보 통합 서비스. All rights reserved.</p>
-      <nav class="footer-nav">
-        <a href="#">이용약관</a>
-        <a href="#">개인정보처리방침</a>
-        <a href="#">문의하기</a>
-      </nav>
-    </div>
+    <p>&copy; 2025 공공의료정보 통합 서비스. All rights reserved.</p>
   </footer>
 
   <script>
     // 햄버거 메뉴 토글
     document.querySelector('.hamburger').addEventListener('click', () => {
-      document.querySelector('.main-nav').classList.toggle('active');
-      document.querySelector('.hamburger').classList.toggle('active');
+      document.querySelector('.top-nav').classList.toggle('active');
     });
   </script>
 </body>
