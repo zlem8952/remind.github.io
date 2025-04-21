@@ -1,1 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>전국 병원 정보 검색</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 헤더 (메인과 통일된 디자인) -->
+  <header class="main-header">
+    <button class="hamburger">☰</button>
+    <h1>병원 정보 검색</h1>
+    <nav class="top-nav">
+      <a href="../index.html">메인</a>
+      <a href="#">마이페이지</a>
+      <a href="#">고객지원</a>
+    </nav>
+  </header>
 
+  <!-- 검색 섹션 -->
+  <section class="search-section">
+    <div class="search-container">
+      <input type="text" placeholder="지역명 또는 병원명 입력" class="search-input">
+      <select class="filter-select">
+        <option value="">전체 진료과목</option>
+        <option>내과</option>
+        <option>외과</option>
+        <option>소아과</option>
+      </select>
+      <button class="search-btn">검색</button>
+    </div>
+  </section>
+
+  <!-- 검색 결과 그리드 -->
+  <main class="results-grid">
+    <!-- API 연동 시 동적 생성 -->
+    <article class="hospital-card">
+      <div class="card-header">
+        <h2>○○대학교 병원</h2>
+        <span class="badge emergency">응급실 운영</span>
+      </div>
+      <div class="card-body">
+        <p class="location">📍 대구광역시 중구 동덕로 88</p>
+        <p class="phone">☎ 053-123-4567</p>
+        <div class="info-row">
+          <span class="department">진료과목: 내과, 외과</span>
+          <span class="time">운영시간: 08:30 ~ 17:30</span>
+        </div>
+      </div>
+      <button class="detail-btn">상세정보 보기</button>
+    </article>
+
+    <!-- 추가 카드 템플릿 -->
+  </main>
+
+  <!-- 푸터 (메인과 동일) -->
+  <footer class="main-footer">
+    <p>&copy; 2025 공공의료정보 통합 서비스. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // 햄버거 메뉴 토글
+    document.querySelector('.hamburger').addEventListener('click', () => {
+      document.querySelector('.top-nav').classList.toggle('active');
+    });
+  </script>
+</body>
+</html>
