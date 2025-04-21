@@ -1,0 +1,184 @@
+/* 전체 레이아웃 및 기본 폰트 */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans KR', Arial, sans-serif;
+  background: #f5f7fa;
+  color: #222;
+}
+
+/* 헤더 및 네비게이션 */
+header {
+  background: #4472c4;
+  color: #fff;
+  padding: 0 0 10px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 10px 0 10px;
+  position: relative;
+}
+
+#menu-btn {
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+nav h1 {
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin: 0 20px;
+  flex: 1;
+}
+
+#main-nav {
+  list-style: none;
+  display: flex;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+}
+
+#main-nav li a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+#main-nav li a:hover {
+  background: #2d4fa0;
+}
+
+/* 메인 비주얼 */
+#main-visual {
+  text-align: center;
+  padding: 60px 10px 40px 10px;
+  background: #eaf0fb;
+}
+
+#main-visual h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #4472c4;
+  margin-bottom: 14px;
+}
+
+#main-visual p {
+  font-size: 1.2rem;
+  color: #444;
+  margin-bottom: 30px;
+}
+
+#main-visual img {
+  width: 320px;
+  max-width: 95vw;
+  border-radius: 20px;
+  box-shadow: 0 4px 14px rgba(68,114,196,0.13);
+}
+
+/* 서비스 바로가기 카드 */
+#service-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 28px;
+  max-width: 1200px;
+  margin: 40px auto 0 auto;
+  padding: 0 10px 50px 10px;
+}
+
+.shortcut-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(68,114,196,0.08);
+  width: 220px;
+  min-height: 140px;
+  padding: 28px 18px;
+  text-align: center;
+  transition: transform 0.17s, box-shadow 0.17s;
+  cursor: pointer;
+}
+
+.shortcut-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 6px 18px rgba(68,114,196,0.17);
+  background: #f2f6fd;
+}
+
+.shortcut-card h3 {
+  margin: 0 0 10px 0;
+  color: #4472c4;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.shortcut-card p {
+  margin: 0;
+  color: #555;
+  font-size: 0.98rem;
+}
+
+/* 푸터 */
+footer {
+  text-align: center;
+  padding: 22px 0 14px 0;
+  color: #888;
+  font-size: 0.98rem;
+  background: #f5f7fa;
+  border-top: 1px solid #e0e3e8;
+  margin-top: 30px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 900px) {
+  #service-shortcuts {
+    gap: 18px;
+  }
+  .shortcut-card {
+    width: 44vw;
+    min-width: 160px;
+    padding: 18px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  nav {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 4vw 0 4vw;
+  }
+  nav h1 {
+    font-size: 1.15rem;
+    margin: 10px 0 0 0;
+  }
+  #main-nav {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  #main-visual {
+    padding: 40px 2vw 20px 2vw;
+  }
+  #service-shortcuts {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 2vw 30px 2vw;
+  }
+  .shortcut-card {
+    width: 90vw;
+    min-width: unset;
+  }
+}
