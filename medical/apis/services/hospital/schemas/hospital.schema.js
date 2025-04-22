@@ -1,11 +1,13 @@
 import { z } from 'zod';
 
-export const hospitalSchema = z.array(
+export const HospitalSchema = z.array(
   z.object({
-    yadmNm: z.string().min(2),
+    yadmNm: z.string(),
     addr: z.string(),
-    telno: z.string().regex(/^\d{2,4}-\d{3,4}-\d{4}$/),
-    clCdNm: z.enum(['내과', '외과', '정형외과']),
-    estbDd: z.string().datetime(),
+    telno: z.string().optional(),
+    clCdNm: z.enum(['상급종합', '종합', '병원', '의원']),
+    estbDd: z.string().regex(/^\d{8}$/),
+    XPos: z.number(),
+    YPos: z.number()
   })
 );
