@@ -1,18 +1,14 @@
-const cache = new Map();
+import axios from 'axios';
+import { cacheManager } from './cache-manager';
 
-export const cacheManager = {
-  get(key) {
-    const entry = cache.get(key);
-    if (entry && entry.expires > Date.now()) return entry.data;
-    cache.delete(key);
-    return null;
-  },
+export const apiClient = {
+  async get({ baseURL, url, params }) {
+    const cacheKey = JSON.stringify({ baseURL, url, params });
+    const cached = cacheManager.get(cacheKey);
+    if (cached) return cached;
 
-  set(key, data, ttl = 60000) {
-    cache.set(key, {
-      data,
-      expires: Date.now() + ttl
-    });
+    const response = await axios.get(url, { baseURL, params });
+    cacheManager.set(cacheKey, response.data);
+    return response.data;
   }
 };
-
