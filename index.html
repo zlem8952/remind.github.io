@@ -3,241 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>내 포트폴리오</title>
-    <!-- OG 메타 태그 시작 -->
-    <meta property="og:title" content="끄적 포트폴리오" />
-    <meta property="og:description" content="끄적의 포트폴리오 사이트입니다." />
-    <meta property="og:image" content="https://i.ibb.co/6Vk5fCy/thumbnail.png" />
-    <meta property="og:url" content="https://zlem8952.github.io/remind.github.io/" />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="끄적 포트폴리오">
-    <meta name="twitter:description" content="끄적의 포트폴리오 사이트입니다.">
-    <meta name="twitter:image" content="https://i.ibb.co/6Vk5fCy/thumbnail.png">
-    <!-- OG 메타 태그 끝 -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <title>zlem8952's Portfolio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- 기본 스타일 및 애니메이션 -->
+    <style>
+        /* 기본 폰트 및 스무딩 설정 */
+        body {
+            font-family: 'Inter', 'Pretendard', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* 다크 모드 기본 스타일 */
+        html.dark body {
+            background-color: #000;
+            color: #f5f5f7;
+        }
+
+        /* 라이트 모드 기본 스타일 */
+        html:not(.dark) body {
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+        }
+
+        /* 스크롤 시 부드럽게 나타나는 애니메이션 */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .section-height {
+            min-height: 100vh;
+        }
+
+        /* 유리 재질(Glassmorphism) 스타일 */
+        .glassmorphism {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        html:not(.dark) .glassmorphism {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        html.dark .glassmorphism {
+            background: rgba(29, 29, 31, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+    </style>
 </head>
 <body>
-    <!-- 햄버거 메뉴 -->
-    <button id="hamburger" aria-label="메뉴 열기">&#9776;</button>
-    <!-- 사이드 네비게이션 -->
-    <div id="sideNav" class="sidenav" aria-label="사이드 메뉴">
-        <button class="closebtn" onclick="closeNav()" aria-label="메뉴 닫기">&times;</button>
-        <a href="medical/index.html">의료정보 통합 서비스</a>
-        <a href="converter.html">PY→EXE 변환기</a>
-        <a href="blog/index.html">블로그</a>
-        <a href="reaction/reaction.html">반응속도 테스트</a>
-        <a href="typing/typing.html">타자속도 테스트</a>
-    </div>
-    <!-- 다크모드 토글 버튼 -->
-    <button id="themeToggle" aria-label="테마 전환">🌓</button>
-    <header>
-        <div class="container">
-            <nav>
-                <ul>
-                    <li><a href="#home">홈</a></li>
-                    <li><a href="#about">소개</a></li>
-                    <li><a href="#projects">프로젝트</a></li>
-                    <li><a href="#contact">연락처</a></li>
-                </ul>
-            </nav>
+
+    <!-- 상단 내비게이션 바 -->
+    <header class="fixed top-0 left-0 right-0 z-50 glassmorphism">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-xl font-bold">zlem8952</a>
+            <div class="hidden md:flex space-x-6 text-sm items-center">
+                <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors">About</a>
+                <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors">Projects</a>
+                <a href="https://github.com/zlem8952" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors">GitHub</a>
+                <a href="#" class="bg-blue-600 text-white px-4 py-2 rounded-full font-semibold hover:bg-blue-500 transition-colors">Contact</a>
+                <!-- 테마 토글 버튼 -->
+                <button id="theme-toggle" type="button" class="ml-2 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none rounded-lg text-sm p-2.5">
+                    <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 5.05A1 1 0 003.636 6.464l.707.707a1 1 0 001.414-1.414l-.707-.707zM3 11a1 1 0 100-2H2a1 1 0 100 2h1zm7.536 2.464a1 1 0 01-1.414 0l-.707-.707a1 1 0 011.414-1.414l.707.707a1 1 0 010 1.414zM13.536 6.464a1 1 0 011.414 0l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 010-1.414z"></path></svg>
+                </button>
+            </div>
+            <div class="md:hidden flex items-center">
+                <!-- 모바일 메뉴용 테마 토글 버튼 -->
+                <button id="theme-toggle-mobile" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none rounded-lg text-sm p-2.5 mr-2">
+                    <svg id="theme-toggle-dark-icon-mobile" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <svg id="theme-toggle-light-icon-mobile" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 5.05A1 1 0 003.636 6.464l.707.707a1 1 0 001.414-1.414l-.707-.707zM3 11a1 1 0 100-2H2a1 1 0 100 2h1zm7.536 2.464a1 1 0 01-1.414 0l-.707-.707a1 1 0 011.414-1.414l.707.707a1 1 0 010 1.414zM13.536 6.464a1 1 0 011.414 0l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 010-1.414z"></path></svg>
+                </button>
+                <button id="mobile-menu-button" class="focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <!-- 모바일 메뉴 -->
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+             <a href="#" class="block py-2 text-gray-600 dark:text-gray-300">About</a>
+             <a href="#" class="block py-2 text-gray-600 dark:text-gray-300">Projects</a>
+             <a href="https://github.com/zlem8952" target="_blank" class="block py-2 text-gray-600 dark:text-gray-300">GitHub</a>
+             <a href="#" class="block mt-2 bg-blue-600 text-white px-4 py-2 rounded-full font-semibold text-center">Contact</a>
         </div>
     </header>
-    <section id="home" class="hero">
-        <img src="https://photos.app.goo.gl/wbRPoPdR8Lm5WmUU9"
-             alt="배경 GIF"
-             class="hero-bg-gif">
-    </section>
-    <section id="about" class="section">
-        <div class="container">
-            <div class="section-title">
-                <h2>소개</h2>
-            </div>
-            <div class="about-main">
-                <div class="about-profile">
-                    <img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F016%2F2025%2F02%2F18%2F0002430677_002_20250218172420878.jpg&type=a340" alt="프로필 사진" class="profile-image">
-                    <h3>끄적</h3>
-                    <p>그냥 끄적이는데 여러기능을 추가하고 싶은 그런 사이트입니다.</p>
+
+    <main>
+        <!-- 섹션 1: Hero -->
+        <section class="section-height flex flex-col justify-center items-center text-center p-8">
+            <div class="reveal">
+                <h1 class="text-5xl md:text-8xl font-black leading-tight">
+                    Ideas that<br>Solve Problems.
+                </h1>
+                <p class="mt-6 text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl">
+                    안녕하세요. 기술로 더 나은 경험을 만드는 개발자, zlem8952입니다.<br>
+                    창의적인 아이디어를 코드로 실현하는 일에 열정을 다합니다.
+                </p>
+                <div class="mt-10">
+                    <a href="#" class="bg-blue-600 text-white px-8 py-4 rounded-full font-bold hover:bg-blue-500 transition-transform duration-300 inline-block text-lg">프로젝트 보기</a>
                 </div>
-                <div class="about-cards">
-                    <div class="about-card">
-                        <h4>경력</h4>
-                        <ul>
-                            <li>2020 - 현재: 대구가톨릭대학교 컴퓨터 소프트웨어학부 재학</li>
-                            <li>2020 - 2020: 뭐!</li>
-                            <li>2022 - 백수생활</li>
-                        </ul>
+            </div>
+        </section>
+
+        <!-- 섹션 2: 주요 기술 스택 -->
+        <section class="section-height flex flex-col justify-center items-center p-8 bg-white dark:bg-zinc-900">
+            <div class="text-center reveal w-full">
+                <h2 class="text-4xl md:text-6xl font-bold mb-4">Core Skills</h2>
+                <p class="text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-16 max-w-2xl mx-auto">다양한 기술 스택을 활용하여 아이디어를 현실로 만듭니다.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+                    <!-- 스킬 카드 -->
+                    <div class="bg-gray-100 dark:bg-zinc-800 p-8 rounded-3xl text-left">
+                        <h3 class="text-2xl font-bold mb-2">iOS & Swift</h3>
+                        <p class="text-gray-600 dark:text-gray-400">사용자 중심의 직관적이고 아름다운 iOS 애플리케이션을 개발합니다.</p>
                     </div>
-                    <div class="about-card">
-                        <h4>기술스택</h4>
-                        <p>JavaScript, React, Node.js, Python, HTML5, CSS3, Git</p>
+                    <div class="bg-gray-100 dark:bg-zinc-800 p-8 rounded-3xl text-left">
+                        <h3 class="text-2xl font-bold mb-2">Python</h3>
+                        <p class="text-gray-600 dark:text-gray-400">데이터 처리부터 백엔드 API 서버 구축까지, 다재다능하게 활용합니다.</p>
                     </div>
-                    <div class="about-card">
-                        <h4>목표</h4>
-                        <p>끄적끄적</p>
+                    <div class="bg-gray-100 dark:bg-zinc-800 p-8 rounded-3xl text-left">
+                        <h3 class="text-2xl font-bold mb-2">JavaScript</h3>
+                        <p class="text-gray-600 dark:text-gray-400">인터랙티브한 프론트엔드와 동적인 웹 경험을 구현합니다.</p>
+                    </div>
+                    <div class="bg-gray-100 dark:bg-zinc-800 p-8 rounded-3xl text-left">
+                        <h3 class="text-2xl font-bold mb-2">PHP</h3>
+                        <p class="text-gray-600 dark:text-gray-400">안정적이고 효율적인 웹 서버 개발 및 유지보수 경험을 갖추고 있습니다.</p>
                     </div>
                 </div>
             </div>
-            <div class="skills-visual">
-                <h3>기술 스택</h3>
-                <div class="skill">
-                    <i class="fab fa-js-square"></i> JavaScript
-                    <div class="skill-bar"><div class="skill-level" style="width: 85%"></div></div>
+        </section>
+
+        <!-- 섹션 3: 대표 프로젝트 -->
+        <section class="section-height flex flex-col justify-center items-center text-center p-8">
+             <div class="reveal max-w-5xl w-full">
+                <p class="text-blue-500 font-bold mb-4">Featured Project</p>
+                <h2 class="text-4xl md:text-6xl font-bold mb-6">프로젝트 이름</h2>
+                <p class="text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-3xl mx-auto">
+                    이곳에 프로젝트에 대한 핵심적인 설명을 간결하게 작성하세요. 어떤 문제를 해결했고, 어떤 기술을 사용했는지 강조하면 좋습니다.
+                </p>
+                <div class="bg-gray-200 dark:bg-zinc-800 w-full h-96 rounded-3xl flex items-center justify-center mb-10">
+                     <img src="https://placehold.co/800x400/e5e7eb/1d1d1f?text=Project+Mockup" alt="Project Mockup" class="object-cover rounded-3xl w-full h-full">
                 </div>
-                <div class="skill">
-                    <i class="fab fa-python"></i> Python
-                    <div class="skill-bar"><div class="skill-level" style="width: 80%"></div></div>
-                </div>
-                <div class="skill">
-                    <i class="fab fa-html5"></i> HTML5
-                    <div class="skill-bar"><div class="skill-level" style="width: 90%"></div></div>
-                </div>
-                <div class="skill">
-                    <i class="fab fa-css3-alt"></i> CSS3
-                    <div class="skill-bar"><div class="skill-level" style="width: 80%"></div></div>
-                </div>
-                <div class="skill">
-                    <i class="fab fa-react"></i> React
-                    <div class="skill-bar"><div class="skill-level" style="width: 70%"></div></div>
-                </div>
-                <div class="skill">
-                    <i class="fab fa-git-alt"></i> Git
-                    <div class="skill-bar"><div class="skill-level" style="width: 75%"></div></div>
-                </div>
+                <a href="#" class="text-blue-500 text-lg hover:underline">더 알아보기 &rarr;</a>
             </div>
-        </div>
-    </section>
-    <section id="projects" class="section">
-        <div class="container">
-            <div class="section-title">
-                <h2>프로젝트</h2>
+        </section>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="text-center p-16 bg-white dark:bg-zinc-900">
+        <div class="reveal">
+            <h2 class="text-3xl md:text-5xl font-bold">궁금한 점이 있으신가요?</h2>
+            <p class="mt-4 mb-8 text-gray-600 dark:text-gray-400 text-lg">언제든지 편하게 연락 주세요.</p>
+            <a href="mailto:your-email@example.com" class="bg-blue-600 text-white px-8 py-4 rounded-full font-bold hover:bg-blue-500 transition-transform duration-300 inline-block text-lg">your-email@example.com</a>
+            <div class="mt-12 text-sm text-gray-500 dark:text-gray-400">
+                <p>
+                    <a href="https://github.com/zlem8952" class="hover:text-black dark:hover:text-white mx-2">GitHub</a> &bull;
+                    <a href="#" class="hover:text-black dark:hover:text-white mx-2">LinkedIn</a>
+                </p>
+                <p class="mt-4">&copy; <span id="year"></span> zlem8952. All rights reserved.</p>
             </div>
-            <div class="projects">
-                <div class="project-card">
-                    <a href="projects/project1.html">
-                        <img src="https://source.unsplash.com/random/300x200" alt="프로젝트 1">
-                        <div class="project-card-content">
-                            <h3>프로젝트 1</h3>
-                            <p>프로젝트에 대한 간단한 설명을 여기에 작성하세요.</p>
-                        </div>
-                    </a>
-                </div>
-                <div class="project-card">
-                    <a href="projects/project2.html">
-                        <img src="https://source.unsplash.com/random/300x201" alt="프로젝트 2">
-                        <div class="project-card-content">
-                            <h3>프로젝트 2</h3>
-                            <p>프로젝트에 대한 간단한 설명을 여기에 작성하세요.</p>
-                        </div>
-                    </a>
-                </div>
-                <div class="project-card">
-                    <a href="projects/project3.html">
-                        <img src="https://source.unsplash.com/random/300x202" alt="프로젝트 3">
-                        <div class="project-card-content">
-                            <h3>프로젝트 3</h3>
-                            <p>프로젝트에 대한 간단한 설명을 여기에 작성하세요.</p>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section id="contact" class="section">
-        <div class="container">
-            <div class="section-title">
-                <h2>연락처</h2>
-            </div>
-            <div class="contact-buttons">
-                <a href="mailto:zlem8952@kakao.com" class="btn contact-btn">
-                    <i class="fas fa-envelope"></i> 이메일 보내기
-                </a>
-                <a href="https://github.com/zlem8952" target="_blank" rel="noopener noreferrer" class="btn contact-btn">
-                    <i class="fab fa-github"></i> GitHub 방문하기
-                </a>
-            </div>
-        </div>
-    </section>
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 [개발자]. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- Elfsight AI Chatbot | Untitled AI Chatbot -->
-    <script src="https://static.elfsight.com/platform/platform.js" async></script>
-    <div class="elfsight-app-fc27a96f-c756-450d-bb37-13139b909d0e" data-elfsight-app-lazy></div>
-
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // 부드러운 스크롤
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            if (anchor.hash) {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.hash);
-                    if (target) target.scrollIntoView({ behavior: 'smooth' });
+        document.addEventListener('DOMContentLoaded', function () {
+            // 테마 토글 버튼 및 아이콘 요소
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+            const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+            const mobileThemeToggleBtn = document.getElementById('theme-toggle-mobile');
+            const mobileThemeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon-mobile');
+            const mobileThemeToggleLightIcon = document.getElementById('theme-toggle-light-icon-mobile');
+
+            // 테마 상태 관리 함수
+            const applyTheme = (isDark) => {
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                    themeToggleDarkIcon.classList.remove('hidden');
+                    themeToggleLightIcon.classList.add('hidden');
+                    mobileThemeToggleDarkIcon.classList.remove('hidden');
+                    mobileThemeToggleLightIcon.classList.add('hidden');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    themeToggleDarkIcon.classList.add('hidden');
+                    themeToggleLightIcon.classList.remove('hidden');
+                    mobileThemeToggleDarkIcon.classList.add('hidden');
+                    mobileThemeToggleLightIcon.classList.remove('hidden');
+                    localStorage.setItem('theme', 'light');
+                }
+            };
+            
+            // 페이지 로드 시 테마 설정
+            const isDarkMode = localStorage.getItem('theme') === 'dark' || 
+                               (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            applyTheme(isDarkMode);
+
+            // 데스크탑/모바일 토글 버튼 이벤트 리스너
+            const toggleTheme = () => {
+                const isCurrentlyDark = document.documentElement.classList.contains('dark');
+                applyTheme(!isCurrentlyDark);
+            };
+
+            themeToggleBtn.addEventListener('click', toggleTheme);
+            mobileThemeToggleBtn.addEventListener('click', toggleTheme);
+
+            // 스크롤 애니메이션
+            const revealElements = document.querySelectorAll('.reveal');
+            const revealOnScroll = () => {
+                const windowHeight = window.innerHeight;
+                revealElements.forEach(el => {
+                    const elementTop = el.getBoundingClientRect().top;
+                    if (elementTop < windowHeight - 100) {
+                        el.classList.add('active');
+                    }
                 });
-            }
-        });
+            };
+            window.addEventListener('scroll', revealOnScroll);
+            revealOnScroll();
 
-        // 헤더 스크롤 효과
-        const header = document.querySelector('header');
-        let isScrolling;
-        window.addEventListener('scroll', () => {
-            clearTimeout(isScrolling);
-            isScrolling = setTimeout(() => {
-                header.style.backgroundColor = window.scrollY > 100 
-                    ? 'rgba(44, 62, 80, 0.9)' 
-                    : 'var(--secondary-color)';
-            }, 50);
-        });
+            // 연도 자동 업데이트
+            document.getElementById('year').textContent = new Date().getFullYear();
 
-        // 다크모드 토글
-        const themeToggle = document.getElementById('themeToggle');
-        const body = document.body;
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
+            // 모바일 메뉴 토글
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
         });
-        if (localStorage.getItem('darkMode') === 'true') {
-            body.classList.add('dark-mode');
-        }
-
-        // 햄버거/사이드 메뉴
-        function openNav() {
-            document.getElementById("sideNav").style.width = "250px";
-            document.getElementById("hamburger").setAttribute('aria-expanded', 'true');
-        }
-        function closeNav() {
-            document.getElementById("sideNav").style.width = "0";
-            document.getElementById("hamburger").setAttribute('aria-expanded', 'false');
-        }
-        const sideNav = document.getElementById('sideNav');
-        const hamburger = document.getElementById('hamburger');
-        hamburger.addEventListener('click', function(e) {
-            e.stopPropagation();
-            openNav();
-        });
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('#sideNav, #hamburger')) closeNav();
-        });
-        // 터치 제스처로 메뉴 열기(모바일)
-        let touchStartX = 0;
-        document.addEventListener('touchstart', function(e) {
-            if (e.touches.length === 1) touchStartX = e.touches[0].clientX;
-        });
-        document.addEventListener('touchend', function(e) {
-            if (e.changedTouches.length === 1) {
-                const touchEndX = e.changedTouches[0].clientX;
-                if (touchEndX - touchStartX > 50) openNav();
-            }
-        });
-        // 전역에서 접근 가능하도록 함수 등록
-        window.closeNav = closeNav;
-    });
     </script>
 </body>
 </html>
