@@ -44,29 +44,107 @@
             transition: all 0.3s ease;
         }
 
-        /* Custom Cursor */
-        .cursor {
+        /* Particle System */
+        .particle-canvas {
             position: fixed;
-            width: 20px;
-            height: 20px;
-            background: var(--accent-color);
-            border-radius: 50%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
-            z-index: 9999;
-            mix-blend-mode: difference;
-            transition: transform 0.1s ease;
+            z-index: 1;
         }
 
-        .cursor-trail {
-            position: fixed;
-            width: 6px;
-            height: 6px;
-            background: var(--accent-color);
+        /* Ripple Effect */
+        .ripple {
+            position: absolute;
             border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
             pointer-events: none;
-            z-index: 9998;
-            opacity: 0.7;
-            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Kaleidoscope Background */
+        .kaleidoscope {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            z-index: -3;
+            overflow: hidden;
+        }
+
+        .kaleidoscope-pattern {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: 
+                conic-gradient(from 0deg at 30% 30%, 
+                    var(--accent-color)33, transparent 0deg 120deg, 
+                    var(--accent-secondary) 0deg 180deg, transparent 0deg),
+                conic-gradient(from 120deg at 70% 30%, 
+                    transparent 0deg 60deg, var(--accent-color)66 0deg 180deg, 
+                    transparent 0deg),
+                conic-gradient(from 240deg at 50% 70%, 
+                    var(--accent-secondary) 0deg 60deg, transparent 0deg 120deg, 
+                    var(--accent-color)33 0deg);
+            background-size: 100px 100px, 80px 80px, 120px 120px;
+            animation: kaleidoscope-rotate 20s linear infinite;
+            opacity: 0.1;
+        }
+
+        @keyframes kaleidoscope-rotate {
+            0% { transform: rotate(0deg) scale(1); }
+            33% { transform: rotate(120deg) scale(1.1); }
+            66% { transform: rotate(240deg) scale(0.9); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* SVG Animations */
+        .svg-decoration {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .floating-svg {
+            animation: float-svg 6s ease-in-out infinite;
+        }
+
+        @keyframes float-svg {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .rotating-svg {
+            animation: rotate-svg 15s linear infinite;
+        }
+
+        @keyframes rotate-svg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .pulsing-svg {
+            animation: pulse-svg 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-svg {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.6; }
         }
 
         /* Loading Animation */
@@ -875,7 +953,7 @@
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-content">
             <div class="loading-spinner"></div>
-            <div class="loading-text">로딩 중...</div>
+            <div class="loading-text">포트폴리오 로딩 중...</div>
             <div class="loading-progress">
                 <div class="loading-bar"></div>
             </div>
@@ -919,7 +997,7 @@
                         <span class="typing-text" id="typingText"></span>
                     </div>
                     <p class="hero-description">
-                        컴공생이 만듬
+                        컴퓨터공학부에서 탄생한 웹/앱 개발 동아리입니다.
                     </p>
                     <button class="cta-button" onclick="showPage('projects')">프로젝트 보기</button>
                 </div>
@@ -1009,7 +1087,8 @@
                     <div class="intro-text">
                         <h3>Log</h3>
                         <p>
-                        
+                            고등학생때 ai를 만들어서 판매를하고
+                            졸업할때 토스에 입사하여 백엔드와 네트워크를 관리하였으며
                             현재 대학교에 재학
                         </p>
                         <p>
@@ -1068,7 +1147,7 @@
                             <div class="stat-label">완료된 프로젝트</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-number" data-target="0">0</div>
+                            <div class="stat-number" data-target="200">0</div>
                             <div class="stat-label">이용자 수</div>
                         </div>
                         <div class="stat-item">
@@ -1076,7 +1155,7 @@
                             <div class="stat-label">실제 서비스 런칭</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-number" data-target="0">0</div>
+                            <div class="stat-number" data-target="6">0</div>
                             <div class="stat-label">년간의 역사</div>
                         </div>
                     </div>
