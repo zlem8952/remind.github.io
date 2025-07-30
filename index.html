@@ -9,58 +9,24 @@
     <!-- Inter Font (Google Fonts) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* 기본 폰트 설정 */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* 모든 요소에 부드러운 색상 전환 효과 적용 */
-        * {
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-        }
-        /* Lucide 아이콘 SVG 스타일 */
-        .icon {
-            width: 1.25rem; /* 20px */
-            height: 1.25rem; /* 20px */
-            stroke: currentColor;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            fill: none;
-        }
-        .icon-lg {
-            width: 1.5rem; /* 24px */
-            height: 1.5rem; /* 24px */
-        }
-        /* 스크롤바 스타일링 (다크모드 호환) */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        .dark ::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #94a3b8;
-            border-radius: 4px;
-        }
-        .dark ::-webkit-scrollbar-thumb {
-            background: #475569;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #64748b;
-        }
-        .dark ::-webkit-scrollbar-thumb:hover {
-            background: #64748b;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        * { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        .icon { width: 1.25rem; height: 1.25rem; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+        .icon-lg { width: 1.5rem; height: 1.5rem; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        .dark ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        .status-paid-leave { background-color: #dbeafe; } /* bg-blue-100 */
+        .dark .status-paid-leave { background-color: #1e3a8a; } /* dark:bg-blue-900 */
+        .status-holiday-work { background-color: #fee2e2; } /* bg-red-100 */
+        .dark .status-holiday-work { background-color: #7f1d1d; } /* dark:bg-red-900 */
     </style>
     <script>
-        // Tailwind CSS 다크 모드 설정을 'class' 기반으로 변경
-        tailwind.config = {
-            darkMode: 'class',
-        }
+        tailwind.config = { darkMode: 'class' }
     </script>
 </head>
 <body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
@@ -104,17 +70,69 @@
                         <span>사용자 추가</span>
                     </button>
                 </div>
-                <!-- 사용자 목록이 표시될 컨테이너 -->
-                <div id="userListContainer" class="overflow-x-auto">
-                    <!-- JS로 사용자 목록 렌더링 -->
-                </div>
+                <div id="userListContainer" class="overflow-x-auto"></div>
             </section>
 
             <!-- 조교급여 섹션 -->
             <section id="salarySection" class="hidden">
-                <h2 class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400 mb-6 border-b border-gray-200 dark:border-gray-700 pb-3">조교 급여 계산 및 명세서</h2>
-                <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-md shadow-inner">
-                    <p class="text-gray-700 dark:text-gray-300 leading-relaxed">이곳은 조교들의 근무 기록을 바탕으로 월별 급여를 계산하고, 개별 급여 명세서를 생성하는 페이지입니다.</p>
+                 <!-- Step 1: 사용자 선택 -->
+                <div id="salaryStep1">
+                    <h2 class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400 mb-4">1. 급여 계산 대상 선택</h2>
+                    <div class="space-y-4 bg-gray-50 dark:bg-gray-700 p-6 rounded-md">
+                        <div>
+                            <label for="affiliationSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">소속 선택</label>
+                            <select id="affiliationSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white"></select>
+                        </div>
+                        <div id="userSelectionContainer" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">사용자 선택</label>
+                            <div id="userCheckboxList" class="space-y-2 p-3 border rounded-md max-h-60 overflow-y-auto dark:border-gray-600"></div>
+                        </div>
+                        <div class="text-right">
+                            <button id="goToStep2Btn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 disabled:bg-gray-400" disabled>다음</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: 기간 선택 -->
+                <div id="salaryStep2" class="hidden">
+                    <h2 class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400 mb-4">2. 계산 기간 선택</h2>
+                    <div class="space-y-4 bg-gray-50 dark:bg-gray-700 p-6 rounded-md">
+                        <div class="flex space-x-4">
+                            <div class="flex-1">
+                                <label for="yearSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">연도</label>
+                                <select id="yearSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-600 dark:border-gray-500"></select>
+                            </div>
+                            <div class="flex-1">
+                                <label for="monthSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">월</label>
+                                <select id="monthSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-600 dark:border-gray-500"></select>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <button id="backToStep1Btn" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">이전</button>
+                            <button id="generateRecordBtn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">근무기록 생성</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: 근무기록 확인 및 수정 -->
+                <div id="salaryStep3" class="hidden">
+                     <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400">3. 근무기록 확인 및 수정</h2>
+                        <button id="backToStep2Btn" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">이전</button>
+                    </div>
+                    <div id="attendanceRecordContainer" class="overflow-x-auto"></div>
+                    <div class="mt-6 text-right">
+                        <button id="calculateSalaryBtn" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">급여 계산하기</button>
+                    </div>
+                </div>
+                
+                <!-- Step 4: 급여 계산 결과 -->
+                <div id="salaryStep4" class="hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400">4. 최종 급여 명세서</h2>
+                        <button id="backToStep3Btn" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">이전</button>
+                    </div>
+                    <div id="salaryResultContainer"></div>
                 </div>
             </section>
         </div>
@@ -133,37 +151,33 @@
                 <input type="hidden" id="userId">
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">이름</label>
-                    <input type="text" id="name" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <input type="text" id="name" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600">
                 </div>
                 <div>
                     <label for="rrn" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">주민등록번호</label>
-                    <input type="text" id="rrn" placeholder="YYMMDD-XXXXXXX" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <input type="text" id="rrn" placeholder="YYMMDD-XXXXXXX" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600">
                 </div>
                 <div>
                     <label for="affiliation" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">소속</label>
-                    <input type="text" id="affiliation" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <input type="text" id="affiliation" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600">
                 </div>
                 <div>
                     <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">전화번호</label>
-                    <input type="tel" id="phone" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <input type="tel" id="phone" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600">
+                </div>
+                <div>
+                    <label for="hourlyWage" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">시급</label>
+                    <input type="number" id="hourlyWage" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600">
                 </div>
                  <div>
                     <label for="weeklyRestDay" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">주휴일</label>
-                    <select id="weeklyRestDay" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        <option value="일">일요일</option>
-                        <option value="월">월요일</option>
-                        <option value="화">화요일</option>
-                        <option value="수">수요일</option>
-                        <option value="목">목요일</option>
-                        <option value="금">금요일</option>
-                        <option value="토">토요일</option>
+                    <select id="weeklyRestDay" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600">
+                        <option value="일">일요일</option><option value="월">월요일</option><option value="화">화요일</option><option value="수">수요일</option><option value="목">목요일</option><option value="금">금요일</option><option value="토">토요일</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">근무 요일 및 시간</label>
-                    <div id="workScheduleContainer" class="grid grid-cols-1 gap-3">
-                        <!-- JS가 요일별 입력 필드를 동적으로 생성합니다. -->
-                    </div>
+                    <div id="workScheduleContainer" class="grid grid-cols-1 gap-3"></div>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">세금 공제 방식</label>
@@ -179,7 +193,6 @@
         </div>
     </div>
     
-    <!-- Backdrop -->
     <div id="backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
 
     <script type="module">
@@ -203,8 +216,28 @@
         const userListContainer = document.getElementById('userListContainer');
         const workScheduleContainer = document.getElementById('workScheduleContainer');
 
+        // --- 급여 관리 UI 요소 ---
+        const salaryStep1 = document.getElementById('salaryStep1');
+        const salaryStep2 = document.getElementById('salaryStep2');
+        const salaryStep3 = document.getElementById('salaryStep3');
+        const salaryStep4 = document.getElementById('salaryStep4');
+        const affiliationSelect = document.getElementById('affiliationSelect');
+        const userSelectionContainer = document.getElementById('userSelectionContainer');
+        const userCheckboxList = document.getElementById('userCheckboxList');
+        const goToStep2Btn = document.getElementById('goToStep2Btn');
+        const yearSelect = document.getElementById('yearSelect');
+        const monthSelect = document.getElementById('monthSelect');
+        const backToStep1Btn = document.getElementById('backToStep1Btn');
+        const generateRecordBtn = document.getElementById('generateRecordBtn');
+        const backToStep2Btn = document.getElementById('backToStep2Btn');
+        const attendanceRecordContainer = document.getElementById('attendanceRecordContainer');
+        const calculateSalaryBtn = document.getElementById('calculateSalaryBtn');
+        const backToStep3Btn = document.getElementById('backToStep3Btn');
+        const salaryResultContainer = document.getElementById('salaryResultContainer');
+
         // --- 로컬 스토리지 키 ---
         const STORAGE_KEY = 'ta-assistants';
+        let salaryCalculationState = {}; // 급여 계산 상태 저장
 
         // --- 스타일 클래스 정의 ---
         const activeMenuClasses = ['bg-indigo-600', 'text-white', 'shadow-md'];
@@ -248,13 +281,13 @@
             document.querySelectorAll('.work-time-input').forEach(input => input.classList.add('hidden'));
 
             if (user && user.id) {
-                // 수정 모드
                 userFormTitle.textContent = '사용자 수정';
                 document.getElementById('userId').value = user.id;
                 document.getElementById('name').value = user.name || '';
                 document.getElementById('rrn').value = user.rrn || '';
                 document.getElementById('affiliation').value = user.affiliation || '';
                 document.getElementById('phone').value = user.phone || '';
+                document.getElementById('hourlyWage').value = user.hourlyWage || '';
                 document.getElementById('weeklyRestDay').value = user.weeklyRestDay || '일';
 
                 if (user.workSchedule) {
@@ -274,7 +307,6 @@
                 }
 
             } else {
-                // 추가 모드
                 userFormTitle.textContent = '사용자 추가';
                 document.getElementById('userId').value = '';
             }
@@ -317,7 +349,7 @@
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">이름</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">소속</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">근무요일</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">시급</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">관리</th>
                         </tr>
                     </thead>
@@ -326,7 +358,7 @@
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">${user.name}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">${user.affiliation}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">${Object.keys(user.workSchedule || {}).join(', ')}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">${(user.hourlyWage || 0).toLocaleString()}원</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                                     <button class="edit-btn text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-200" data-id="${user.id}">수정</button>
                                     <button class="delete-btn text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-200" data-id="${user.id}">삭제</button>
@@ -355,6 +387,7 @@
                 rrn: document.getElementById('rrn').value,
                 affiliation: document.getElementById('affiliation').value,
                 phone: document.getElementById('phone').value,
+                hourlyWage: parseFloat(document.getElementById('hourlyWage').value) || 0,
                 weeklyRestDay: document.getElementById('weeklyRestDay').value,
                 workSchedule: workSchedule,
                 taxType: document.querySelector('input[name="taxType"]:checked')?.value || null,
@@ -364,10 +397,8 @@
             let users = getUsersFromStorage();
 
             if (id) {
-                // 기존 사용자 업데이트
                 users = users.map(user => user.id === id ? { ...user, ...userData, id: id } : user);
             } else {
-                // 새 사용자 추가 (고유 ID 생성)
                 userData.id = `user_${Date.now()}`;
                 users.push(userData);
             }
@@ -391,13 +422,262 @@
             }
 
             if (target.classList.contains('delete-btn')) {
-                // 실제 앱에서는 삭제 전에 커스텀 UI로 재확인하는 것이 좋습니다.
                 let users = getUsersFromStorage();
                 users = users.filter(user => user.id !== id);
                 saveUsersToStorage(users);
                 fetchAndRenderUsers();
             }
         }
+
+        // --- 급여 관리 로직 ---
+        function initializeSalaryPage() {
+            const users = getUsersFromStorage();
+            const affiliations = [...new Set(users.map(u => u.affiliation).filter(Boolean))];
+            affiliationSelect.innerHTML = '<option value="">소속을 선택하세요</option>';
+            affiliations.forEach(aff => {
+                affiliationSelect.innerHTML += `<option value="${aff}">${aff}</option>`;
+            });
+            resetSalarySteps();
+        }
+        
+        function resetSalarySteps() {
+            salaryStep1.classList.remove('hidden');
+            salaryStep2.classList.add('hidden');
+            salaryStep3.classList.add('hidden');
+            salaryStep4.classList.add('hidden');
+            userSelectionContainer.classList.add('hidden');
+            affiliationSelect.value = '';
+            goToStep2Btn.disabled = true;
+            salaryCalculationState = {};
+        }
+        
+        function timeToMinutes(timeStr) {
+            if (!timeStr || !timeStr.includes(':')) return 0;
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return hours * 60 + minutes;
+        }
+
+        function calculateWorkHours(start, end) {
+            let startMinutes = timeToMinutes(start);
+            let endMinutes = timeToMinutes(end);
+            if (endMinutes < startMinutes) endMinutes += 24 * 60; // 야간 근무 처리
+            return (endMinutes - startMinutes) / 60;
+        }
+
+        affiliationSelect.addEventListener('change', () => {
+            const selectedAffiliation = affiliationSelect.value;
+            if (!selectedAffiliation) {
+                userSelectionContainer.classList.add('hidden');
+                return;
+            }
+            const users = getUsersFromStorage().filter(u => u.affiliation === selectedAffiliation);
+            userCheckboxList.innerHTML = users.map(user => `
+                <label class="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600">
+                    <input type="checkbox" name="selectedUsers" value="${user.id}" class="rounded text-indigo-600 focus:ring-indigo-500">
+                    <span>${user.name}</span>
+                </label>
+            `).join('');
+            userSelectionContainer.classList.remove('hidden');
+        });
+
+        userCheckboxList.addEventListener('change', () => {
+            goToStep2Btn.disabled = document.querySelectorAll('input[name="selectedUsers"]:checked').length === 0;
+        });
+
+        goToStep2Btn.addEventListener('click', () => {
+            salaryCalculationState.selectedUserIds = Array.from(document.querySelectorAll('input[name="selectedUsers"]:checked')).map(cb => cb.value);
+            
+            const currentYear = new Date().getFullYear();
+            yearSelect.innerHTML = '';
+            for (let i = currentYear + 1; i >= currentYear - 5; i--) yearSelect.innerHTML += `<option value="${i}">${i}년</option>`;
+            yearSelect.value = currentYear;
+
+            monthSelect.innerHTML = '';
+            for (let i = 1; i <= 12; i++) monthSelect.innerHTML += `<option value="${i}">${i}월</option>`;
+            monthSelect.value = new Date().getMonth() + 1;
+
+            salaryStep1.classList.add('hidden');
+            salaryStep2.classList.remove('hidden');
+        });
+        
+        backToStep1Btn.addEventListener('click', () => {
+            salaryStep2.classList.add('hidden');
+            salaryStep1.classList.remove('hidden');
+        });
+
+        generateRecordBtn.addEventListener('click', () => {
+            salaryCalculationState.year = parseInt(yearSelect.value);
+            salaryCalculationState.month = parseInt(monthSelect.value);
+            generateAttendanceTable();
+            salaryStep2.classList.add('hidden');
+            salaryStep3.classList.remove('hidden');
+        });
+
+        backToStep2Btn.addEventListener('click', () => {
+            salaryStep3.classList.add('hidden');
+            salaryStep2.classList.remove('hidden');
+        });
+        
+        calculateSalaryBtn.addEventListener('click', () => {
+            calculateAndShowResults();
+            salaryStep3.classList.add('hidden');
+            salaryStep4.classList.remove('hidden');
+        });
+
+        backToStep3Btn.addEventListener('click', () => {
+            salaryStep4.classList.add('hidden');
+            salaryStep3.classList.remove('hidden');
+        });
+
+        function generateAttendanceTable() {
+            const { selectedUserIds, year, month } = salaryCalculationState;
+            const allUsers = getUsersFromStorage();
+            const selectedUsers = allUsers.filter(u => selectedUserIds.includes(u.id));
+            const daysInMonth = new Date(year, month, 0).getDate();
+            const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+
+            let tableHTML = `
+                <table class="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th class="p-2 text-left text-xs font-medium uppercase">날짜</th>
+                            <th class="p-2 text-left text-xs font-medium uppercase">이름</th>
+                            <th class="p-2 text-left text-xs font-medium uppercase">상태</th>
+                            <th class="p-2 text-left text-xs font-medium uppercase">계획된 시간</th>
+                            <th class="p-2 text-left text-xs font-medium uppercase">실제 출근</th>
+                            <th class="p-2 text-left text-xs font-medium uppercase">실제 퇴근</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">`;
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month - 1, day);
+                const dayName = dayNames[date.getDay()];
+                
+                selectedUsers.forEach(user => {
+                    if (user.workSchedule && user.workSchedule[dayName]) {
+                        const [startTime, endTime] = user.workSchedule[dayName].split('~');
+                        const rowId = `row-${user.id}-${day}`;
+                        tableHTML += `
+                            <tr id="${rowId}" data-user-id="${user.id}" data-day="${day}" data-day-name="${dayName}">
+                                <td class="p-2 whitespace-nowrap text-sm">${month}/${day} (${dayName})</td>
+                                <td class="p-2 whitespace-nowrap text-sm">${user.name}</td>
+                                <td class="p-2">
+                                    <select class="status-select w-full rounded-md border-gray-300 dark:bg-gray-600 text-sm">
+                                        <option value="normal">정상</option>
+                                        <option value="paid-leave">유급휴가</option>
+                                        <option value="holiday-work">공휴일근무</option>
+                                    </select>
+                                </td>
+                                <td class="p-2 whitespace-nowrap text-sm">${user.workSchedule[dayName]}</td>
+                                <td class="p-2"><input type="time" class="actual-start w-full rounded-md border-gray-300 dark:bg-gray-600 text-sm" value="${startTime || ''}"></td>
+                                <td class="p-2"><input type="time" class="actual-end w-full rounded-md border-gray-300 dark:bg-gray-600 text-sm" value="${endTime || ''}"></td>
+                            </tr>
+                        `;
+                    }
+                });
+            }
+
+            tableHTML += `</tbody></table>`;
+            attendanceRecordContainer.innerHTML = tableHTML;
+            
+            // 상태 변경 시 배경색 적용
+            attendanceRecordContainer.querySelectorAll('.status-select').forEach(select => {
+                select.addEventListener('change', (e) => {
+                    const row = e.target.closest('tr');
+                    row.classList.remove('status-paid-leave', 'status-holiday-work');
+                    if (e.target.value === 'paid-leave') {
+                        row.classList.add('status-paid-leave');
+                    } else if (e.target.value === 'holiday-work') {
+                        row.classList.add('status-holiday-work');
+                    }
+                });
+            });
+        }
+        
+        function calculateAndShowResults() {
+            const allUsers = getUsersFromStorage();
+            const { selectedUserIds, year, month } = salaryCalculationState;
+            const selectedUsers = allUsers.filter(u => selectedUserIds.includes(u.id));
+            let resultsHTML = '';
+
+            selectedUsers.forEach(user => {
+                const hourlyWage = user.hourlyWage || 0;
+                let totalBasePay = 0;
+                let totalOvertimePay = 0;
+                let totalHolidayPay = 0;
+                let totalWeeklyAllowance = 0;
+                
+                const weeklyHours = {}; // {weekNumber: hours}
+
+                const rows = attendanceRecordContainer.querySelectorAll(`tr[data-user-id="${user.id}"]`);
+                rows.forEach(row => {
+                    const day = parseInt(row.dataset.day);
+                    const date = new Date(year, month - 1, day);
+                    const weekNumber = Math.ceil((date.getDate() + (new Date(year, month - 1, 1).getDay() || 7) - 1) / 7);
+
+                    if (!weeklyHours[weekNumber]) weeklyHours[weekNumber] = 0;
+
+                    const status = row.querySelector('.status-select').value;
+                    const scheduledTime = row.cells[3].textContent;
+                    const actualStart = row.querySelector('.actual-start').value;
+                    const actualEnd = row.querySelector('.actual-end').value;
+
+                    const [scheduledStart, scheduledEnd] = scheduledTime.split('~');
+                    const scheduledHours = calculateWorkHours(scheduledStart, scheduledEnd);
+                    const actualHours = calculateWorkHours(actualStart, actualEnd);
+                    
+                    let dayPay = 0;
+                    
+                    if (status === 'paid-leave') {
+                        dayPay = scheduledHours * hourlyWage;
+                        totalBasePay += dayPay;
+                        weeklyHours[weekNumber] += scheduledHours; // 유급휴가도 주휴수당 산정에 포함
+                    } else if (status === 'holiday-work') {
+                        const holidayPay = actualHours * hourlyWage * 1.5; // 공휴일 가산 1.5배
+                        totalHolidayPay += holidayPay;
+                        weeklyHours[weekNumber] += actualHours;
+                    } else { // normal
+                        const baseHours = Math.min(actualHours, scheduledHours);
+                        const overtimeHours = Math.max(0, actualHours - scheduledHours);
+
+                        totalBasePay += baseHours * hourlyWage;
+                        totalOvertimePay += overtimeHours * hourlyWage * 1.5; // 연장근무 가산 1.5배
+                        weeklyHours[weekNumber] += actualHours;
+                    }
+                });
+                
+                // 주휴수당 계산
+                Object.values(weeklyHours).forEach(hours => {
+                    if (hours >= 15) {
+                        const weeklyAllowance = (hours / 40) * 8 * hourlyWage; // 1주 40시간 기준
+                        totalWeeklyAllowance += weeklyAllowance;
+                    }
+                });
+
+                const totalPay = totalBasePay + totalOvertimePay + totalHolidayPay + totalWeeklyAllowance;
+                const tax = user.taxType === '3.3%' ? totalPay * 0.033 : 0; // 4대보험은 별도 계산 필요
+                const netPay = totalPay - tax;
+
+                resultsHTML += `
+                    <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg mb-4">
+                        <h3 class="text-xl font-bold text-indigo-600 dark:text-indigo-400 mb-4">${user.name} (${user.affiliation})</h3>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div><span class="font-medium text-gray-600 dark:text-gray-400">기본급여:</span> ${Math.round(totalBasePay).toLocaleString()} 원</div>
+                            <div><span class="font-medium text-gray-600 dark:text-gray-400">연장수당:</span> ${Math.round(totalOvertimePay).toLocaleString()} 원</div>
+                            <div><span class="font-medium text-gray-600 dark:text-gray-400">공휴일수당:</span> ${Math.round(totalHolidayPay).toLocaleString()} 원</div>
+                            <div><span class="font-medium text-gray-600 dark:text-gray-400">주휴수당:</span> ${Math.round(totalWeeklyAllowance).toLocaleString()} 원</div>
+                            <div class="col-span-2 border-t pt-4 mt-2 dark:border-gray-600"></div>
+                            <div><span class="font-semibold text-gray-700 dark:text-gray-300">총 지급액:</span> ${Math.round(totalPay).toLocaleString()} 원</div>
+                            <div><span class="font-semibold text-gray-700 dark:text-gray-300">공제액 (3.3%):</span> ${Math.round(tax).toLocaleString()} 원</div>
+                            <div class="col-span-2 text-lg font-bold text-green-600 dark:text-green-400 mt-2">실지급액: ${Math.round(netPay).toLocaleString()} 원</div>
+                        </div>
+                    </div>
+                `;
+            });
+            salaryResultContainer.innerHTML = resultsHTML;
+        }
+
 
         // --- 페이지 동적 컨텐츠 생성 ---
         function createWorkScheduleInputs() {
@@ -423,6 +703,7 @@
             salaryMenuBtn.addEventListener('click', () => {
                 showSection(salarySection, usersSection);
                 updateMenuStyles(salaryMenuBtn, usersMenuBtn);
+                initializeSalaryPage();
             });
             addUserBtn.addEventListener('click', () => openUserPanel());
             closePanelBtn.addEventListener('click', closeUserPanel);
@@ -453,7 +734,7 @@
             createWorkScheduleInputs();
             setupEventListeners();
             updateMenuStyles(usersMenuBtn, salaryMenuBtn);
-            fetchAndRenderUsers(); // 페이지 로드 시 사용자 목록 불러오기
+            fetchAndRenderUsers();
         }
 
         window.addEventListener('load', initializePage);
