@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- SheetJS (XLSX) Library for Excel Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Chart.js Library for Visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; }
         * { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
@@ -55,6 +57,12 @@
                         <button id="salaryMenuBtn" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium">
                             <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2" /><path d="M2 10h20" /></svg>
                             <span class="hidden sm:inline">조교급여</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button id="statsMenuBtn" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium">
+                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                            <span class="hidden sm:inline">통계</span>
                         </button>
                     </li>
                 </ul>
@@ -149,6 +157,24 @@
                     <div id="salaryResultContainer"></div>
                 </div>
             </section>
+
+            <!-- 통계 섹션 -->
+            <section id="statisticsSection" class="hidden">
+                <h2 class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400 mb-4">급여 통계</h2>
+                <div class="flex space-x-4 mb-4 bg-gray-50 dark:bg-gray-700 p-4 rounded-md">
+                    <div class="flex-1">
+                        <label for="statsAffiliationSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">소속</label>
+                        <select id="statsAffiliationSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-600 dark:border-gray-500"></select>
+                    </div>
+                    <div class="flex-1">
+                        <label for="statsYearSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">연도</label>
+                        <select id="statsYearSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-600 dark:border-gray-500"></select>
+                    </div>
+                </div>
+                <div>
+                    <canvas id="salaryChart"></canvas>
+                </div>
+            </section>
         </div>
     </main>
 
@@ -214,8 +240,10 @@
         const htmlElement = document.documentElement;
         const usersMenuBtn = document.getElementById('usersMenuBtn');
         const salaryMenuBtn = document.getElementById('salaryMenuBtn');
+        const statsMenuBtn = document.getElementById('statsMenuBtn');
         const usersSection = document.getElementById('usersSection');
         const salarySection = document.getElementById('salarySection');
+        const statisticsSection = document.getElementById('statisticsSection');
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const sunIcon = document.getElementById('sunIcon');
         const moonIcon = document.getElementById('moonIcon');
@@ -250,8 +278,15 @@
         const salaryResultContainer = document.getElementById('salaryResultContainer');
         const exportToExcelBtn = document.getElementById('exportToExcelBtn');
 
+        // --- 통계 UI 요소 ---
+        const statsAffiliationSelect = document.getElementById('statsAffiliationSelect');
+        const statsYearSelect = document.getElementById('statsYearSelect');
+        const salaryChartCanvas = document.getElementById('salaryChart');
+        let salaryChart = null;
+
         // --- 로컬 스토리지 키 ---
-        const STORAGE_KEY = 'ta-assistants';
+        const USER_STORAGE_KEY = 'ta-assistants';
+        const PAYROLL_HISTORY_KEY = 'ta-payroll-history';
         let salaryCalculationState = {}; // 급여 계산 상태 저장
 
         // --- 스타일 클래스 정의 ---
@@ -278,16 +313,18 @@
         }
 
         // --- 메뉴/섹션 관리 ---
-        function updateMenuStyles(activeBtn, inactiveBtn) {
-            activeBtn.classList.remove(...inactiveMenuClasses);
+        function updateMenuStyles(activeBtn) {
+            [usersMenuBtn, salaryMenuBtn, statsMenuBtn].forEach(btn => {
+                btn.classList.remove(...activeMenuClasses);
+                btn.classList.add(...inactiveMenuClasses);
+            });
             activeBtn.classList.add(...activeMenuClasses);
-            inactiveBtn.classList.remove(...activeMenuClasses);
-            inactiveBtn.classList.add(...inactiveMenuClasses);
+            activeBtn.classList.remove(...inactiveMenuClasses);
         }
 
-        function showSection(sectionToShow, sectionToHide) {
+        function showSection(sectionToShow) {
+             [usersSection, salarySection, statisticsSection].forEach(sec => sec.classList.add('hidden'));
              sectionToShow.classList.remove('hidden');
-             sectionToHide.classList.add('hidden');
         }
 
         // --- 사용자 관리 패널(사이드바) 관리 ---
@@ -336,12 +373,29 @@
 
         // --- 로컬 스토리지 데이터 처리 ---
         function getUsersFromStorage() {
-            const usersJSON = localStorage.getItem(STORAGE_KEY);
+            const usersJSON = localStorage.getItem(USER_STORAGE_KEY);
             return usersJSON ? JSON.parse(usersJSON) : [];
         }
 
         function saveUsersToStorage(users) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+            localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(users));
+        }
+
+        function getPayrollHistory() {
+            const historyJSON = localStorage.getItem(PAYROLL_HISTORY_KEY);
+            return historyJSON ? JSON.parse(historyJSON) : [];
+        }
+
+        function savePayrollToHistory(newPayroll) {
+            let history = getPayrollHistory();
+            // 동일 연/월 데이터가 있으면 덮어쓰기, 없으면 추가
+            const existingIndex = history.findIndex(p => p.year === newPayroll.year && p.month === newPayroll.month);
+            if (existingIndex > -1) {
+                history[existingIndex] = newPayroll;
+            } else {
+                history.push(newPayroll);
+            }
+            localStorage.setItem(PAYROLL_HISTORY_KEY, JSON.stringify(history));
         }
 
         function fetchAndRenderUsers() {
@@ -588,7 +642,7 @@
                     const [startTime, endTime] = isWorkDay ? user.workSchedule[dayName].split('~') : ['', ''];
 
                     tableHTML += `
-                        <tr id="${rowId}" data-user-id="${user.id}" data-day="${day}" data-day-name="${dayName}" class="${!isWorkDay ? 'status-off-day' : ''}">
+                        <tr id="${rowId}" data-user-id="${user.id}" data-day="${day}" data-day-name="${dayName}">
                             <td class="p-2 whitespace-nowrap">${month}/${day} (${dayName})</td>
                             <td class="p-2 whitespace-nowrap">${user.name}</td>
                             <td class="p-2">
@@ -622,6 +676,10 @@
                                         <input type="checkbox" class="weekly-allowance-cb" data-allowance="0">
                                         <span>주휴수당 지급 (<span class="weekly-allowance-amount">0</span>원)</span>
                                     </label>
+                                    <span class="weekly-allowance-warning text-red-500 text-xs ml-2 hidden">
+                                        <svg class="inline w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                        결근 시 주휴수당 미지급
+                                    </span>
                                 </td>
                             </tr>
                          `;
@@ -714,14 +772,25 @@
 
             if (isPaidLeave) {
                 dailyPay = scheduledHours * hourlyWage;
-            } else if (isHolidayWork) {
-                dailyPay = actualHours * hourlyWage * 1.5 + nightAllowance;
-            } else if (status === 'extra-work') {
-                dailyPay = actualHours * hourlyWage * 1.5 + nightAllowance;
-            } else { // normal
-                const baseHours = Math.min(actualHours, scheduledHours);
-                const overtimeHours = Math.max(0, actualHours - scheduledHours);
-                dailyPay = (baseHours * hourlyWage) + (overtimeHours * hourlyWage * 1.5) + nightAllowance;
+            } else {
+                let basePay = 0;
+                let overtimePay = 0;
+                let holidayPay = 0;
+
+                if (status === 'extra-work') {
+                    overtimePay = actualHours * hourlyWage * 1.5;
+                } else { // normal
+                    const baseHours = Math.min(actualHours, scheduledHours);
+                    const overtimeHours = Math.max(0, actualHours - scheduledHours);
+                    basePay = baseHours * hourlyWage;
+                    overtimePay = overtimeHours * hourlyWage * 1.5;
+                }
+
+                if (isHolidayWork) {
+                    holidayPay = actualHours * hourlyWage * 0.5; // 1.5배 중 0.5배만 가산
+                }
+
+                dailyPay = basePay + overtimePay + holidayPay + nightAllowance;
             }
             
             row.querySelector('.daily-pay-val').textContent = Math.round(dailyPay).toLocaleString();
@@ -769,10 +838,18 @@
                         const allowance = isEligible ? dailyAverageHours * user.hourlyWage : 0;
                         
                         const checkbox = summaryRow.querySelector('.weekly-allowance-cb');
+                        const warning = summaryRow.querySelector('.weekly-allowance-warning');
+                        
                         summaryRow.querySelector('.weekly-allowance-amount').textContent = Math.round(allowance).toLocaleString();
                         checkbox.dataset.allowance = allowance;
                         checkbox.disabled = !isEligible;
                         checkbox.checked = isEligible;
+
+                        if (data.hasAbsence) {
+                            warning.classList.remove('hidden');
+                        } else {
+                            warning.classList.add('hidden');
+                        }
                     }
                 });
             });
@@ -841,16 +918,23 @@
                         return;
                     }
 
-                    if (isHolidayWork) {
-                        totalHolidayPay += actualHours * hourlyWage * 1.5;
-                    } else if (status === 'extra-work') {
-                        totalOvertimePay += actualHours * hourlyWage * 1.5;
+                    let basePay = 0;
+                    let overtimePay = 0;
+                    
+                    if (status === 'extra-work') {
+                        overtimePay = actualHours * hourlyWage * 1.5;
                     } else { // normal
                         const baseHours = Math.min(actualHours, scheduledHours);
                         const overtimeHours = Math.max(0, actualHours - scheduledHours);
-                        totalBasePay += baseHours * hourlyWage;
-                        totalOvertimePay += overtimeHours * hourlyWage * 1.5;
+                        basePay = baseHours * hourlyWage;
+                        overtimePay = overtimeHours * hourlyWage * 1.5;
                     }
+
+                    if (isHolidayWork) {
+                        totalHolidayPay += (basePay + overtimePay) * 0.5; // 기존 급여에 0.5배 가산
+                    }
+                    totalBasePay += basePay;
+                    totalOvertimePay += overtimePay;
                 });
                 
                 let totalWeeklyAllowance = 0;
@@ -903,8 +987,8 @@
                     </div>
                 `;
                 
-                // 엑셀 내보내기를 위해 결과 저장
-                salaryCalculationState.results.push({
+                // 엑셀 내보내기 및 통계용 결과 저장
+                const resultData = {
                     userName: user.name,
                     affiliation: user.affiliation,
                     totalPay: Math.round(totalPay),
@@ -917,8 +1001,17 @@
                         localIncomeTax: Math.round(deductions.localIncomeTax || 0),
                     },
                     netPay: Math.round(netPay)
-                });
+                };
+                salaryCalculationState.results.push(resultData);
             });
+            
+            // 급여 계산 결과를 히스토리에 저장
+            savePayrollToHistory({
+                year: salaryCalculationState.year,
+                month: salaryCalculationState.month,
+                results: salaryCalculationState.results
+            });
+
             salaryResultContainer.innerHTML = resultsHTML;
         }
 
@@ -968,6 +1061,97 @@
             XLSX.writeFile(wb, `${year}년 ${month}월 조교급여명세서.xlsx`);
         }
 
+        // --- 통계 로직 ---
+        function initializeStatisticsPage() {
+            const history = getPayrollHistory();
+            const affiliations = ['전체', ...new Set(history.flatMap(p => p.results.map(r => r.affiliation)))];
+            const years = ['전체', ...new Set(history.map(p => p.year))].sort((a,b) => b-a);
+            
+            statsAffiliationSelect.innerHTML = affiliations.map(a => `<option value="${a}">${a}</option>`).join('');
+            statsYearSelect.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+
+            renderChart();
+        }
+
+        function renderChart() {
+            const history = getPayrollHistory();
+            const selectedAffiliation = statsAffiliationSelect.value;
+            const selectedYear = statsYearSelect.value;
+
+            const filteredHistory = history.filter(p => selectedYear === '전체' || p.year == selectedYear);
+            
+            const monthlyData = {};
+            for (let i = 1; i <= 12; i++) {
+                monthlyData[i] = { totalSalary: 0, employeeCount: 0, employees: new Set() };
+            }
+
+            filteredHistory.forEach(payroll => {
+                payroll.results.forEach(res => {
+                    if (selectedAffiliation === '전체' || res.affiliation === selectedAffiliation) {
+                        monthlyData[payroll.month].totalSalary += res.totalPay;
+                        monthlyData[payroll.month].employees.add(res.userName);
+                    }
+                });
+            });
+
+            const labels = [];
+            const salaryData = [];
+            const employeeData = [];
+
+            for (let i = 1; i <= 12; i++) {
+                labels.push(`${i}월`);
+                salaryData.push(monthlyData[i].totalSalary);
+                employeeData.push(monthlyData[i].employees.size);
+            }
+
+            if (salaryChart) {
+                salaryChart.destroy();
+            }
+
+            salaryChart = new Chart(salaryChartCanvas, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            type: 'bar',
+                            label: '월별 총 급여액',
+                            data: salaryData,
+                            backgroundColor: 'rgba(79, 70, 229, 0.6)', // Indigo
+                            borderColor: 'rgba(79, 70, 229, 1)',
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        },
+                        {
+                            type: 'line',
+                            label: '월별 근무자 수',
+                            data: employeeData,
+                            backgroundColor: 'rgba(219, 39, 119, 0.6)', // Pink
+                            borderColor: 'rgba(219, 39, 119, 1)',
+                            tension: 0.1,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            position: 'left',
+                            title: { display: true, text: '급여액 (원)' }
+                        },
+                        y1: {
+                            beginAtZero: true,
+                            position: 'right',
+                            title: { display: true, text: '근무자 수 (명)' },
+                            grid: { drawOnChartArea: false }
+                        }
+                    }
+                }
+            });
+        }
+
 
         // --- 페이지 동적 컨텐츠 생성 ---
         function createWorkScheduleInputs() {
@@ -987,13 +1171,18 @@
         function setupEventListeners() {
             themeToggleBtn.addEventListener('click', toggleTheme);
             usersMenuBtn.addEventListener('click', () => {
-                showSection(usersSection, salarySection);
-                updateMenuStyles(usersMenuBtn, salaryMenuBtn);
+                showSection(usersSection);
+                updateMenuStyles(usersMenuBtn);
             });
             salaryMenuBtn.addEventListener('click', () => {
-                showSection(salarySection, usersSection);
-                updateMenuStyles(salaryMenuBtn, usersMenuBtn);
+                showSection(salarySection);
+                updateMenuStyles(salaryMenuBtn);
                 initializeSalaryPage();
+            });
+            statsMenuBtn.addEventListener('click', () => {
+                showSection(statisticsSection);
+                updateMenuStyles(statsMenuBtn);
+                initializeStatisticsPage();
             });
             addUserBtn.addEventListener('click', () => openUserPanel());
             closePanelBtn.addEventListener('click', closeUserPanel);
@@ -1001,6 +1190,8 @@
             userForm.addEventListener('submit', handleFormSubmit);
             userListContainer.addEventListener('click', handleUserListClick);
             exportToExcelBtn.addEventListener('click', handleExcelExport);
+            statsAffiliationSelect.addEventListener('change', renderChart);
+            statsYearSelect.addEventListener('change', renderChart);
             
             userForm.addEventListener('change', (e) => {
                 if (e.target.classList.contains('day-checkbox')) {
@@ -1024,7 +1215,7 @@
             
             createWorkScheduleInputs();
             setupEventListeners();
-            updateMenuStyles(usersMenuBtn, salaryMenuBtn);
+            updateMenuStyles(usersMenuBtn);
             fetchAndRenderUsers();
         }
 
@@ -1032,3 +1223,4 @@
     </script>
 </body>
 </html>
+" in the document. What do you want to do with 
