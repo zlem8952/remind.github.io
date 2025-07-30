@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter Font (Google Fonts) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- SheetJS (XLSX) Library for Excel Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; }
         * { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
@@ -136,7 +138,13 @@
                 <div id="salaryStep4" class="hidden">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400">4. 최종 급여 명세서</h2>
-                        <button id="backToStep3Btn" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">이전</button>
+                        <div class="flex space-x-2">
+                            <button id="exportToExcelBtn" class="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.17 3.25a2.25 2.25 0 0 0-3.18 0L6 15.25v3.5h3.5l11.92-11.92a2.25 2.25 0 0 0 0-3.18Z"/><path d="m12 15-5 5"/><path d="M3 7v11a2 2 0 0 0 2 2h11"/></svg>
+                                <span>엑셀로 내보내기</span>
+                            </button>
+                            <button id="backToStep3Btn" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">이전</button>
+                        </div>
                     </div>
                     <div id="salaryResultContainer"></div>
                 </div>
@@ -240,6 +248,7 @@
         const calculateSalaryBtn = document.getElementById('calculateSalaryBtn');
         const backToStep3Btn = document.getElementById('backToStep3Btn');
         const salaryResultContainer = document.getElementById('salaryResultContainer');
+        const exportToExcelBtn = document.getElementById('exportToExcelBtn');
 
         // --- 로컬 스토리지 키 ---
         const STORAGE_KEY = 'ta-assistants';
@@ -564,6 +573,7 @@
                             <th class="p-2 text-left text-xs font-medium uppercase">계획</th>
                             <th class="p-2 text-left text-xs font-medium uppercase">출근</th>
                             <th class="p-2 text-left text-xs font-medium uppercase">퇴근</th>
+                            <th class="p-2 text-left text-xs font-medium uppercase">일일급여</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">`;
@@ -594,8 +604,9 @@
                                 <label><input type="checkbox" class="allowance-checkbox" value="holiday-work"> 공휴일</label>
                             </td>
                             <td class="p-2 whitespace-nowrap">${isWorkDay ? user.workSchedule[dayName] : '-'}</td>
-                            <td class="p-2"><input type="time" class="actual-start w-full rounded-md border-gray-300 dark:bg-gray-600" value="${startTime || ''}" ${!isWorkDay ? 'disabled' : ''}></td>
-                            <td class="p-2"><input type="time" class="actual-end w-full rounded-md border-gray-300 dark:bg-gray-600" value="${endTime || ''}" ${!isWorkDay ? 'disabled' : ''}></td>
+                            <td class="p-2"><input type="time" class="actual-start w-full rounded-md border-gray-300 dark:bg-gray-600" value="${startTime || ''}"></td>
+                            <td class="p-2"><input type="time" class="actual-end w-full rounded-md border-gray-300 dark:bg-gray-600" value="${endTime || ''}"></td>
+                            <td class="p-2 font-medium text-right"><span class="daily-pay-val">0</span> 원</td>
                         </tr>
                     `;
 
@@ -606,7 +617,7 @@
                             <tr class="weekly-summary-row" data-user-id="${user.id}" data-week-number="${weekNumber}">
                                 <td colspan="2" class="p-2 font-bold text-indigo-700 dark:text-indigo-300">${weekNumber}주차 요약 (${user.name})</td>
                                 <td colspan="2" class="p-2">총 근무: <span class="weekly-hours">0</span>시간</td>
-                                <td colspan="3" class="p-2">
+                                <td colspan="4" class="p-2">
                                     <label class="flex items-center space-x-2">
                                         <input type="checkbox" class="weekly-allowance-cb" data-allowance="0">
                                         <span>주휴수당 지급 (<span class="weekly-allowance-amount">0</span>원)</span>
@@ -623,9 +634,97 @@
             attendanceRecordContainer.innerHTML = tableHTML;
             
             attendanceRecordContainer.querySelectorAll('.status-select, .allowance-checkbox, .actual-start, .actual-end').forEach(el => {
-                el.addEventListener('change', updateWeeklySummaries);
+                el.addEventListener('change', (e) => {
+                    const row = e.target.closest('tr');
+                    updateRowAppearanceAndState(row);
+                    updateWeeklySummaries();
+                });
             });
-            updateWeeklySummaries(); // 초기 계산 실행
+            
+            // 초기 상태 업데이트
+            attendanceRecordContainer.querySelectorAll('tr[data-day]').forEach(row => {
+                updateRowAppearanceAndState(row);
+            });
+            updateWeeklySummaries();
+        }
+
+        function updateRowAppearanceAndState(row) {
+            if (!row || !row.matches('tr[data-day]')) return;
+
+            const statusSelect = row.querySelector('.status-select');
+            const startInput = row.querySelector('.actual-start');
+            const endInput = row.querySelector('.actual-end');
+            
+            row.classList.remove('status-absence', 'allowance-paid-leave', 'allowance-holiday-work', 'status-off-day');
+            
+            const status = statusSelect.value;
+            const isPaidLeave = row.querySelector('.allowance-checkbox[value="paid-leave"]').checked;
+            const isHolidayWork = row.querySelector('.allowance-checkbox[value="holiday-work"]').checked;
+            
+            if (status === 'absence' || status === 'off-day') {
+                startInput.disabled = true;
+                endInput.disabled = true;
+            } else {
+                startInput.disabled = false;
+                endInput.disabled = false;
+            }
+
+            if (status === 'absence') row.classList.add('status-absence');
+            if (status === 'off-day') row.classList.add('status-off-day');
+            if (isPaidLeave) row.classList.add('allowance-paid-leave');
+            if (isHolidayWork) row.classList.add('allowance-holiday-work');
+            
+            // 일일 급여 실시간 계산
+            calculateDailyPay(row);
+        }
+        
+        function calculateDailyPay(row) {
+            const userId = row.dataset.userId;
+            const user = getUsersFromStorage().find(u => u.id === userId);
+            if (!user) return;
+
+            let dailyPay = 0;
+            const hourlyWage = user.hourlyWage || 0;
+            const status = row.querySelector('.status-select')?.value;
+            if (status === 'absence' || status === 'off-day') {
+                row.querySelector('.daily-pay-val').textContent = '0';
+                return;
+            }
+
+            const isPaidLeave = row.querySelector('.allowance-checkbox[value="paid-leave"]').checked;
+            const isHolidayWork = row.querySelector('.allowance-checkbox[value="holiday-work"]').checked;
+            
+            const scheduledTime = row.cells[4].textContent;
+            const [scheduledStart, scheduledEnd] = scheduledTime.split('~');
+            const scheduledHours = calculateWorkHours(scheduledStart, scheduledEnd);
+            
+            const actualStart = row.querySelector('.actual-start').value;
+            const actualEnd = row.querySelector('.actual-end').value;
+            const actualHours = calculateWorkHours(actualStart, actualEnd);
+
+            // 야간 시간 계산 (22:00 ~ 06:00)
+            const nightStartMinutes = 22 * 60;
+            const nightEndMinutes = (24 + 6) * 60;
+            let startMinutes = timeToMinutes(actualStart);
+            let endMinutes = timeToMinutes(actualEnd);
+            if (endMinutes < startMinutes) endMinutes += 24 * 60;
+
+            const nightHours = (Math.max(0, Math.min(endMinutes, nightEndMinutes) - Math.max(startMinutes, nightStartMinutes))) / 60;
+            const nightAllowance = nightHours * hourlyWage * 0.5;
+
+            if (isPaidLeave) {
+                dailyPay = scheduledHours * hourlyWage;
+            } else if (isHolidayWork) {
+                dailyPay = actualHours * hourlyWage * 1.5 + nightAllowance;
+            } else if (status === 'extra-work') {
+                dailyPay = actualHours * hourlyWage * 1.5 + nightAllowance;
+            } else { // normal
+                const baseHours = Math.min(actualHours, scheduledHours);
+                const overtimeHours = Math.max(0, actualHours - scheduledHours);
+                dailyPay = (baseHours * hourlyWage) + (overtimeHours * hourlyWage * 1.5) + nightAllowance;
+            }
+            
+            row.querySelector('.daily-pay-val').textContent = Math.round(dailyPay).toLocaleString();
         }
         
         function updateWeeklySummaries() {
@@ -707,10 +806,11 @@
             const { selectedUserIds } = salaryCalculationState;
             const selectedUsers = allUsers.filter(u => selectedUserIds.includes(u.id));
             let resultsHTML = '';
+            salaryCalculationState.results = []; // 결과 저장 초기화
 
             selectedUsers.forEach(user => {
                 const hourlyWage = user.hourlyWage || 0;
-                let totalBasePay = 0, totalOvertimePay = 0, totalHolidayPay = 0, totalPaidLeavePay = 0;
+                let totalBasePay = 0, totalOvertimePay = 0, totalHolidayPay = 0, totalPaidLeavePay = 0, totalNightAllowance = 0;
                 
                 const rows = attendanceRecordContainer.querySelectorAll(`tr[data-user-id="${user.id}"][data-day]`);
                 rows.forEach(row => {
@@ -727,6 +827,14 @@
                     const actualStart = row.querySelector('.actual-start').value;
                     const actualEnd = row.querySelector('.actual-end').value;
                     const actualHours = calculateWorkHours(actualStart, actualEnd);
+
+                    const nightStartMinutes = 22 * 60;
+                    const nightEndMinutes = (24 + 6) * 60;
+                    let startMinutes = timeToMinutes(actualStart);
+                    let endMinutes = timeToMinutes(actualEnd);
+                    if (endMinutes < startMinutes) endMinutes += 24 * 60;
+                    const nightHours = (Math.max(0, Math.min(endMinutes, nightEndMinutes) - Math.max(startMinutes, nightStartMinutes))) / 60;
+                    totalNightAllowance += nightHours * hourlyWage * 0.5;
 
                     if (isPaidLeave) {
                         totalPaidLeavePay += scheduledHours * hourlyWage;
@@ -750,7 +858,7 @@
                     totalWeeklyAllowance += parseFloat(cb.dataset.allowance);
                 });
 
-                const totalPay = totalBasePay + totalOvertimePay + totalHolidayPay + totalPaidLeavePay + totalWeeklyAllowance;
+                const totalPay = totalBasePay + totalOvertimePay + totalHolidayPay + totalPaidLeavePay + totalWeeklyAllowance + totalNightAllowance;
                 let deductions = { total: 0 };
                 let deductionDetailsHTML = '';
 
@@ -779,6 +887,7 @@
                             <h4 class="col-span-2 text-md font-semibold mb-2 text-gray-700 dark:text-gray-300">급여 항목</h4>
                             <div><span class="font-medium text-gray-600 dark:text-gray-400">기본급여:</span> ${Math.round(totalBasePay).toLocaleString()} 원</div>
                             <div><span class="font-medium text-gray-600 dark:text-gray-400">연장수당:</span> ${Math.round(totalOvertimePay).toLocaleString()} 원</div>
+                            <div><span class="font-medium text-gray-600 dark:text-gray-400">야간수당:</span> ${Math.round(totalNightAllowance).toLocaleString()} 원</div>
                             <div><span class="font-medium text-gray-600 dark:text-gray-400">유급수당:</span> ${Math.round(totalPaidLeavePay).toLocaleString()} 원</div>
                             <div><span class="font-medium text-gray-600 dark:text-gray-400">공휴일수당:</span> ${Math.round(totalHolidayPay).toLocaleString()} 원</div>
                             <div><span class="font-medium text-gray-600 dark:text-gray-400">주휴수당:</span> ${Math.round(totalWeeklyAllowance).toLocaleString()} 원</div>
@@ -793,8 +902,70 @@
                         </div>
                     </div>
                 `;
+                
+                // 엑셀 내보내기를 위해 결과 저장
+                salaryCalculationState.results.push({
+                    userName: user.name,
+                    affiliation: user.affiliation,
+                    totalPay: Math.round(totalPay),
+                    deductions: {
+                        nationalPension: Math.round(deductions.nationalPension || 0),
+                        healthInsurance: Math.round(deductions.healthInsurance || 0),
+                        longTermCareInsurance: Math.round(deductions.longTermCareInsurance || 0),
+                        employmentInsurance: Math.round(deductions.employmentInsurance || 0),
+                        incomeTax: Math.round(deductions.incomeTax || 0),
+                        localIncomeTax: Math.round(deductions.localIncomeTax || 0),
+                    },
+                    netPay: Math.round(netPay)
+                });
             });
             salaryResultContainer.innerHTML = resultsHTML;
+        }
+
+        function handleExcelExport() {
+            const results = salaryCalculationState.results;
+            if (!results || results.length === 0) {
+                alert("내보낼 데이터가 없습니다.");
+                return;
+            }
+
+            const exportData = results.map(res => ({
+                '이름': res.userName,
+                '소속': res.affiliation,
+                '세전금액': res.totalPay,
+                '국민연금': res.deductions.nationalPension,
+                '건강보험': res.deductions.healthInsurance,
+                '장기요양보험': res.deductions.longTermCareInsurance,
+                '고용보험': res.deductions.employmentInsurance,
+                '소득세': res.deductions.incomeTax,
+                '지방소득세': res.deductions.localIncomeTax,
+                '세후금액': res.netPay
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "급여명세서");
+
+            const headerStyle = {
+                font: { bold: true, color: { rgb: "FFFFFF" } },
+                fill: { fgColor: { rgb: "4F46E5" } }, // Indigo-600
+                alignment: { horizontal: "center", vertical: "center" }
+            };
+
+            const headers = Object.keys(exportData[0]);
+            for (let i = 0; i < headers.length; i++) {
+                const cellRef = XLSX.utils.encode_cell({ c: i, r: 0 });
+                if (ws[cellRef]) ws[cellRef].s = headerStyle;
+            }
+            
+            ws['!cols'] = [
+                { wch: 15 }, { wch: 20 }, { wch: 15 }, { wch: 15 },
+                { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
+                { wch: 15 }, { wch: 15 }
+            ];
+
+            const { year, month } = salaryCalculationState;
+            XLSX.writeFile(wb, `${year}년 ${month}월 조교급여명세서.xlsx`);
         }
 
 
@@ -829,6 +1000,7 @@
             backdrop.addEventListener('click', closeUserPanel);
             userForm.addEventListener('submit', handleFormSubmit);
             userListContainer.addEventListener('click', handleUserListClick);
+            exportToExcelBtn.addEventListener('click', handleExcelExport);
             
             userForm.addEventListener('change', (e) => {
                 if (e.target.classList.contains('day-checkbox')) {
@@ -860,4 +1032,3 @@
     </script>
 </body>
 </html>
-" in the document. What do you want to do with 
