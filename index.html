@@ -1,185 +1,466 @@
 <!DOCTYPE html>
-<html lang="ko" class="light">
+<html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>조교 급여 관리</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Inter Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-    .icon { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; }
-    .transition-theme { transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>조교 급여 관리</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font (Google Fonts) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 기본 폰트 설정 */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* 모든 요소에 부드러운 색상 전환 효과 적용 */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        /* Lucide 아이콘 SVG 스타일 */
+        .icon {
+            width: 1.25rem; /* 20px */
+            height: 1.25rem; /* 20px */
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+        .icon-lg {
+            width: 1.5rem; /* 24px */
+            height: 1.5rem; /* 24px */
+        }
+        /* 스크롤바 스타일링 (다크모드 호환) */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+    <script>
+        // Tailwind CSS 다크 모드 설정을 'class' 기반으로 변경
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
 </head>
-<body class="min-h-screen bg-gray-100 text-gray-800 transition-theme dark:bg-gray-900 dark:text-gray-100">
+<body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
 
-  <!-- HEADER -->
-  <header class="bg-white dark:bg-gray-800 shadow py-4 px-6 transition-theme">
-    <div class="container mx-auto flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-indigo-700 dark:text-indigo-300">조교 급여 관리</h1>
-      <nav class="flex items-center gap-4">
-        <button id="usersMenuBtn"
-          class="flex items-center gap-2 px-4 py-2 rounded-lg transition-theme font-medium
-                 text-gray-700 bg-indigo-50 border-2 border-transparent
-                 hover:bg-indigo-100 dark:text-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600">
-          <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-          </svg>
-          <span>사용자 목록</span>
-        </button>
-        <button id="salaryMenuBtn"
-          class="flex items-center gap-2 px-4 py-2 rounded-lg transition-theme font-medium
-                 text-gray-700 bg-indigo-50 border-2 border-transparent
-                 hover:bg-indigo-100 dark:text-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600">
-          <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="2" />
-            <rect width="20" height="14" x="2" y="5" rx="2" />
-            <path d="M2 10h20" />
-          </svg>
-          <span>조교급여</span>
-        </button>
-        <!-- THEME TOGGLE BUTTON -->
-        <button id="themeToggleBtn" class="ml-2 p-2 rounded-full transition-theme hover:bg-gray-200 dark:hover:bg-gray-700">
-          <svg id="sunIcon" class="icon transition-theme" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="4" />
-            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-          </svg>
-          <svg id="moonIcon" class="icon transition-theme hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-          </svg>
-        </button>
-      </nav>
+    <!-- Header / Navigation -->
+    <header class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-30">
+        <div class="container mx-auto flex justify-between items-center py-4 px-6">
+            <h1 class="text-2xl md:text-3xl font-bold text-indigo-600 dark:text-indigo-400">조교 급여 관리</h1>
+            <nav class="flex items-center space-x-2 md:space-x-4">
+                <ul class="flex space-x-2 md:space-x-4">
+                    <li>
+                        <button id="usersMenuBtn" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium">
+                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+                            <span class="hidden sm:inline">사용자 목록</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button id="salaryMenuBtn" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium">
+                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2" /><path d="M2 10h20" /></svg>
+                            <span class="hidden sm:inline">조교급여</span>
+                        </button>
+                    </li>
+                </ul>
+                <button id="themeToggleBtn" class="p-2 rounded-full text-gray-600 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700">
+                    <svg id="sunIcon" class="icon-lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m4.93 19.07 1.41-1.41" /><path d="m17.66 6.34 1.41-1.41" /></svg>
+                    <svg id="moonIcon" class="icon-lg hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="container mx-auto mt-8 p-4 sm:p-6 md:p-8">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <!-- 사용자 목록 섹션 -->
+            <section id="usersSection">
+                <div class="flex justify-between items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-3">
+                    <h2 class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400">사용자 목록</h2>
+                    <button id="addUserBtn" class="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 shadow-md">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
+                        <span>사용자 추가</span>
+                    </button>
+                </div>
+                <!-- 사용자 목록이 표시될 컨테이너 -->
+                <div id="userListContainer" class="overflow-x-auto">
+                    <!-- JS로 사용자 목록 렌더링 -->
+                </div>
+                <div id="userIdDisplay" class="mt-6 text-gray-500 dark:text-gray-400 text-sm hidden">
+                    현재 사용자 ID: <span id="currentUserId" class="font-mono text-indigo-600 dark:text-indigo-300"></span>
+                </div>
+            </section>
+
+            <!-- 조교급여 섹션 -->
+            <section id="salarySection" class="hidden">
+                <h2 class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400 mb-6 border-b border-gray-200 dark:border-gray-700 pb-3">조교 급여 계산 및 명세서</h2>
+                <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-md shadow-inner">
+                    <p class="text-gray-700 dark:text-gray-300 leading-relaxed">이곳은 조교들의 근무 기록을 바탕으로 월별 급여를 계산하고, 개별 급여 명세서를 생성하는 페이지입니다.</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 사용자 추가/수정 패널 (사이드바) -->
+    <div id="userFormPanel" class="fixed top-0 right-0 h-full w-full max-w-md bg-white dark:bg-gray-800 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out z-50">
+        <div class="flex flex-col h-full">
+            <div class="flex justify-between items-center p-6 border-b dark:border-gray-700">
+                <h3 id="userFormTitle" class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400">사용자 추가</h3>
+                <button id="closePanelBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600">
+                    <svg class="w-6 h-6 text-gray-600 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                </button>
+            </div>
+            <form id="userForm" class="p-6 flex-grow overflow-y-auto space-y-6">
+                <input type="hidden" id="userId">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">이름</label>
+                    <input type="text" id="name" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div>
+                    <label for="dob" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">생년월일</label>
+                    <input type="date" id="dob" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div>
+                    <label for="affiliation" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">소속</label>
+                    <input type="text" id="affiliation" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">전화번호</label>
+                    <input type="tel" id="phone" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">근무 요일 및 일수</label>
+                    <div class="grid grid-cols-4 gap-2">
+                        <label class="flex items-center space-x-2 p-2 border rounded-md dark:border-gray-600"><input type="checkbox" name="workday" value="월" class="rounded text-indigo-600 focus:ring-indigo-500"><span>월</span></label>
+                        <label class="flex items-center space-x-2 p-2 border rounded-md dark:border-gray-600"><input type="checkbox" name="workday" value="화" class="rounded text-indigo-600 focus:ring-indigo-500"><span>화</span></label>
+                        <label class="flex items-center space-x-2 p-2 border rounded-md dark:border-gray-600"><input type="checkbox" name="workday" value="수" class="rounded text-indigo-600 focus:ring-indigo-500"><span>수</span></label>
+                        <label class="flex items-center space-x-2 p-2 border rounded-md dark:border-gray-600"><input type="checkbox" name="workday" value="목" class="rounded text-indigo-600 focus:ring-indigo-500"><span>목</span></label>
+                        <label class="flex items-center space-x-2 p-2 border rounded-md dark:border-gray-600"><input type="checkbox" name="workday" value="금" class="rounded text-indigo-600 focus:ring-indigo-500"><span>금</span></label>
+                        <label class="flex items-center space-x-2 p-2 border rounded-md dark:border-gray-600"><input type="checkbox" name="workday" value="토" class="rounded text-indigo-600 focus:ring-indigo-500"><span>토</span></label>
+                        <label class="flex items-center space-x-2 p-2 border rounded-md dark:border-gray-600"><input type="checkbox" name="workday" value="일" class="rounded text-indigo-600 focus:ring-indigo-500"><span>일</span></label>
+                    </div>
+                    <input type="number" id="workdaysCount" placeholder="주당 근무일수" class="mt-2 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">세금 공제 방식</label>
+                    <div class="flex space-x-4">
+                        <label class="flex items-center"><input type="radio" name="taxType" value="4대보험" required class="text-indigo-600 focus:ring-indigo-500"><span class="ml-2">4대보험</span></label>
+                        <label class="flex items-center"><input type="radio" name="taxType" value="3.3%" class="text-indigo-600 focus:ring-indigo-500"><span class="ml-2">3.3%</span></label>
+                    </div>
+                </div>
+            </form>
+            <div class="p-6 border-t dark:border-gray-700">
+                <button type="submit" form="userForm" class="w-full bg-indigo-600 text-white px-4 py-3 rounded-lg hover:bg-indigo-700 font-semibold shadow-md">저장</button>
+            </div>
+        </div>
     </div>
-  </header>
+    
+    <!-- Backdrop -->
+    <div id="backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
 
-  <!-- MAIN CONTENT -->
-  <main class="container mx-auto mt-10 p-6 bg-white dark:bg-gray-800 rounded-xl shadow transition-theme">
-    <!-- USERS SECTION -->
-    <section id="usersSection">
-      <h2 class="text-xl font-bold text-indigo-700 dark:text-indigo-300 border-b border-gray-200 dark:border-gray-600 pb-2 mb-6">
-        사용자 목록
-      </h2>
-      <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded shadow-sm transition-theme">
-        <p class="dark:text-gray-200">
-          이곳은 조교들의 이름, 사번, 연락처 등 기본적인 정보를 관리하는 페이지입니다.
-        </p>
-        <p class="mt-3 text-gray-500 text-sm dark:text-gray-400">
-          (현재는 기능 구현 전입니다. 데이터베이스 연동 후 실제 사용자 목록이 표시됩니다.)
-        </p>
-      </div>
-      <div id="userIdDisplay" class="mt-6 text-gray-500 text-sm hidden dark:text-gray-300">
-        현재 사용자 ID: <span id="currentUserId" class="font-mono text-indigo-700 dark:text-indigo-300"></span>
-      </div>
-    </section>
-    <!-- SALARY SECTION -->
-    <section id="salarySection" class="hidden">
-      <h2 class="text-xl font-bold text-indigo-700 dark:text-indigo-300 border-b border-gray-200 dark:border-gray-600 pb-2 mb-6">
-        조교 급여 계산 및 명세서
-      </h2>
-      <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded shadow-sm transition-theme">
-        <p class="dark:text-gray-200">
-          이곳은 조교들의 근무 기록을 바탕으로 월별 급여를 계산하고,
-          급여 명세서를 생성하는 페이지입니다.
-        </p>
-        <p class="mt-3 text-gray-500 text-sm dark:text-gray-400">
-          (현재는 기능 구현 전입니다. 근무 기록 입력 및 급여 계산 로직이 추가될 예정입니다.)
-        </p>
-      </div>
-    </section>
-  </main>
+    <!-- Firebase SDK (ES Module 버전) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, getDoc, setDoc, deleteDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-  <!-- FOOTER -->
-  <footer class="container mx-auto mt-12 py-4 text-center text-gray-400 text-sm transition-theme dark:text-gray-500">
-    &copy; 2025 조교 급여 관리 시스템. All rights reserved.
-  </footer>
+        // --- DOM 요소 ---
+        const htmlElement = document.documentElement;
+        const usersMenuBtn = document.getElementById('usersMenuBtn');
+        const salaryMenuBtn = document.getElementById('salaryMenuBtn');
+        const usersSection = document.getElementById('usersSection');
+        const salarySection = document.getElementById('salarySection');
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        
+        // --- 사용자 관리 UI 요소 ---
+        const addUserBtn = document.getElementById('addUserBtn');
+        const userFormPanel = document.getElementById('userFormPanel');
+        const closePanelBtn = document.getElementById('closePanelBtn');
+        const backdrop = document.getElementById('backdrop');
+        const userForm = document.getElementById('userForm');
+        const userFormTitle = document.getElementById('userFormTitle');
+        const userListContainer = document.getElementById('userListContainer');
+        const userIdDisplay = document.getElementById('userIdDisplay');
+        const currentUserId = document.getElementById('currentUserId');
 
-  <script type="module">
-    // --- DOM ELEMENTS ---
-    const htmlEl = document.documentElement;
-    const usersMenuBtn = document.getElementById('usersMenuBtn');
-    const salaryMenuBtn = document.getElementById('salaryMenuBtn');
-    const usersSection = document.getElementById('usersSection');
-    const salarySection = document.getElementById('salarySection');
-    const userIdDisplay = document.getElementById('userIdDisplay');
-    const currentUserId = document.getElementById('currentUserId');
-    const themeToggleBtn = document.getElementById('themeToggleBtn');
-    const sunIcon = document.getElementById('sunIcon');
-    const moonIcon = document.getElementById('moonIcon');
-    // --- MENU TOGGLE ---
-    function activateMenu(section) {
-      if(section === 'users') {
-        usersSection.classList.remove('hidden');
-        salarySection.classList.add('hidden');
-        usersMenuBtn.classList.add(
-          'bg-indigo-600','text-white','border-indigo-700','shadow-lg'
-        );
-        usersMenuBtn.classList.remove(
-          'text-gray-700','bg-indigo-50','border-transparent',
-          'hover:bg-indigo-100','dark:bg-gray-700','dark:hover:bg-gray-600'
-        );
-        salaryMenuBtn.classList.remove(
-          'bg-indigo-600','text-white','border-indigo-700','shadow-lg'
-        );
-        salaryMenuBtn.classList.add(
-          'text-gray-700','bg-indigo-50','border-transparent',
-          'hover:bg-indigo-100','dark:bg-gray-700','dark:hover:bg-gray-600'
-        );
-      } else {
-        salarySection.classList.remove('hidden');
-        usersSection.classList.add('hidden');
-        salaryMenuBtn.classList.add(
-          'bg-indigo-600','text-white','border-indigo-700','shadow-lg'
-        );
-        salaryMenuBtn.classList.remove(
-          'text-gray-700','bg-indigo-50','border-transparent',
-          'hover:bg-indigo-100','dark:bg-gray-700','dark:hover:bg-gray-600'
-        );
-        usersMenuBtn.classList.remove(
-          'bg-indigo-600','text-white','border-indigo-700','shadow-lg'
-        );
-        usersMenuBtn.classList.add(
-          'text-gray-700','bg-indigo-50','border-transparent',
-          'hover:bg-indigo-100','dark:bg-gray-700','dark:hover:bg-gray-600'
-        );
-      }
-    }
-    usersMenuBtn.onclick = () => activateMenu('users');
-    salaryMenuBtn.onclick = () => activateMenu('salary');
+        // --- Firebase 인스턴스 ---
+        let db = null;
+        let auth = null;
+        let currentAppUserId = null; // 로그인한 사용자의 UID
+        let usersCollectionRef = null; // 사용자 데이터 컬렉션 참조
 
-    // --- THEME LOGIC ---
-    const setTheme = (theme) => {
-      if(theme === 'dark') {
-        htmlEl.classList.add('dark');
-        sunIcon.classList.add('hidden');
-        moonIcon.classList.remove('hidden');
-      } else {
-        htmlEl.classList.remove('dark');
-        sunIcon.classList.remove('hidden');
-        moonIcon.classList.add('hidden');
-      }
-      localStorage.setItem('theme', theme);
-    }
-    const toggleTheme = () => {
-      setTheme(htmlEl.classList.contains('dark') ? 'light' : 'dark');
-    }
-    themeToggleBtn.onclick = toggleTheme;
+        // --- 스타일 클래스 정의 ---
+        const activeMenuClasses = ['bg-indigo-600', 'text-white', 'shadow-md'];
+        const inactiveMenuClasses = ['text-gray-600', 'hover:bg-indigo-100', 'hover:text-indigo-700', 'dark:text-gray-300', 'dark:hover:bg-gray-700', 'dark:hover:text-white'];
 
-    // --- PAGE INIT ---
-    window.onload = () => {
-      // theme preset
-      const savedTheme = localStorage.getItem('theme')
-        || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      setTheme(savedTheme);
-      activateMenu('users');
-      // ---- Firebase 인증 (선택적) ----
-      // 여기에 원 코드의 firebase 인증 부분을 복사하여 삽입하면 작동함 (필요 시)
-    }
-  </script>
+        // --- 테마 관리 ---
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                htmlElement.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                htmlElement.classList.remove('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            }
+        }
+
+        function toggleTheme() {
+            const newTheme = htmlElement.classList.contains('dark') ? 'light' : 'dark';
+            applyTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // --- 메뉴/섹션 관리 ---
+        function updateMenuStyles(activeBtn, inactiveBtn) {
+            activeBtn.classList.remove(...inactiveMenuClasses);
+            activeBtn.classList.add(...activeMenuClasses);
+            inactiveBtn.classList.remove(...activeMenuClasses);
+            inactiveBtn.classList.add(...inactiveMenuClasses);
+        }
+
+        function showSection(sectionToShow, sectionToHide) {
+             sectionToShow.classList.remove('hidden');
+             sectionToHide.classList.add('hidden');
+        }
+
+        // --- 사용자 관리 패널(사이드바) 관리 ---
+        function openUserPanel(user = null) {
+            userForm.reset(); // 폼 초기화
+            if (user && user.id) {
+                // 수정 모드
+                userFormTitle.textContent = '사용자 수정';
+                document.getElementById('userId').value = user.id;
+                document.getElementById('name').value = user.name || '';
+                document.getElementById('dob').value = user.dob || '';
+                document.getElementById('affiliation').value = user.affiliation || '';
+                document.getElementById('phone').value = user.phone || '';
+                document.getElementById('workdaysCount').value = user.workdaysCount || '';
+
+                // 근무요일 체크
+                document.querySelectorAll('input[name="workday"]').forEach(cb => {
+                    cb.checked = user.workdays && user.workdays.includes(cb.value);
+                });
+                // 세금 유형 체크
+                document.querySelector(`input[name="taxType"][value="${user.taxType}"]`).checked = true;
+
+            } else {
+                // 추가 모드
+                userFormTitle.textContent = '사용자 추가';
+                document.getElementById('userId').value = '';
+            }
+            backdrop.classList.remove('hidden');
+            userFormPanel.classList.remove('translate-x-full');
+        }
+
+        function closeUserPanel() {
+            userFormPanel.classList.add('translate-x-full');
+            backdrop.classList.add('hidden');
+        }
+
+        // --- Firestore 데이터 처리 ---
+        function fetchUsers() {
+            if (!usersCollectionRef) return;
+            const q = query(usersCollectionRef);
+            onSnapshot(q, (snapshot) => {
+                const users = [];
+                snapshot.forEach(doc => {
+                    users.push({ id: doc.id, ...doc.data() });
+                });
+                renderUserList(users);
+            });
+        }
+
+        function renderUserList(users) {
+            if (users.length === 0) {
+                userListContainer.innerHTML = `<div class="text-center py-10 px-6 bg-gray-50 dark:bg-gray-700 rounded-md">
+                    <p class="text-gray-500 dark:text-gray-400">등록된 사용자가 없습니다.</p>
+                    <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">'사용자 추가' 버튼을 눌러 새로운 조교를 등록하세요.</p>
+                </div>`;
+                return;
+            }
+
+            userListContainer.innerHTML = `
+                <table class="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">이름</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">소속</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">연락처</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                        ${users.map(user => `
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">${user.name}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">${user.affiliation}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">${user.phone}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                                    <button class="edit-btn text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-200" data-id="${user.id}">수정</button>
+                                    <button class="delete-btn text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-200" data-id="${user.id}">삭제</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            if (!usersCollectionRef) {
+                console.error("User not authenticated or collection reference not set.");
+                return;
+            }
+
+            const workdays = Array.from(document.querySelectorAll('input[name="workday"]:checked')).map(cb => cb.value);
+
+            const userData = {
+                name: document.getElementById('name').value,
+                dob: document.getElementById('dob').value,
+                affiliation: document.getElementById('affiliation').value,
+                phone: document.getElementById('phone').value,
+                workdays: workdays,
+                workdaysCount: document.getElementById('workdaysCount').value,
+                taxType: document.querySelector('input[name="taxType"]:checked').value,
+            };
+
+            const id = document.getElementById('userId').value;
+            try {
+                if (id) {
+                    // Update existing user
+                    const userDocRef = doc(db, usersCollectionRef.path, id);
+                    await setDoc(userDocRef, userData);
+                } else {
+                    // Add new user
+                    await addDoc(usersCollectionRef, userData);
+                }
+                closeUserPanel();
+            } catch (error) {
+                console.error("Error saving user data:", error);
+            }
+        }
+
+        async function handleUserListClick(e) {
+            const target = e.target;
+            const id = target.dataset.id;
+            if (!id) return;
+
+            if (target.classList.contains('edit-btn')) {
+                const userDocRef = doc(db, usersCollectionRef.path, id);
+                const docSnap = await getDoc(userDocRef);
+                if (docSnap.exists()) {
+                    openUserPanel({ id: docSnap.id, ...docSnap.data() });
+                }
+            }
+
+            if (target.classList.contains('delete-btn')) {
+                // In a real app, use a custom modal for confirmation.
+                // For now, using window.confirm as a placeholder.
+                // IMPORTANT: This should be replaced with a custom UI modal.
+                if (window.confirm("정말로 이 사용자를 삭제하시겠습니까?")) {
+                    try {
+                        const userDocRef = doc(db, usersCollectionRef.path, id);
+                        await deleteDoc(userDocRef);
+                    } catch (error) {
+                        console.error("Error deleting user:", error);
+                    }
+                }
+            }
+        }
+
+
+        // --- Firebase 초기화 및 인증 ---
+        async function initializeFirebase() {
+            try {
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        currentAppUserId = user.uid;
+                        currentUserId.textContent = currentAppUserId;
+                        userIdDisplay.classList.remove('hidden');
+                        
+                        // 사용자의 개인 TA 목록 컬렉션 참조 설정
+                        usersCollectionRef = collection(db, 'artifacts', appId, 'users', currentAppUserId, 'assistants');
+                        fetchUsers(); // 인증 후 사용자 데이터 가져오기
+
+                    } else {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Firebase initialization or authentication failed:", error);
+                userIdDisplay.textContent = "인증 서버에 연결할 수 없습니다.";
+                userIdDisplay.classList.remove('hidden');
+            }
+        }
+
+        // --- 이벤트 리스너 설정 ---
+        function setupEventListeners() {
+            themeToggleBtn.addEventListener('click', toggleTheme);
+            usersMenuBtn.addEventListener('click', () => {
+                showSection(usersSection, salarySection);
+                updateMenuStyles(usersMenuBtn, salaryMenuBtn);
+            });
+            salaryMenuBtn.addEventListener('click', () => {
+                showSection(salarySection, usersSection);
+                updateMenuStyles(salaryMenuBtn, usersMenuBtn);
+            });
+
+            // 사용자 관리 이벤트 리스너
+            addUserBtn.addEventListener('click', () => openUserPanel());
+            closePanelBtn.addEventListener('click', closeUserPanel);
+            backdrop.addEventListener('click', closeUserPanel);
+            userForm.addEventListener('submit', handleFormSubmit);
+            userListContainer.addEventListener('click', handleUserListClick);
+        }
+
+        // --- 페이지 초기화 ---
+        function initializePage() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            applyTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+            initializeFirebase();
+            setupEventListeners();
+            updateMenuStyles(usersMenuBtn, salaryMenuBtn);
+        }
+
+        window.addEventListener('load', initializePage);
+    </script>
 </body>
 </html>
