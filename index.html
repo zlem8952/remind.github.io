@@ -561,38 +561,30 @@
                     const dayName = dayNames[date.getDay()];
                     const isWorkDay = user.workSchedule && user.workSchedule[dayName];
                     const rowId = `row-${user.id}-${day}`;
+                    
+                    const [startTime, endTime] = isWorkDay ? user.workSchedule[dayName].split('~') : ['', ''];
 
-                    if (isWorkDay) {
-                        const [startTime, endTime] = user.workSchedule[dayName].split('~');
-                        tableHTML += `
-                            <tr id="${rowId}" data-user-id="${user.id}" data-day="${day}" data-day-name="${dayName}">
-                                <td class="p-2 whitespace-nowrap">${month}/${day} (${dayName})</td>
-                                <td class="p-2 whitespace-nowrap">${user.name}</td>
-                                <td class="p-2">
-                                    <select class="status-select w-full rounded-md border-gray-300 dark:bg-gray-600">
-                                        <option value="normal">정상</option>
-                                        <option value="extra-work">계약 외 출근</option>
-                                        <option value="absence">결근</option>
-                                    </select>
-                                </td>
-                                <td class="p-2 space-x-2">
-                                    <label><input type="checkbox" class="allowance-checkbox" value="paid-leave"> 유급</label>
-                                    <label><input type="checkbox" class="allowance-checkbox" value="holiday-work"> 공휴일</label>
-                                </td>
-                                <td class="p-2 whitespace-nowrap">${user.workSchedule[dayName]}</td>
-                                <td class="p-2"><input type="time" class="actual-start w-full rounded-md border-gray-300 dark:bg-gray-600" value="${startTime || ''}"></td>
-                                <td class="p-2"><input type="time" class="actual-end w-full rounded-md border-gray-300 dark:bg-gray-600" value="${endTime || ''}"></td>
-                            </tr>
-                        `;
-                    } else {
-                         tableHTML += `
-                            <tr id="${rowId}" data-user-id="${user.id}" data-day="${day}" data-day-name="${dayName}" class="status-off-day">
-                                <td class="p-2 whitespace-nowrap">${month}/${day} (${dayName})</td>
-                                <td class="p-2 whitespace-nowrap">${user.name}</td>
-                                <td class="p-2" colspan="5">미출근</td>
-                            </tr>
-                        `;
-                    }
+                    tableHTML += `
+                        <tr id="${rowId}" data-user-id="${user.id}" data-day="${day}" data-day-name="${dayName}" class="${!isWorkDay ? 'status-off-day' : ''}">
+                            <td class="p-2 whitespace-nowrap">${month}/${day} (${dayName})</td>
+                            <td class="p-2 whitespace-nowrap">${user.name}</td>
+                            <td class="p-2">
+                                <select class="status-select w-full rounded-md border-gray-300 dark:bg-gray-600">
+                                    <option value="normal" ${isWorkDay ? 'selected' : ''}>정상</option>
+                                    <option value="extra-work">계약 외 출근</option>
+                                    <option value="off-day" ${!isWorkDay ? 'selected' : ''}>미출근</option>
+                                    <option value="absence">결근</option>
+                                </select>
+                            </td>
+                            <td class="p-2 space-x-2">
+                                <label><input type="checkbox" class="allowance-checkbox" value="paid-leave"> 유급</label>
+                                <label><input type="checkbox" class="allowance-checkbox" value="holiday-work"> 공휴일</label>
+                            </td>
+                            <td class="p-2 whitespace-nowrap">${isWorkDay ? user.workSchedule[dayName] : '-'}</td>
+                            <td class="p-2"><input type="time" class="actual-start w-full rounded-md border-gray-300 dark:bg-gray-600" value="${startTime || ''}" ${!isWorkDay ? 'disabled' : ''}></td>
+                            <td class="p-2"><input type="time" class="actual-end w-full rounded-md border-gray-300 dark:bg-gray-600" value="${endTime || ''}" ${!isWorkDay ? 'disabled' : ''}></td>
+                        </tr>
+                    `;
                 }
             }
 
@@ -603,13 +595,29 @@
             attendanceRecordContainer.querySelectorAll('.status-select, .allowance-checkbox').forEach(el => {
                 el.addEventListener('change', (e) => {
                     const row = e.target.closest('tr');
-                    row.classList.remove('status-absence', 'allowance-paid-leave', 'allowance-holiday-work');
+                    const statusSelect = row.querySelector('.status-select');
+                    const startInput = row.querySelector('.actual-start');
+                    const endInput = row.querySelector('.actual-end');
                     
-                    const status = row.querySelector('.status-select').value;
+                    // Reset classes
+                    row.classList.remove('status-absence', 'allowance-paid-leave', 'allowance-holiday-work', 'status-off-day');
+                    
+                    const status = statusSelect.value;
                     const isPaidLeave = row.querySelector('.allowance-checkbox[value="paid-leave"]').checked;
                     const isHolidayWork = row.querySelector('.allowance-checkbox[value="holiday-work"]').checked;
+                    
+                    // Disable/enable time inputs based on status
+                    if (status === 'absence' || status === 'off-day') {
+                        startInput.disabled = true;
+                        endInput.disabled = true;
+                    } else {
+                        startInput.disabled = false;
+                        endInput.disabled = false;
+                    }
 
+                    // Apply styles
                     if (status === 'absence') row.classList.add('status-absence');
+                    if (status === 'off-day') row.classList.add('status-off-day');
                     if (isPaidLeave) row.classList.add('allowance-paid-leave');
                     if (isHolidayWork) row.classList.add('allowance-holiday-work');
                 });
@@ -652,9 +660,6 @@
 
                 const rows = attendanceRecordContainer.querySelectorAll(`tr[data-user-id="${user.id}"]`);
                 rows.forEach(row => {
-                    // 미출근 행은 건너뜀
-                    if (row.classList.contains('status-off-day')) return;
-
                     const day = parseInt(row.dataset.day);
                     const date = new Date(year, month - 1, day);
                     const weekNumber = Math.ceil((date.getDate() + (new Date(year, month - 1, 1).getDay() || 7) - 1) / 7);
@@ -668,6 +673,7 @@
                         weeklyData[weekNumber].hasAbsence = true;
                         return;
                     }
+                    if (status === 'off-day') return;
 
                     const scheduledTime = row.cells[4].textContent;
                     const [scheduledStart, scheduledEnd] = scheduledTime.split('~');
@@ -699,8 +705,7 @@
                 });
                 
                 let weeklyAllowanceHTML = '<h4 class="col-span-2 text-md font-semibold mt-4 mb-2 text-gray-700 dark:text-gray-300">주휴수당 적용</h4>';
-                let totalWeeklyAllowance = 0;
-
+                
                 Object.entries(weeklyData).forEach(([week, data]) => {
                     const isEligible = data.hours >= 15 && !data.hasAbsence;
                     const allowance = isEligible ? (Math.min(data.hours, 40) / 40) * 8 * hourlyWage : 0;
@@ -714,15 +719,21 @@
                             </label>
                         </div>
                     `;
-                    if (isEligible) {
-                        totalWeeklyAllowance += allowance;
-                    }
                 });
                 
                 const initialPay = {
                     base: totalBasePay, overtime: totalOvertimePay, holiday: totalHolidayPay,
-                    paidLeave: totalPaidLeavePay, weekly: totalWeeklyAllowance
+                    paidLeave: totalPaidLeavePay
                 };
+
+                let totalWeeklyAllowance = 0;
+                // Initial calculation based on eligibility
+                Object.values(weeklyData).forEach(data => {
+                    if (data.hours >= 15 && !data.hasAbsence) {
+                        totalWeeklyAllowance += (Math.min(data.hours, 40) / 40) * 8 * hourlyWage;
+                    }
+                });
+                initialPay.weekly = totalWeeklyAllowance;
 
                 const totalPay = Object.values(initialPay).reduce((a, b) => a + b, 0);
                 let deductions = { total: 0 };
@@ -872,3 +883,4 @@
     </script>
 </body>
 </html>
+" in the document. What do you want to do with 
