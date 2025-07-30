@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>조교 급여 관리 (로컬 스토리지)</title>
+    <title>조교 급여 관리</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter Font (Google Fonts) -->
@@ -161,17 +161,29 @@
             <!-- 통계 섹션 -->
             <section id="statisticsSection" class="hidden">
                 <h2 class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400 mb-4">급여 통계</h2>
-                <div class="flex space-x-4 mb-4 bg-gray-50 dark:bg-gray-700 p-4 rounded-md">
-                    <div class="flex-1">
-                        <label for="statsAffiliationSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">소속</label>
-                        <select id="statsAffiliationSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-600 dark:border-gray-500"></select>
+                <div class="space-y-4 bg-gray-50 dark:bg-gray-700 p-4 rounded-md">
+                    <div class="flex space-x-4">
+                        <div class="flex-1">
+                            <label for="statsAffiliationSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">소속</label>
+                            <select id="statsAffiliationSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-600 dark:border-gray-500"></select>
+                        </div>
+                        <div class="flex-1">
+                            <label for="statsYearSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">연도</label>
+                            <select id="statsYearSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-600 dark:border-gray-500"></select>
+                        </div>
                     </div>
-                    <div class="flex-1">
-                        <label for="statsYearSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">연도</label>
-                        <select id="statsYearSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-600 dark:border-gray-500"></select>
+                    <div class="flex justify-center space-x-6 pt-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="statsType" value="salary" class="text-indigo-600 focus:ring-indigo-500" checked>
+                            <span class="ml-2">급여액 보기</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="statsType" value="employees" class="text-indigo-600 focus:ring-indigo-500">
+                            <span class="ml-2">근무자 수 보기</span>
+                        </label>
                     </div>
                 </div>
-                <div>
+                <div class="mt-4">
                     <canvas id="salaryChart"></canvas>
                 </div>
             </section>
@@ -624,9 +636,10 @@
                             <th class="p-2 text-left text-xs font-medium uppercase">이름</th>
                             <th class="p-2 text-left text-xs font-medium uppercase">상태</th>
                             <th class="p-2 text-left text-xs font-medium uppercase">수당적용</th>
-                            <th class="p-2 text-left text-xs font-medium uppercase">계획</th>
-                            <th class="p-2 text-left text-xs font-medium uppercase">출근</th>
-                            <th class="p-2 text-left text-xs font-medium uppercase">퇴근</th>
+                            <th class="p-2 text-left text-xs font-medium uppercase">계약상 출근</th>
+                            <th class="p-2 text-left text-xs font-medium uppercase">계약상 퇴근</th>
+                            <th class="p-2 text-left text-xs font-medium uppercase">계산출근</th>
+                            <th class="p-2 text-left text-xs font-medium uppercase">계산퇴근</th>
                             <th class="p-2 text-left text-xs font-medium uppercase">일일급여</th>
                         </tr>
                     </thead>
@@ -657,9 +670,10 @@
                                 <label><input type="checkbox" class="allowance-checkbox" value="paid-leave"> 유급</label>
                                 <label><input type="checkbox" class="allowance-checkbox" value="holiday-work"> 공휴일</label>
                             </td>
-                            <td class="p-2 whitespace-nowrap">${isWorkDay ? user.workSchedule[dayName] : '-'}</td>
-                            <td class="p-2"><input type="time" class="actual-start w-full rounded-md border-gray-300 dark:bg-gray-600" value="${startTime || ''}"></td>
-                            <td class="p-2"><input type="time" class="actual-end w-full rounded-md border-gray-300 dark:bg-gray-600" value="${endTime || ''}"></td>
+                            <td class="p-2 whitespace-nowrap contract-start">${startTime || '-'}</td>
+                            <td class="p-2 whitespace-nowrap contract-end">${endTime || '-'}</td>
+                            <td class="p-2"><input type="time" class="calc-start w-full rounded-md border-gray-300 dark:bg-gray-600" value="${startTime || ''}"></td>
+                            <td class="p-2"><input type="time" class="calc-end w-full rounded-md border-gray-300 dark:bg-gray-600" value="${endTime || ''}"></td>
                             <td class="p-2 font-medium text-right"><span class="daily-pay-val">0</span> 원</td>
                         </tr>
                     `;
@@ -670,7 +684,7 @@
                          tableHTML += `
                             <tr class="weekly-summary-row" data-user-id="${user.id}" data-week-number="${weekNumber}">
                                 <td colspan="2" class="p-2 font-bold text-indigo-700 dark:text-indigo-300">${weekNumber}주차 요약 (${user.name})</td>
-                                <td colspan="2" class="p-2">총 근무: <span class="weekly-hours">0</span>시간</td>
+                                <td colspan="3" class="p-2">총 근무: <span class="weekly-hours">0</span>시간</td>
                                 <td colspan="4" class="p-2">
                                     <label class="flex items-center space-x-2">
                                         <input type="checkbox" class="weekly-allowance-cb" data-allowance="0">
@@ -691,7 +705,7 @@
             tableHTML += `</tbody></table>`;
             attendanceRecordContainer.innerHTML = tableHTML;
             
-            attendanceRecordContainer.querySelectorAll('.status-select, .allowance-checkbox, .actual-start, .actual-end').forEach(el => {
+            attendanceRecordContainer.querySelectorAll('.status-select, .allowance-checkbox, .calc-start, .calc-end').forEach(el => {
                 el.addEventListener('change', (e) => {
                     const row = e.target.closest('tr');
                     updateRowAppearanceAndState(row);
@@ -710,8 +724,8 @@
             if (!row || !row.matches('tr[data-day]')) return;
 
             const statusSelect = row.querySelector('.status-select');
-            const startInput = row.querySelector('.actual-start');
-            const endInput = row.querySelector('.actual-end');
+            const startInput = row.querySelector('.calc-start');
+            const endInput = row.querySelector('.calc-end');
             
             row.classList.remove('status-absence', 'allowance-paid-leave', 'allowance-holiday-work', 'status-off-day');
             
@@ -752,12 +766,12 @@
             const isPaidLeave = row.querySelector('.allowance-checkbox[value="paid-leave"]').checked;
             const isHolidayWork = row.querySelector('.allowance-checkbox[value="holiday-work"]').checked;
             
-            const scheduledTime = row.cells[4].textContent;
-            const [scheduledStart, scheduledEnd] = scheduledTime.split('~');
-            const scheduledHours = calculateWorkHours(scheduledStart, scheduledEnd);
+            const contractStart = row.querySelector('.contract-start').textContent;
+            const contractEnd = row.querySelector('.contract-end').textContent;
+            const scheduledHours = calculateWorkHours(contractStart, contractEnd);
             
-            const actualStart = row.querySelector('.actual-start').value;
-            const actualEnd = row.querySelector('.actual-end').value;
+            const actualStart = row.querySelector('.calc-start').value;
+            const actualEnd = row.querySelector('.calc-end').value;
             const actualHours = calculateWorkHours(actualStart, actualEnd);
 
             // 야간 시간 계산 (22:00 ~ 06:00)
@@ -774,23 +788,19 @@
                 dailyPay = scheduledHours * hourlyWage;
             } else {
                 let basePay = 0;
-                let overtimePay = 0;
                 let holidayPay = 0;
 
                 if (status === 'extra-work') {
-                    overtimePay = actualHours * hourlyWage * 1.5;
+                    basePay = actualHours * hourlyWage;
                 } else { // normal
-                    const baseHours = Math.min(actualHours, scheduledHours);
-                    const overtimeHours = Math.max(0, actualHours - scheduledHours);
-                    basePay = baseHours * hourlyWage;
-                    overtimePay = overtimeHours * hourlyWage * 1.5;
+                    basePay = actualHours * hourlyWage;
                 }
 
                 if (isHolidayWork) {
                     holidayPay = actualHours * hourlyWage * 0.5; // 1.5배 중 0.5배만 가산
                 }
 
-                dailyPay = basePay + overtimePay + holidayPay + nightAllowance;
+                dailyPay = basePay + holidayPay + nightAllowance;
             }
             
             row.querySelector('.daily-pay-val').textContent = Math.round(dailyPay).toLocaleString();
@@ -820,8 +830,8 @@
                     const [scheduledStart, scheduledEnd] = scheduledTime.split('~');
                     const scheduledHours = calculateWorkHours(scheduledStart, scheduledEnd);
                     
-                    const actualStart = row.querySelector('.actual-start')?.value;
-                    const actualEnd = row.querySelector('.actual-end')?.value;
+                    const actualStart = row.querySelector('.calc-start')?.value;
+                    const actualEnd = row.querySelector('.calc-end')?.value;
                     const actualHours = calculateWorkHours(actualStart, actualEnd);
 
                     weeklyData[weekNumber].hours += isPaidLeave ? scheduledHours : actualHours;
@@ -901,8 +911,8 @@
                     const [scheduledStart, scheduledEnd] = scheduledTime.split('~');
                     const scheduledHours = calculateWorkHours(scheduledStart, scheduledEnd);
                     
-                    const actualStart = row.querySelector('.actual-start').value;
-                    const actualEnd = row.querySelector('.actual-end').value;
+                    const actualStart = row.querySelector('.calc-start').value;
+                    const actualEnd = row.querySelector('.calc-end').value;
                     const actualHours = calculateWorkHours(actualStart, actualEnd);
 
                     const nightStartMinutes = 22 * 60;
@@ -919,22 +929,17 @@
                     }
 
                     let basePay = 0;
-                    let overtimePay = 0;
                     
                     if (status === 'extra-work') {
-                        overtimePay = actualHours * hourlyWage * 1.5;
+                        basePay = actualHours * hourlyWage;
                     } else { // normal
-                        const baseHours = Math.min(actualHours, scheduledHours);
-                        const overtimeHours = Math.max(0, actualHours - scheduledHours);
-                        basePay = baseHours * hourlyWage;
-                        overtimePay = overtimeHours * hourlyWage * 1.5;
+                        basePay = actualHours * hourlyWage;
                     }
 
                     if (isHolidayWork) {
-                        totalHolidayPay += (basePay + overtimePay) * 0.5; // 기존 급여에 0.5배 가산
+                        totalHolidayPay += basePay * 0.5; // 기존 급여에 0.5배 가산
                     }
                     totalBasePay += basePay;
-                    totalOvertimePay += overtimePay;
                 });
                 
                 let totalWeeklyAllowance = 0;
@@ -942,7 +947,7 @@
                     totalWeeklyAllowance += parseFloat(cb.dataset.allowance);
                 });
 
-                const totalPay = totalBasePay + totalOvertimePay + totalHolidayPay + totalPaidLeavePay + totalWeeklyAllowance + totalNightAllowance;
+                const totalPay = totalBasePay + totalHolidayPay + totalPaidLeavePay + totalWeeklyAllowance + totalNightAllowance;
                 let deductions = { total: 0 };
                 let deductionDetailsHTML = '';
 
@@ -970,7 +975,6 @@
                         <div class="grid grid-cols-2 gap-4 text-sm">
                             <h4 class="col-span-2 text-md font-semibold mb-2 text-gray-700 dark:text-gray-300">급여 항목</h4>
                             <div><span class="font-medium text-gray-600 dark:text-gray-400">기본급여:</span> ${Math.round(totalBasePay).toLocaleString()} 원</div>
-                            <div><span class="font-medium text-gray-600 dark:text-gray-400">연장수당:</span> ${Math.round(totalOvertimePay).toLocaleString()} 원</div>
                             <div><span class="font-medium text-gray-600 dark:text-gray-400">야간수당:</span> ${Math.round(totalNightAllowance).toLocaleString()} 원</div>
                             <div><span class="font-medium text-gray-600 dark:text-gray-400">유급수당:</span> ${Math.round(totalPaidLeavePay).toLocaleString()} 원</div>
                             <div><span class="font-medium text-gray-600 dark:text-gray-400">공휴일수당:</span> ${Math.round(totalHolidayPay).toLocaleString()} 원</div>
@@ -1077,12 +1081,13 @@
             const history = getPayrollHistory();
             const selectedAffiliation = statsAffiliationSelect.value;
             const selectedYear = statsYearSelect.value;
+            const chartType = document.querySelector('input[name="statsType"]:checked').value;
 
             const filteredHistory = history.filter(p => selectedYear === '전체' || p.year == selectedYear);
             
             const monthlyData = {};
             for (let i = 1; i <= 12; i++) {
-                monthlyData[i] = { totalSalary: 0, employeeCount: 0, employees: new Set() };
+                monthlyData[i] = { totalSalary: 0, employees: new Set() };
             }
 
             filteredHistory.forEach(payroll => {
@@ -1108,48 +1113,45 @@
                 salaryChart.destroy();
             }
 
-            salaryChart = new Chart(salaryChartCanvas, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            type: 'bar',
+            let chartConfig;
+            if (chartType === 'salary') {
+                chartConfig = {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [{
                             label: '월별 총 급여액',
                             data: salaryData,
-                            backgroundColor: 'rgba(79, 70, 229, 0.6)', // Indigo
+                            backgroundColor: 'rgba(79, 70, 229, 0.6)',
                             borderColor: 'rgba(79, 70, 229, 1)',
-                            borderWidth: 1,
-                            yAxisID: 'y'
-                        },
-                        {
-                            type: 'line',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: { y: { beginAtZero: true, title: { display: true, text: '급여액 (원)' } } }
+                    }
+                };
+            } else { // employees
+                chartConfig = {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [{
                             label: '월별 근무자 수',
                             data: employeeData,
-                            backgroundColor: 'rgba(219, 39, 119, 0.6)', // Pink
+                            backgroundColor: 'rgba(219, 39, 119, 0.6)',
                             borderColor: 'rgba(219, 39, 119, 1)',
-                            tension: 0.1,
-                            yAxisID: 'y1'
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            position: 'left',
-                            title: { display: true, text: '급여액 (원)' }
-                        },
-                        y1: {
-                            beginAtZero: true,
-                            position: 'right',
-                            title: { display: true, text: '근무자 수 (명)' },
-                            grid: { drawOnChartArea: false }
-                        }
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: { y: { beginAtZero: true, title: { display: true, text: '근무자 수 (명)' }, ticks: { stepSize: 1 } } }
                     }
-                }
-            });
+                };
+            }
+            salaryChart = new Chart(salaryChartCanvas, chartConfig);
         }
 
 
@@ -1192,6 +1194,9 @@
             exportToExcelBtn.addEventListener('click', handleExcelExport);
             statsAffiliationSelect.addEventListener('change', renderChart);
             statsYearSelect.addEventListener('change', renderChart);
+            document.querySelectorAll('input[name="statsType"]').forEach(radio => {
+                radio.addEventListener('change', renderChart);
+            });
             
             userForm.addEventListener('change', (e) => {
                 if (e.target.classList.contains('day-checkbox')) {
@@ -1223,4 +1228,3 @@
     </script>
 </body>
 </html>
-" in the document. What do you want to do with 
