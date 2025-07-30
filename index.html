@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>조교 급여 관리</title>
+    <title>조교 급여 관리 (로컬 스토리지)</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter Font (Google Fonts) -->
@@ -636,6 +636,7 @@
                             <th class="p-2 text-left text-xs font-medium uppercase">이름</th>
                             <th class="p-2 text-left text-xs font-medium uppercase">상태</th>
                             <th class="p-2 text-left text-xs font-medium uppercase">수당적용</th>
+                            <th class="p-2 text-left text-xs font-medium uppercase">조기적용</th>
                             <th class="p-2 text-left text-xs font-medium uppercase">계약상 출근</th>
                             <th class="p-2 text-left text-xs font-medium uppercase">계약상 퇴근</th>
                             <th class="p-2 text-left text-xs font-medium uppercase">계산출근</th>
@@ -669,6 +670,10 @@
                             <td class="p-2 space-x-2">
                                 <label><input type="checkbox" class="allowance-checkbox" value="paid-leave"> 유급</label>
                                 <label><input type="checkbox" class="allowance-checkbox" value="holiday-work"> 공휴일</label>
+                            </td>
+                            <td class="p-2 space-x-2">
+                                <label><input type="checkbox" class="early-checkbox" value="early-in"> 조기출근</label>
+                                <label><input type="checkbox" class="early-checkbox" value="early-out"> 조기퇴근</label>
                             </td>
                             <td class="p-2 whitespace-nowrap contract-start">${startTime || '-'}</td>
                             <td class="p-2 whitespace-nowrap contract-end">${endTime || '-'}</td>
@@ -705,7 +710,7 @@
             tableHTML += `</tbody></table>`;
             attendanceRecordContainer.innerHTML = tableHTML;
             
-            attendanceRecordContainer.querySelectorAll('.status-select, .allowance-checkbox, .calc-start, .calc-end').forEach(el => {
+            attendanceRecordContainer.querySelectorAll('.status-select, .allowance-checkbox, .early-checkbox, .calc-start, .calc-end').forEach(el => {
                 el.addEventListener('change', (e) => {
                     const row = e.target.closest('tr');
                     updateRowAppearanceAndState(row);
@@ -765,6 +770,8 @@
 
             const isPaidLeave = row.querySelector('.allowance-checkbox[value="paid-leave"]').checked;
             const isHolidayWork = row.querySelector('.allowance-checkbox[value="holiday-work"]').checked;
+            const isEarlyIn = row.querySelector('.early-checkbox[value="early-in"]').checked;
+            const isEarlyOut = row.querySelector('.early-checkbox[value="early-out"]').checked;
             
             const contractStart = row.querySelector('.contract-start').textContent;
             const contractEnd = row.querySelector('.contract-end').textContent;
@@ -772,13 +779,16 @@
             
             const actualStart = row.querySelector('.calc-start').value;
             const actualEnd = row.querySelector('.calc-end').value;
-            const actualHours = calculateWorkHours(actualStart, actualEnd);
+
+            const payStart = isEarlyIn ? actualStart : contractStart;
+            const payEnd = isEarlyOut ? actualEnd : actualStart;
+            const payHours = calculateWorkHours(payStart, payEnd);
 
             // 야간 시간 계산 (22:00 ~ 06:00)
             const nightStartMinutes = 22 * 60;
             const nightEndMinutes = (24 + 6) * 60;
-            let startMinutes = timeToMinutes(actualStart);
-            let endMinutes = timeToMinutes(actualEnd);
+            let startMinutes = timeToMinutes(payStart);
+            let endMinutes = timeToMinutes(payEnd);
             if (endMinutes < startMinutes) endMinutes += 24 * 60;
 
             const nightHours = (Math.max(0, Math.min(endMinutes, nightEndMinutes) - Math.max(startMinutes, nightStartMinutes))) / 60;
@@ -787,17 +797,11 @@
             if (isPaidLeave) {
                 dailyPay = scheduledHours * hourlyWage;
             } else {
-                let basePay = 0;
+                let basePay = payHours * hourlyWage;
                 let holidayPay = 0;
 
-                if (status === 'extra-work') {
-                    basePay = actualHours * hourlyWage;
-                } else { // normal
-                    basePay = actualHours * hourlyWage;
-                }
-
                 if (isHolidayWork) {
-                    holidayPay = actualHours * hourlyWage * 0.5; // 1.5배 중 0.5배만 가산
+                    holidayPay = payHours * hourlyWage * 0.5; // 1.5배 중 0.5배만 가산
                 }
 
                 dailyPay = basePay + holidayPay + nightAllowance;
@@ -897,7 +901,7 @@
 
             selectedUsers.forEach(user => {
                 const hourlyWage = user.hourlyWage || 0;
-                let totalBasePay = 0, totalOvertimePay = 0, totalHolidayPay = 0, totalPaidLeavePay = 0, totalNightAllowance = 0;
+                let totalBasePay = 0, totalHolidayPay = 0, totalPaidLeavePay = 0, totalNightAllowance = 0;
                 
                 const rows = attendanceRecordContainer.querySelectorAll(`tr[data-user-id="${user.id}"][data-day]`);
                 rows.forEach(row => {
@@ -906,19 +910,24 @@
 
                     const isPaidLeave = row.querySelector('.allowance-checkbox[value="paid-leave"]').checked;
                     const isHolidayWork = row.querySelector('.allowance-checkbox[value="holiday-work"]').checked;
+                    const isEarlyIn = row.querySelector('.early-checkbox[value="early-in"]').checked;
+                    const isEarlyOut = row.querySelector('.early-checkbox[value="early-out"]').checked;
                     
-                    const scheduledTime = row.cells[4].textContent;
-                    const [scheduledStart, scheduledEnd] = scheduledTime.split('~');
-                    const scheduledHours = calculateWorkHours(scheduledStart, scheduledEnd);
+                    const contractStart = row.querySelector('.contract-start').textContent;
+                    const contractEnd = row.querySelector('.contract-end').textContent;
+                    const scheduledHours = calculateWorkHours(contractStart, contractEnd);
                     
                     const actualStart = row.querySelector('.calc-start').value;
                     const actualEnd = row.querySelector('.calc-end').value;
-                    const actualHours = calculateWorkHours(actualStart, actualEnd);
+
+                    const payStart = isEarlyIn ? actualStart : contractStart;
+                    const payEnd = isEarlyOut ? actualEnd : contractEnd;
+                    const payHours = calculateWorkHours(payStart, payEnd);
 
                     const nightStartMinutes = 22 * 60;
                     const nightEndMinutes = (24 + 6) * 60;
-                    let startMinutes = timeToMinutes(actualStart);
-                    let endMinutes = timeToMinutes(actualEnd);
+                    let startMinutes = timeToMinutes(payStart);
+                    let endMinutes = timeToMinutes(payEnd);
                     if (endMinutes < startMinutes) endMinutes += 24 * 60;
                     const nightHours = (Math.max(0, Math.min(endMinutes, nightEndMinutes) - Math.max(startMinutes, nightStartMinutes))) / 60;
                     totalNightAllowance += nightHours * hourlyWage * 0.5;
@@ -928,16 +937,10 @@
                         return;
                     }
 
-                    let basePay = 0;
-                    
-                    if (status === 'extra-work') {
-                        basePay = actualHours * hourlyWage;
-                    } else { // normal
-                        basePay = actualHours * hourlyWage;
-                    }
+                    let basePay = payHours * hourlyWage;
 
                     if (isHolidayWork) {
-                        totalHolidayPay += basePay * 0.5; // 기존 급여에 0.5배 가산
+                        totalHolidayPay += basePay * 0.5;
                     }
                     totalBasePay += basePay;
                 });
