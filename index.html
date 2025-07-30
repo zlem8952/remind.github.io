@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>조교 급여 관리</title>
+    <title>조교 급여 관리 (로컬 스토리지)</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter Font (Google Fonts) -->
@@ -108,9 +108,6 @@
                 <div id="userListContainer" class="overflow-x-auto">
                     <!-- JS로 사용자 목록 렌더링 -->
                 </div>
-                <div id="userIdDisplay" class="mt-6 text-gray-500 dark:text-gray-400 text-sm hidden">
-                    현재 사용자 ID: <span id="currentUserId" class="font-mono text-indigo-600 dark:text-indigo-300"></span>
-                </div>
             </section>
 
             <!-- 조교급여 섹션 -->
@@ -177,12 +174,7 @@
     <!-- Backdrop -->
     <div id="backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
 
-    <!-- Firebase SDK (ES Module 버전) -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, getDoc, setDoc, deleteDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
         // --- DOM 요소 ---
         const htmlElement = document.documentElement;
         const usersMenuBtn = document.getElementById('usersMenuBtn');
@@ -201,16 +193,10 @@
         const userForm = document.getElementById('userForm');
         const userFormTitle = document.getElementById('userFormTitle');
         const userListContainer = document.getElementById('userListContainer');
-        const userIdDisplay = document.getElementById('userIdDisplay');
-        const currentUserId = document.getElementById('currentUserId');
         const workScheduleContainer = document.getElementById('workScheduleContainer');
 
-        // --- Firebase 인스턴스 및 상태 ---
-        let db = null;
-        let auth = null;
-        let currentAppUserId = null; // 로그인한 사용자의 UID
-        let usersCollectionRef = null; // 사용자 데이터 컬렉션 참조
-        let isAuthReady = false; // 인증 준비 상태 플래그
+        // --- 로컬 스토리지 키 ---
+        const STORAGE_KEY = 'ta-assistants';
 
         // --- 스타일 클래스 정의 ---
         const activeMenuClasses = ['bg-indigo-600', 'text-white', 'shadow-md'];
@@ -250,8 +236,8 @@
 
         // --- 사용자 관리 패널(사이드바) 관리 ---
         function openUserPanel(user = null) {
-            userForm.reset(); // 폼 초기화
-            document.querySelectorAll('.work-time-input').forEach(input => input.classList.add('hidden')); // 시간 입력 필드 숨기기
+            userForm.reset();
+            document.querySelectorAll('.work-time-input').forEach(input => input.classList.add('hidden'));
 
             if (user && user.id) {
                 // 수정 모드
@@ -263,7 +249,6 @@
                 document.getElementById('affiliation').value = user.affiliation || '';
                 document.getElementById('phone').value = user.phone || '';
 
-                // 근무 스케줄 채우기
                 if (user.workSchedule) {
                     Object.entries(user.workSchedule).forEach(([day, time]) => {
                         const checkbox = document.querySelector(`.day-checkbox[data-day="${day}"]`);
@@ -276,7 +261,6 @@
                     });
                 }
                 
-                // 세금 유형 체크
                 if(user.taxType) {
                     document.querySelector(`input[name="taxType"][value="${user.taxType}"]`).checked = true;
                 }
@@ -295,17 +279,19 @@
             backdrop.classList.add('hidden');
         }
 
-        // --- Firestore 데이터 처리 ---
-        function fetchUsers() {
-            if (!usersCollectionRef) return;
-            const q = query(usersCollectionRef);
-            onSnapshot(q, (snapshot) => {
-                const users = [];
-                snapshot.forEach(doc => {
-                    users.push({ id: doc.id, ...doc.data() });
-                });
-                renderUserList(users);
-            });
+        // --- 로컬 스토리지 데이터 처리 ---
+        function getUsersFromStorage() {
+            const usersJSON = localStorage.getItem(STORAGE_KEY);
+            return usersJSON ? JSON.parse(usersJSON) : [];
+        }
+
+        function saveUsersToStorage(users) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+        }
+
+        function fetchAndRenderUsers() {
+            const users = getUsersFromStorage();
+            renderUserList(users);
         }
 
         function renderUserList(users) {
@@ -344,14 +330,9 @@
             `;
         }
 
-        async function handleFormSubmit(e) {
+        function handleFormSubmit(e) {
             e.preventDefault();
-            if (!isAuthReady || !usersCollectionRef) {
-                console.error("인증이 준비되지 않았거나 DB 연결에 실패했습니다. 잠시 후 다시 시도해주세요.");
-                // 실제 앱에서는 사용자에게 이 메시지를 보여주는 것이 좋습니다.
-                return;
-            }
-
+            
             const workSchedule = {};
             document.querySelectorAll('input.day-checkbox:checked').forEach(checkbox => {
                 const day = checkbox.dataset.day;
@@ -372,43 +353,41 @@
             };
 
             const id = document.getElementById('userId').value;
-            try {
-                if (id) {
-                    // 기존 사용자 업데이트
-                    const userDocRef = doc(db, usersCollectionRef.path, id);
-                    await setDoc(userDocRef, userData);
-                } else {
-                    // 새 사용자 추가
-                    await addDoc(usersCollectionRef, userData);
-                }
-                closeUserPanel();
-            } catch (error) {
-                console.error("Error saving user data:", error);
+            let users = getUsersFromStorage();
+
+            if (id) {
+                // 기존 사용자 업데이트
+                users = users.map(user => user.id === id ? { ...user, ...userData, id: id } : user);
+            } else {
+                // 새 사용자 추가 (고유 ID 생성)
+                userData.id = `user_${Date.now()}`;
+                users.push(userData);
             }
+            
+            saveUsersToStorage(users);
+            fetchAndRenderUsers();
+            closeUserPanel();
         }
 
-        async function handleUserListClick(e) {
+        function handleUserListClick(e) {
             const target = e.target;
             const id = target.dataset.id;
-            if (!id || !isAuthReady) return;
+            if (!id) return;
 
             if (target.classList.contains('edit-btn')) {
-                const userDocRef = doc(db, usersCollectionRef.path, id);
-                const docSnap = await getDoc(userDocRef);
-                if (docSnap.exists()) {
-                    openUserPanel({ id: docSnap.id, ...docSnap.data() });
+                const users = getUsersFromStorage();
+                const userToEdit = users.find(user => user.id === id);
+                if (userToEdit) {
+                    openUserPanel(userToEdit);
                 }
             }
 
             if (target.classList.contains('delete-btn')) {
                 // 실제 앱에서는 삭제 전에 커스텀 UI로 재확인하는 것이 좋습니다.
-                // ex: if (await showCustomConfirm("정말 삭제하시겠습니까?")) { ... }
-                try {
-                    const userDocRef = doc(db, usersCollectionRef.path, id);
-                    await deleteDoc(userDocRef);
-                } catch (error) {
-                    console.error("Error deleting user:", error);
-                }
+                let users = getUsersFromStorage();
+                users = users.filter(user => user.id !== id);
+                saveUsersToStorage(users);
+                fetchAndRenderUsers();
             }
         }
 
@@ -424,45 +403,6 @@
                     <input type="text" data-day-input="${day}" placeholder="09:00~18:00" class="work-time-input hidden w-36 text-center px-2 py-1 border border-gray-300 rounded-md text-sm dark:bg-gray-600 dark:border-gray-500">
                 </div>
             `).join('');
-        }
-
-        // --- Firebase 초기화 및 인증 ---
-        async function initializeFirebase() {
-            try {
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        currentAppUserId = user.uid;
-                        currentUserId.textContent = currentAppUserId;
-                        userIdDisplay.classList.remove('hidden');
-                        
-                        usersCollectionRef = collection(db, 'artifacts', appId, 'users', currentAppUserId, 'assistants');
-                        isAuthReady = true; // 인증 완료
-                        fetchUsers();
-                    } else {
-                        try {
-                            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                                await signInWithCustomToken(auth, __initial_auth_token);
-                            } else {
-                                await signInAnonymously(auth);
-                            }
-                        } catch (authError) {
-                             console.error("Authentication sign-in failed:", authError);
-                             isAuthReady = false;
-                        }
-                    }
-                });
-            } catch (error) {
-                console.error("Firebase initialization failed:", error);
-                userIdDisplay.textContent = "인증 서버에 연결할 수 없습니다.";
-                userIdDisplay.classList.remove('hidden');
-                isAuthReady = false;
-            }
         }
 
         // --- 이벤트 리스너 설정 ---
@@ -503,9 +443,9 @@
             applyTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
             
             createWorkScheduleInputs();
-            initializeFirebase();
             setupEventListeners();
             updateMenuStyles(usersMenuBtn, salaryMenuBtn);
+            fetchAndRenderUsers(); // 페이지 로드 시 사용자 목록 불러오기
         }
 
         window.addEventListener('load', initializePage);
