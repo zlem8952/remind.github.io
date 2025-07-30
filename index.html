@@ -20,10 +20,12 @@
         .dark ::-webkit-scrollbar-thumb { background: #475569; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
         .dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
-        .status-paid-leave { background-color: #dbeafe; } /* bg-blue-100 */
-        .dark .status-paid-leave { background-color: #1e3a8a; } /* dark:bg-blue-900 */
-        .status-holiday-work { background-color: #fee2e2; } /* bg-red-100 */
-        .dark .status-holiday-work { background-color: #7f1d1d; } /* dark:bg-red-900 */
+        .status-absence { background-color: #e5e7eb; } /* bg-gray-200 */
+        .dark .status-absence { background-color: #4b5563; } /* dark:bg-gray-600 */
+        .allowance-paid-leave { background-color: #dbeafe; } /* bg-blue-100 */
+        .dark .allowance-paid-leave { background-color: #1e3a8a; } /* dark:bg-blue-900 */
+        .allowance-holiday-work { background-color: #fee2e2; } /* bg-red-100 */
+        .dark .allowance-holiday-work { background-color: #7f1d1d; } /* dark:bg-red-900 */
     </style>
     <script>
         tailwind.config = { darkMode: 'class' }
@@ -537,15 +539,16 @@
             const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
 
             let tableHTML = `
-                <table class="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                <table class="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm">
                     <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
                             <th class="p-2 text-left text-xs font-medium uppercase">날짜</th>
                             <th class="p-2 text-left text-xs font-medium uppercase">이름</th>
                             <th class="p-2 text-left text-xs font-medium uppercase">상태</th>
-                            <th class="p-2 text-left text-xs font-medium uppercase">계획된 시간</th>
-                            <th class="p-2 text-left text-xs font-medium uppercase">실제 출근</th>
-                            <th class="p-2 text-left text-xs font-medium uppercase">실제 퇴근</th>
+                            <th class="p-2 text-left text-xs font-medium uppercase">수당적용</th>
+                            <th class="p-2 text-left text-xs font-medium uppercase">계획</th>
+                            <th class="p-2 text-left text-xs font-medium uppercase">출근</th>
+                            <th class="p-2 text-left text-xs font-medium uppercase">퇴근</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">`;
@@ -560,18 +563,22 @@
                         const rowId = `row-${user.id}-${day}`;
                         tableHTML += `
                             <tr id="${rowId}" data-user-id="${user.id}" data-day="${day}" data-day-name="${dayName}">
-                                <td class="p-2 whitespace-nowrap text-sm">${month}/${day} (${dayName})</td>
-                                <td class="p-2 whitespace-nowrap text-sm">${user.name}</td>
+                                <td class="p-2 whitespace-nowrap">${month}/${day} (${dayName})</td>
+                                <td class="p-2 whitespace-nowrap">${user.name}</td>
                                 <td class="p-2">
-                                    <select class="status-select w-full rounded-md border-gray-300 dark:bg-gray-600 text-sm">
+                                    <select class="status-select w-full rounded-md border-gray-300 dark:bg-gray-600">
                                         <option value="normal">정상</option>
-                                        <option value="paid-leave">유급휴가</option>
-                                        <option value="holiday-work">공휴일근무</option>
+                                        <option value="extra-work">계약 외 출근</option>
+                                        <option value="absence">결근</option>
                                     </select>
                                 </td>
-                                <td class="p-2 whitespace-nowrap text-sm">${user.workSchedule[dayName]}</td>
-                                <td class="p-2"><input type="time" class="actual-start w-full rounded-md border-gray-300 dark:bg-gray-600 text-sm" value="${startTime || ''}"></td>
-                                <td class="p-2"><input type="time" class="actual-end w-full rounded-md border-gray-300 dark:bg-gray-600 text-sm" value="${endTime || ''}"></td>
+                                <td class="p-2 space-x-2">
+                                    <label><input type="checkbox" class="allowance-checkbox" value="paid-leave"> 유급</label>
+                                    <label><input type="checkbox" class="allowance-checkbox" value="holiday-work"> 공휴일</label>
+                                </td>
+                                <td class="p-2 whitespace-nowrap">${user.workSchedule[dayName]}</td>
+                                <td class="p-2"><input type="time" class="actual-start w-full rounded-md border-gray-300 dark:bg-gray-600" value="${startTime || ''}"></td>
+                                <td class="p-2"><input type="time" class="actual-end w-full rounded-md border-gray-300 dark:bg-gray-600" value="${endTime || ''}"></td>
                             </tr>
                         `;
                     }
@@ -581,18 +588,43 @@
             tableHTML += `</tbody></table>`;
             attendanceRecordContainer.innerHTML = tableHTML;
             
-            // 상태 변경 시 배경색 적용
-            attendanceRecordContainer.querySelectorAll('.status-select').forEach(select => {
-                select.addEventListener('change', (e) => {
+            attendanceRecordContainer.querySelectorAll('.status-select, .allowance-checkbox').forEach(el => {
+                el.addEventListener('change', (e) => {
                     const row = e.target.closest('tr');
-                    row.classList.remove('status-paid-leave', 'status-holiday-work');
-                    if (e.target.value === 'paid-leave') {
-                        row.classList.add('status-paid-leave');
-                    } else if (e.target.value === 'holiday-work') {
-                        row.classList.add('status-holiday-work');
-                    }
+                    row.classList.remove('status-absence', 'allowance-paid-leave', 'allowance-holiday-work');
+                    
+                    const status = row.querySelector('.status-select').value;
+                    const isPaidLeave = row.querySelector('.allowance-checkbox[value="paid-leave"]').checked;
+                    const isHolidayWork = row.querySelector('.allowance-checkbox[value="holiday-work"]').checked;
+
+                    if (status === 'absence') row.classList.add('status-absence');
+                    if (isPaidLeave) row.classList.add('allowance-paid-leave');
+                    if (isHolidayWork) row.classList.add('allowance-holiday-work');
                 });
             });
+        }
+        
+        function calculateDeductions(totalPay) {
+            const deductions = {
+                nationalPension: 0, healthInsurance: 0, longTermCareInsurance: 0,
+                employmentInsurance: 0, incomeTax: 0, localIncomeTax: 0, total: 0
+            };
+
+            deductions.employmentInsurance = totalPay * 0.009;
+
+            if (totalPay >= 1050000) {
+                deductions.nationalPension = totalPay * 0.045;
+                deductions.healthInsurance = totalPay * 0.03545;
+                deductions.longTermCareInsurance = deductions.healthInsurance * 0.1295;
+            }
+
+            if (totalPay > 1060000) {
+                 deductions.incomeTax = (totalPay * 0.03); // 단순 예시 세율
+            }
+            deductions.localIncomeTax = deductions.incomeTax * 0.1;
+
+            deductions.total = Object.values(deductions).reduce((acc, val) => acc + val, 0);
+            return deductions;
         }
         
         function calculateAndShowResults() {
@@ -603,74 +635,97 @@
 
             selectedUsers.forEach(user => {
                 const hourlyWage = user.hourlyWage || 0;
-                let totalBasePay = 0;
-                let totalOvertimePay = 0;
-                let totalHolidayPay = 0;
-                let totalWeeklyAllowance = 0;
-                
-                const weeklyHours = {}; // {weekNumber: hours}
+                let totalBasePay = 0, totalOvertimePay = 0, totalHolidayPay = 0, totalWeeklyAllowance = 0, totalPaidLeavePay = 0;
+                const weeklyHours = {};
 
                 const rows = attendanceRecordContainer.querySelectorAll(`tr[data-user-id="${user.id}"]`);
                 rows.forEach(row => {
                     const day = parseInt(row.dataset.day);
                     const date = new Date(year, month - 1, day);
                     const weekNumber = Math.ceil((date.getDate() + (new Date(year, month - 1, 1).getDay() || 7) - 1) / 7);
-
                     if (!weeklyHours[weekNumber]) weeklyHours[weekNumber] = 0;
 
                     const status = row.querySelector('.status-select').value;
-                    const scheduledTime = row.cells[3].textContent;
-                    const actualStart = row.querySelector('.actual-start').value;
-                    const actualEnd = row.querySelector('.actual-end').value;
+                    const isPaidLeave = row.querySelector('.allowance-checkbox[value="paid-leave"]').checked;
+                    const isHolidayWork = row.querySelector('.allowance-checkbox[value="holiday-work"]').checked;
+                    
+                    if (status === 'absence') return;
 
+                    const scheduledTime = row.cells[4].textContent;
                     const [scheduledStart, scheduledEnd] = scheduledTime.split('~');
                     const scheduledHours = calculateWorkHours(scheduledStart, scheduledEnd);
+                    
+                    const actualStart = row.querySelector('.actual-start').value;
+                    const actualEnd = row.querySelector('.actual-end').value;
                     const actualHours = calculateWorkHours(actualStart, actualEnd);
-                    
-                    let dayPay = 0;
-                    
-                    if (status === 'paid-leave') {
-                        dayPay = scheduledHours * hourlyWage;
-                        totalBasePay += dayPay;
-                        weeklyHours[weekNumber] += scheduledHours; // 유급휴가도 주휴수당 산정에 포함
-                    } else if (status === 'holiday-work') {
-                        const holidayPay = actualHours * hourlyWage * 1.5; // 공휴일 가산 1.5배
-                        totalHolidayPay += holidayPay;
+
+                    if (isPaidLeave) {
+                        totalPaidLeavePay += scheduledHours * hourlyWage;
+                        weeklyHours[weekNumber] += scheduledHours; // 주휴수당 산정에 포함
+                        return; // 유급휴일은 다른 계산과 중복하지 않음
+                    }
+
+                    if (isHolidayWork) {
+                        totalHolidayPay += actualHours * hourlyWage * 1.5;
+                        weeklyHours[weekNumber] += actualHours;
+                    } else if (status === 'extra-work') {
+                        totalOvertimePay += actualHours * hourlyWage * 1.5;
                         weeklyHours[weekNumber] += actualHours;
                     } else { // normal
                         const baseHours = Math.min(actualHours, scheduledHours);
                         const overtimeHours = Math.max(0, actualHours - scheduledHours);
-
                         totalBasePay += baseHours * hourlyWage;
-                        totalOvertimePay += overtimeHours * hourlyWage * 1.5; // 연장근무 가산 1.5배
+                        totalOvertimePay += overtimeHours * hourlyWage * 1.5;
                         weeklyHours[weekNumber] += actualHours;
                     }
                 });
                 
-                // 주휴수당 계산
                 Object.values(weeklyHours).forEach(hours => {
                     if (hours >= 15) {
-                        const weeklyAllowance = (hours / 40) * 8 * hourlyWage; // 1주 40시간 기준
+                        const weeklyAllowance = Math.min(hours, 40) / 40 * 8 * hourlyWage;
                         totalWeeklyAllowance += weeklyAllowance;
                     }
                 });
 
-                const totalPay = totalBasePay + totalOvertimePay + totalHolidayPay + totalWeeklyAllowance;
-                const tax = user.taxType === '3.3%' ? totalPay * 0.033 : 0; // 4대보험은 별도 계산 필요
-                const netPay = totalPay - tax;
+                const totalPay = totalBasePay + totalOvertimePay + totalHolidayPay + totalPaidLeavePay + totalWeeklyAllowance;
+                let deductions = { total: 0 };
+                let deductionDetailsHTML = '';
+
+                if (user.taxType === '4대보험') {
+                    deductions = calculateDeductions(totalPay);
+                    deductionDetailsHTML = `
+                        <h4 class="col-span-2 text-md font-semibold mt-4 mb-2 text-gray-700 dark:text-gray-300">4대보험 공제 내역</h4>
+                        <div><span class="font-medium text-gray-600 dark:text-gray-400">국민연금:</span> ${Math.round(deductions.nationalPension).toLocaleString()} 원</div>
+                        <div><span class="font-medium text-gray-600 dark:text-gray-400">건강보험:</span> ${Math.round(deductions.healthInsurance).toLocaleString()} 원</div>
+                        <div><span class="font-medium text-gray-600 dark:text-gray-400">장기요양:</span> ${Math.round(deductions.longTermCareInsurance).toLocaleString()} 원</div>
+                        <div><span class="font-medium text-gray-600 dark:text-gray-400">고용보험:</span> ${Math.round(deductions.employmentInsurance).toLocaleString()} 원</div>
+                        <div><span class="font-medium text-gray-600 dark:text-gray-400">소득세:</span> ${Math.round(deductions.incomeTax).toLocaleString()} 원</div>
+                        <div><span class="font-medium text-gray-600 dark:text-gray-400">지방소득세:</span> ${Math.round(deductions.localIncomeTax).toLocaleString()} 원</div>
+                    `;
+                } else if (user.taxType === '3.3%') {
+                    deductions.total = totalPay * 0.033;
+                    deductionDetailsHTML = `<div><span class="font-medium text-gray-600 dark:text-gray-400">사업소득세 (3.3%):</span> ${Math.round(deductions.total).toLocaleString()} 원</div>`;
+                }
+
+                const netPay = totalPay - deductions.total;
 
                 resultsHTML += `
                     <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg mb-4">
                         <h3 class="text-xl font-bold text-indigo-600 dark:text-indigo-400 mb-4">${user.name} (${user.affiliation})</h3>
                         <div class="grid grid-cols-2 gap-4 text-sm">
+                            <h4 class="col-span-2 text-md font-semibold mb-2 text-gray-700 dark:text-gray-300">급여 항목</h4>
                             <div><span class="font-medium text-gray-600 dark:text-gray-400">기본급여:</span> ${Math.round(totalBasePay).toLocaleString()} 원</div>
                             <div><span class="font-medium text-gray-600 dark:text-gray-400">연장수당:</span> ${Math.round(totalOvertimePay).toLocaleString()} 원</div>
+                            <div><span class="font-medium text-gray-600 dark:text-gray-400">유급수당:</span> ${Math.round(totalPaidLeavePay).toLocaleString()} 원</div>
                             <div><span class="font-medium text-gray-600 dark:text-gray-400">공휴일수당:</span> ${Math.round(totalHolidayPay).toLocaleString()} 원</div>
                             <div><span class="font-medium text-gray-600 dark:text-gray-400">주휴수당:</span> ${Math.round(totalWeeklyAllowance).toLocaleString()} 원</div>
-                            <div class="col-span-2 border-t pt-4 mt-2 dark:border-gray-600"></div>
-                            <div><span class="font-semibold text-gray-700 dark:text-gray-300">총 지급액:</span> ${Math.round(totalPay).toLocaleString()} 원</div>
-                            <div><span class="font-semibold text-gray-700 dark:text-gray-300">공제액 (3.3%):</span> ${Math.round(tax).toLocaleString()} 원</div>
-                            <div class="col-span-2 text-lg font-bold text-green-600 dark:text-green-400 mt-2">실지급액: ${Math.round(netPay).toLocaleString()} 원</div>
+                            <div class="col-span-2 border-t pt-4 mt-2 dark:border-gray-600">
+                                <span class="font-semibold text-gray-700 dark:text-gray-300">총 지급액 (과세 대상):</span> ${Math.round(totalPay).toLocaleString()} 원
+                            </div>
+                            ${deductionDetailsHTML}
+                             <div class="col-span-2 border-t pt-4 mt-4 dark:border-gray-600"></div>
+                            <div><span class="font-semibold text-gray-700 dark:text-gray-300">총 공제액:</span> ${Math.round(deductions.total).toLocaleString()} 원</div>
+                            <div class="text-lg font-bold text-green-600 dark:text-green-400">실지급액: ${Math.round(netPay).toLocaleString()} 원</div>
                         </div>
                     </div>
                 `;
