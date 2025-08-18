@@ -3,1231 +3,1890 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>조교 급여 관리</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font (Google Fonts) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- SheetJS (XLSX) Library for Excel Export -->
+    <title>대구가톨릭대학교 시간표 최적화 도구</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- Chart.js Library for Visualization -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        * { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
-        .icon { width: 1.25rem; height: 1.25rem; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
-        .icon-lg { width: 1.5rem; height: 1.5rem; }
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        .dark ::-webkit-scrollbar-track { background: #1e293b; }
-        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
-        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
-        .dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
-        .status-absence { background-color: #e5e7eb; } /* bg-gray-200 */
-        .dark .status-absence { background-color: #4b5563; } /* dark:bg-gray-600 */
-        .status-off-day { background-color: #f3f4f6; color: #9ca3af; } /* bg-gray-100 text-gray-400 */
-        .dark .status-off-day { background-color: #374151; color: #6b7280; } /* dark:bg-gray-700 dark:text-gray-500 */
-        .allowance-paid-leave { background-color: #dbeafe; } /* bg-blue-100 */
-        .dark .allowance-paid-leave { background-color: #1e3a8a; } /* dark:bg-blue-900 */
-        .allowance-holiday-work { background-color: #fee2e2; } /* bg-red-100 */
-        .dark .allowance-holiday-work { background-color: #7f1d1d; } /* dark:bg-red-900 */
-        .weekly-summary-row { background-color: #eef2ff; } /* bg-indigo-50 */
-        .dark .weekly-summary-row { background-color: #312e81; } /* dark:bg-indigo-900 */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            /* Chanel & Hermès inspired palette */
+            --primary-black: #1a1a1a;
+            --secondary-black: #2c2c2c;
+            --accent-gold: #d4af37;
+            --warm-gold: #f4e6c7;
+            --cream: #faf8f3;
+            --warm-grey: #8b8680;
+            --dark-grey: #4a4a4a;
+            --burgundy: #8b1538;
+            --navy: #1e2a4a;
+            --soft-white: #fefefe;
+            --shadow: rgba(26, 26, 26, 0.15);
+            --light-shadow: rgba(26, 26, 26, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, var(--warm-gold) 100%);
+            min-height: 100vh;
+            color: var(--primary-black);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: var(--soft-white);
+            box-shadow: 0 0 60px var(--shadow);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+            color: var(--soft-white);
+            padding: 40px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, var(--accent-gold) 0%, transparent 70%);
+            opacity: 0.1;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            letter-spacing: -0.02em;
+            color: var(--soft-white);
+        }
+
+        .header .subtitle {
+            font-size: 1.3em;
+            opacity: 0.85;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .header .tagline {
+            font-size: 1em;
+            color: var(--accent-gold);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            min-height: calc(100vh - 200px);
+        }
+
+        .sidebar {
+            background: var(--cream);
+            border-right: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 40px 30px;
+            overflow-y: auto;
+        }
+
+        .content-area {
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5em;
+            font-weight: 600;
+            color: var(--primary-black);
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--accent-gold);
+        }
+
+        .search-section {
+            margin-bottom: 30px;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 18px 50px 18px 20px;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 400;
+            background: var(--soft-white);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--warm-grey);
+            font-size: 18px;
+        }
+
+        .filter-section {
+            background: var(--soft-white);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px var(--light-shadow);
+            margin-bottom: 25px;
+        }
+
+        .filter-group {
+            margin-bottom: 20px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-grey);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-group select, .filter-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid rgba(139, 134, 128, 0.3);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--soft-white);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .filter-group select:focus, .filter-group input:focus {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+            color: var(--soft-white);
+            border: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(26, 26, 26, 0.3);
+        }
+
+        .btn.secondary {
+            background: linear-gradient(135deg, var(--burgundy) 0%, #a61e3c 100%);
+        }
+
+        .btn.tertiary {
+            background: linear-gradient(135deg, var(--navy) 0%, #2a3a5a 100%);
+        }
+
+        .course-grid {
+            display: grid;
+            gap: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .course-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .course-grid::-webkit-scrollbar-track {
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 3px;
+        }
+
+        .course-grid::-webkit-scrollbar-thumb {
+            background: var(--accent-gold);
+            border-radius: 3px;
+        }
+
+        .course-card {
+            background: var(--soft-white);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-gold);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px var(--light-shadow);
+            border-color: var(--accent-gold);
+        }
+
+        .course-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .course-card.selected {
+            background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+            color: var(--soft-white);
+            border-color: var(--accent-gold);
+            box-shadow: 0 8px 30px rgba(26, 26, 26, 0.2);
+        }
+
+        .course-card.selected::before {
+            background: var(--accent-gold);
+            transform: scaleY(1);
+        }
+
+        .course-info h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: inherit;
+        }
+
+        .course-info p {
+            margin-bottom: 8px;
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        .course-info .highlight {
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 40px;
+            color: var(--warm-grey);
+            font-size: 1.1em;
+        }
+
+        .schedule-container {
+            background: var(--soft-white);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 30px var(--light-shadow);
+            margin-top: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--cream) 0%, var(--warm-gold) 100%);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--light-shadow);
+        }
+
+        .stat-card h5 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--dark-grey);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            color: var(--primary-black);
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px var(--light-shadow);
+            margin: 20px 0;
+        }
+
+        .schedule-table th {
+            background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+            color: var(--soft-white);
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .schedule-table td {
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            padding: 8px;
+            text-align: center;
+            vertical-align: middle;
+            height: 50px;
+            background: var(--soft-white);
+            transition: all 0.3s ease;
+        }
+
+        .schedule-table .time-slot {
+            background: var(--cream);
+            font-weight: 600;
+            color: var(--dark-grey);
+            min-width: 110px;
+            font-size: 13px;
+        }
+
+        .schedule-table .course-slot {
+            background: linear-gradient(135deg, var(--burgundy) 0%, #a61e3c 100%);
+            color: var(--soft-white);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .schedule-table .course-slot:hover {
+            background: linear-gradient(135deg, var(--navy) 0%, #2a3a5a 100%);
+            transform: scale(1.02);
+        }
+
+        .selected-courses {
+            margin-top: 30px;
+            padding: 25px;
+            background: var(--cream);
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .selected-course-item {
+            background: var(--soft-white);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px var(--light-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .selected-course-item:hover {
+            transform: translateX(5px);
+        }
+
+        .remove-btn {
+            background: var(--burgundy);
+            color: var(--soft-white);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+        }
+
+        .remove-btn:hover {
+            background: #a61e3c;
+            transform: translateY(-1px);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-black);
+            color: var(--soft-white);
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px var(--shadow);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .tabs {
+            display: flex;
+            background: var(--cream);
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 25px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 20px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--dark-grey);
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: var(--soft-white);
+            color: var(--primary-black);
+            box-shadow: 0 2px 10px var(--light-shadow);
+        }
+
+        .advanced-filters {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(212, 175, 55, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .advanced-filters.show {
+            display: block;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent-gold);
+        }
+
+        .export-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--soft-white);
+            border-radius: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .export-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .export-btn {
+            padding: 10px 15px;
+            font-size: 12px;
+            background: var(--warm-grey);
+            color: var(--soft-white);
+        }
+
+        @media (max-width: 1200px) {
+            .main-layout {
+                grid-template-columns: 350px 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                border-right: none;
+                border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.2em;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
-    <script>
-        tailwind.config = { darkMode: 'class' }
-    </script>
 </head>
-<body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
-
-    <!-- Header / Navigation -->
-    <header class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-30">
-        <div class="container mx-auto flex justify-between items-center py-4 px-6">
-            <h1 class="text-2xl md:text-3xl font-bold text-indigo-600 dark:text-indigo-400">조교 급여 관리</h1>
-            <nav class="flex items-center space-x-2 md:space-x-4">
-                <ul class="flex space-x-2 md:space-x-4">
-                    <li>
-                        <button id="usersMenuBtn" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium">
-                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
-                            <span class="hidden sm:inline">사용자 목록</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button id="salaryMenuBtn" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium">
-                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2" /><path d="M2 10h20" /></svg>
-                            <span class="hidden sm:inline">조교급여</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button id="statsMenuBtn" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium">
-                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-                            <span class="hidden sm:inline">통계</span>
-                        </button>
-                    </li>
-                </ul>
-                <button id="themeToggleBtn" class="p-2 rounded-full text-gray-600 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700">
-                    <svg id="sunIcon" class="icon-lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m4.93 19.07 1.41-1.41" /><path d="m17.66 6.34 1.41-1.41" /></svg>
-                    <svg id="moonIcon" class="icon-lg hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg>
-                </button>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Main Content Area -->
-    <main class="container mx-auto mt-8 p-4 sm:p-6 md:p-8">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <!-- 사용자 목록 섹션 -->
-            <section id="usersSection">
-                <div class="flex justify-between items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-3">
-                    <h2 class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400">사용자 목록</h2>
-                    <button id="addUserBtn" class="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 shadow-md">
-                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
-                        <span>사용자 추가</span>
-                    </button>
-                </div>
-                <div id="userListContainer" class="overflow-x-auto"></div>
-            </section>
-
-            <!-- 조교급여 섹션 -->
-            <section id="salarySection" class="hidden">
-                 <!-- Step 1: 사용자 선택 -->
-                <div id="salaryStep1">
-                    <h2 class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400 mb-4">1. 급여 계산 대상 선택</h2>
-                    <div class="space-y-4 bg-gray-50 dark:bg-gray-700 p-6 rounded-md">
-                        <div>
-                            <label for="affiliationSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">소속 선택</label>
-                            <select id="affiliationSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white"></select>
-                        </div>
-                        <div id="userSelectionContainer" class="hidden">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">사용자 선택</label>
-                            <div id="userCheckboxList" class="space-y-2 p-3 border rounded-md max-h-60 overflow-y-auto dark:border-gray-600"></div>
-                        </div>
-                        <div class="text-right">
-                            <button id="goToStep2Btn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 disabled:bg-gray-400" disabled>다음</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 2: 기간 선택 -->
-                <div id="salaryStep2" class="hidden">
-                    <h2 class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400 mb-4">2. 계산 기간 선택</h2>
-                    <div class="space-y-4 bg-gray-50 dark:bg-gray-700 p-6 rounded-md">
-                        <div class="flex space-x-4">
-                            <div class="flex-1">
-                                <label for="yearSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">연도</label>
-                                <select id="yearSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-600 dark:border-gray-500"></select>
-                            </div>
-                            <div class="flex-1">
-                                <label for="monthSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">월</label>
-                                <select id="monthSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-600 dark:border-gray-500"></select>
-                            </div>
-                        </div>
-                        <div class="flex justify-between">
-                            <button id="backToStep1Btn" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">이전</button>
-                            <button id="generateRecordBtn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">근무기록 생성</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 3: 근무기록 확인 및 수정 -->
-                <div id="salaryStep3" class="hidden">
-                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400">3. 근무기록 확인 및 수정</h2>
-                        <button id="backToStep2Btn" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">이전</button>
-                    </div>
-                    <div id="attendanceRecordContainer" class="overflow-x-auto"></div>
-                    <div class="mt-6 text-right">
-                        <button id="calculateSalaryBtn" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">급여 계산하기</button>
-                    </div>
-                </div>
-                
-                <!-- Step 4: 급여 계산 결과 -->
-                <div id="salaryStep4" class="hidden">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400">4. 최종 급여 명세서</h2>
-                        <div class="flex space-x-2">
-                            <button id="exportToExcelBtn" class="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
-                                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.17 3.25a2.25 2.25 0 0 0-3.18 0L6 15.25v3.5h3.5l11.92-11.92a2.25 2.25 0 0 0 0-3.18Z"/><path d="m12 15-5 5"/><path d="M3 7v11a2 2 0 0 0 2 2h11"/></svg>
-                                <span>엑셀로 내보내기</span>
-                            </button>
-                            <button id="backToStep3Btn" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">이전</button>
-                        </div>
-                    </div>
-                    <div id="salaryResultContainer"></div>
-                </div>
-            </section>
-
-            <!-- 통계 섹션 -->
-            <section id="statisticsSection" class="hidden">
-                <h2 class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400 mb-4">급여 통계</h2>
-                <div class="space-y-4 bg-gray-50 dark:bg-gray-700 p-4 rounded-md">
-                    <div class="flex space-x-4">
-                        <div class="flex-1">
-                            <label for="statsAffiliationSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">소속</label>
-                            <select id="statsAffiliationSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-600 dark:border-gray-500"></select>
-                        </div>
-                        <div class="flex-1">
-                            <label for="statsYearSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">연도</label>
-                            <select id="statsYearSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-600 dark:border-gray-500"></select>
-                        </div>
-                    </div>
-                    <div class="flex justify-center space-x-6 pt-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="statsType" value="salary" class="text-indigo-600 focus:ring-indigo-500" checked>
-                            <span class="ml-2">급여액 보기</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="statsType" value="employees" class="text-indigo-600 focus:ring-indigo-500">
-                            <span class="ml-2">근무자 수 보기</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <canvas id="salaryChart"></canvas>
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <!-- 사용자 추가/수정 패널 (사이드바) -->
-    <div id="userFormPanel" class="fixed top-0 right-0 h-full w-full max-w-md bg-white dark:bg-gray-800 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out z-50">
-        <div class="flex flex-col h-full">
-            <div class="flex justify-between items-center p-6 border-b dark:border-gray-700">
-                <h3 id="userFormTitle" class="text-2xl font-semibold text-indigo-700 dark:text-indigo-400">사용자 추가</h3>
-                <button id="closePanelBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600">
-                    <svg class="w-6 h-6 text-gray-600 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
-                </button>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1>시간표 최적화 도구</h1>
+                <p class="subtitle">2025학년도 2학기 대구가톨릭대학교</p>
+                <p class="tagline">Elegant Schedule Planning</p>
             </div>
-            <form id="userForm" class="p-6 flex-grow overflow-y-auto space-y-6">
-                <input type="hidden" id="userId">
-                <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">이름</label>
-                    <input type="text" id="name" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600">
-                </div>
-                <div>
-                    <label for="rrn" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">주민등록번호</label>
-                    <input type="text" id="rrn" placeholder="YYMMDD-XXXXXXX" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600">
-                </div>
-                <div>
-                    <label for="affiliation" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">소속</label>
-                    <input type="text" id="affiliation" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600">
-                </div>
-                <div>
-                    <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">전화번호</label>
-                    <input type="tel" id="phone" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600">
-                </div>
-                <div>
-                    <label for="hourlyWage" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">시급</label>
-                    <input type="number" id="hourlyWage" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600">
-                </div>
-                 <div>
-                    <label for="weeklyRestDay" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">주휴일</label>
-                    <select id="weeklyRestDay" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600">
-                        <option value="일">일요일</option><option value="월">월요일</option><option value="화">화요일</option><option value="수">수요일</option><option value="목">목요일</option><option value="금">금요일</option><option value="토">토요일</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">근무 요일 및 시간</label>
-                    <div id="workScheduleContainer" class="grid grid-cols-1 gap-3"></div>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">세금 공제 방식</label>
-                    <div class="flex space-x-4">
-                        <label class="flex items-center"><input type="radio" name="taxType" value="4대보험" required class="text-indigo-600 focus:ring-indigo-500"><span class="ml-2">4대보험</span></label>
-                        <label class="flex items-center"><input type="radio" name="taxType" value="3.3%" class="text-indigo-600 focus:ring-indigo-500"><span class="ml-2">3.3%</span></label>
+        </header>
+
+        <div class="main-layout">
+            <aside class="sidebar">
+                <section class="search-section">
+                    <h3 class="section-title">검색</h3>
+                    <div class="search-container">
+                        <input type="text" id="searchInput" class="search-input" placeholder="과목명, 교수명 검색...">
+                        <span class="search-icon">🔍</span>
                     </div>
-                </div>
-            </form>
-            <div class="p-6 border-t dark:border-gray-700">
-                <button type="submit" form="userForm" class="w-full bg-indigo-600 text-white px-4 py-3 rounded-lg hover:bg-indigo-700 font-semibold shadow-md">저장</button>
-            </div>
+                </section>
+
+                <section class="filter-section">
+                    <h3 class="section-title">필터</h3>
+                    
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab('basic')">기본</button>
+                        <button class="tab" onclick="switchTab('advanced')">고급</button>
+                    </div>
+
+                    <div id="basicFilters">
+                        <div class="filter-group">
+                            <label for="departmentFilter">개설학과</label>
+                            <select id="departmentFilter">
+                                <option value="">전체</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="gradeFilter">학년</label>
+                            <select id="gradeFilter">
+                                <option value="">전체</option>
+                                <option value="1">1학년</option>
+                                <option value="2">2학년</option>
+                                <option value="3">3학년</option>
+                                <option value="4">4학년</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="typeFilter">교과구분</label>
+                            <select id="typeFilter">
+                                <option value="">전체</option>
+                                <option value="교선">교양선택</option>
+                                <option value="교필">교양필수</option>
+                                <option value="전선">전공선택</option>
+                                <option value="전필">전공필수</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="creditsFilter">학점</label>
+                            <select id="creditsFilter">
+                                <option value="">전체</option>
+                                <option value="1">1학점</option>
+                                <option value="2">2학점</option>
+                                <option value="3">3학점</option>
+                                <option value="4">4학점</option>
+                                <option value="5">5학점</option>
+                                <option value="6">6학점</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="advancedFilters" class="advanced-filters">
+                        <div class="filter-group">
+                            <label>시간대 선택</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="morning" value="morning">
+                                    <label for="morning">오전 (9-12시)</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="afternoon" value="afternoon">
+                                    <label for="afternoon">오후 (13-17시)</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="evening" value="evening">
+                                    <label for="evening">저녁 (18-21시)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>요일 선택</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="weekdays" value="weekdays" checked>
+                                    <label for="weekdays">평일</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="saturday" value="saturday">
+                                    <label for="saturday">토요일</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="maxCredits">최대 학점</label>
+                            <input type="number" id="maxCredits" min="1" max="25" placeholder="예: 18">
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="applyFilters()">필터 적용</button>
+                    <button class="btn secondary" onclick="optimizeSchedule()">시간표 최적화</button>
+                    <button class="btn tertiary" onclick="generateRecommendations()">추천 시간표</button>
+                </section>
+
+                <section class="export-section">
+                    <h4 class="section-title">내보내기</h4>
+                    <div class="export-buttons">
+                        <button class="btn export-btn" onclick="exportToPDF()">PDF</button>
+                        <button class="btn export-btn" onclick="exportToExcel()">Excel</button>
+                        <button class="btn export-btn" onclick="exportToImage()">이미지</button>
+                        <button class="btn export-btn" onclick="shareSchedule()">공유</button>
+                    </div>
+                </section>
+            </aside>
+
+            <main class="content-area">
+                <section class="results-section">
+                    <h3 class="section-title">강의 목록</h3>
+                    <div id="loadingIndicator" class="loading">
+                        강의 데이터를 불러오는 중... ⏳
+                    </div>
+                    <div id="courseGrid" class="course-grid" style="display: none;"></div>
+                </section>
+
+                <section class="schedule-container">
+                    <h3 class="section-title">시간표</h3>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h5>선택 과목</h5>
+                            <div class="value" id="selectedCount">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h5>총 학점</h5>
+                            <div class="value" id="totalCredits">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h5>시간 충돌</h5>
+                            <div class="value" id="conflicts">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h5>공강시간</h5>
+                            <div class="value" id="freeTime">0</div>
+                        </div>
+                    </div>
+                    
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>시간</th>
+                                <th>월</th>
+                                <th>화</th>
+                                <th>수</th>
+                                <th>목</th>
+                                <th>금</th>
+                                <th>토</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scheduleTableBody">
+                        </tbody>
+                    </table>
+
+                    <div class="selected-courses">
+                        <h4 class="section-title">선택한 강의</h4>
+                        <div id="selectedCoursesList"></div>
+                    </div>
+                </section>
+            </main>
         </div>
     </div>
-    
-    <div id="backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
 
-    <script type="module">
-        // --- DOM 요소 ---
-        const htmlElement = document.documentElement;
-        const usersMenuBtn = document.getElementById('usersMenuBtn');
-        const salaryMenuBtn = document.getElementById('salaryMenuBtn');
-        const statsMenuBtn = document.getElementById('statsMenuBtn');
-        const usersSection = document.getElementById('usersSection');
-        const salarySection = document.getElementById('salarySection');
-        const statisticsSection = document.getElementById('statisticsSection');
-        const themeToggleBtn = document.getElementById('themeToggleBtn');
-        const sunIcon = document.getElementById('sunIcon');
-        const moonIcon = document.getElementById('moonIcon');
-        
-        // --- 사용자 관리 UI 요소 ---
-        const addUserBtn = document.getElementById('addUserBtn');
-        const userFormPanel = document.getElementById('userFormPanel');
-        const closePanelBtn = document.getElementById('closePanelBtn');
-        const backdrop = document.getElementById('backdrop');
-        const userForm = document.getElementById('userForm');
-        const userFormTitle = document.getElementById('userFormTitle');
-        const userListContainer = document.getElementById('userListContainer');
-        const workScheduleContainer = document.getElementById('workScheduleContainer');
+    <div id="notification" class="notification"></div>
 
-        // --- 급여 관리 UI 요소 ---
-        const salaryStep1 = document.getElementById('salaryStep1');
-        const salaryStep2 = document.getElementById('salaryStep2');
-        const salaryStep3 = document.getElementById('salaryStep3');
-        const salaryStep4 = document.getElementById('salaryStep4');
-        const affiliationSelect = document.getElementById('affiliationSelect');
-        const userSelectionContainer = document.getElementById('userSelectionContainer');
-        const userCheckboxList = document.getElementById('userCheckboxList');
-        const goToStep2Btn = document.getElementById('goToStep2Btn');
-        const yearSelect = document.getElementById('yearSelect');
-        const monthSelect = document.getElementById('monthSelect');
-        const backToStep1Btn = document.getElementById('backToStep1Btn');
-        const generateRecordBtn = document.getElementById('generateRecordBtn');
-        const backToStep2Btn = document.getElementById('backToStep2Btn');
-        const attendanceRecordContainer = document.getElementById('attendanceRecordContainer');
-        const calculateSalaryBtn = document.getElementById('calculateSalaryBtn');
-        const backToStep3Btn = document.getElementById('backToStep3Btn');
-        const salaryResultContainer = document.getElementById('salaryResultContainer');
-        const exportToExcelBtn = document.getElementById('exportToExcelBtn');
+    <script>
+        let allCourses = [];
+        let filteredCourses = [];
+        let selectedCourses = [];
+        let scheduleHistory = [];
+        let currentTab = 'basic';
 
-        // --- 통계 UI 요소 ---
-        const statsAffiliationSelect = document.getElementById('statsAffiliationSelect');
-        const statsYearSelect = document.getElementById('statsYearSelect');
-        const salaryChartCanvas = document.getElementById('salaryChart');
-        let salaryChart = null;
+        // 알림 표시
+        function showNotification(message, duration = 3000) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, duration);
+        }
 
-        // --- 로컬 스토리지 키 ---
-        const USER_STORAGE_KEY = 'ta-assistants';
-        const PAYROLL_HISTORY_KEY = 'ta-payroll-history';
-        let salaryCalculationState = {}; // 급여 계산 상태 저장
-
-        // --- 스타일 클래스 정의 ---
-        const activeMenuClasses = ['bg-indigo-600', 'text-white', 'shadow-md'];
-        const inactiveMenuClasses = ['text-gray-600', 'hover:bg-indigo-100', 'hover:text-indigo-700', 'dark:text-gray-300', 'dark:hover:bg-gray-700', 'dark:hover:text-white'];
-
-        // --- 테마 관리 ---
-        function applyTheme(theme) {
-            if (theme === 'dark') {
-                htmlElement.classList.add('dark');
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
+        // 탭 전환
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+            
+            if (tab === 'advanced') {
+                document.getElementById('advancedFilters').classList.add('show');
             } else {
-                htmlElement.classList.remove('dark');
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
+                document.getElementById('advancedFilters').classList.remove('show');
             }
         }
 
-        function toggleTheme() {
-            const newTheme = htmlElement.classList.contains('dark') ? 'light' : 'dark';
-            applyTheme(newTheme);
-            localStorage.setItem('theme', newTheme);
-        }
-
-        // --- 메뉴/섹션 관리 ---
-        function updateMenuStyles(activeBtn) {
-            [usersMenuBtn, salaryMenuBtn, statsMenuBtn].forEach(btn => {
-                btn.classList.remove(...activeMenuClasses);
-                btn.classList.add(...inactiveMenuClasses);
+        // 시간표 초기화
+        function initializeSchedule() {
+            const times = [
+                '09:00-10:00', '10:00-11:00', '11:00-12:00', '12:00-13:00',
+                '13:00-14:00', '14:00-15:00', '15:00-16:00', '16:00-17:00',
+                '17:00-18:00', '18:00-19:00', '19:00-20:00', '20:00-21:00'
+            ];
+            
+            const days = ['월', '화', '수', '목', '금', '토'];
+            const tableBody = document.getElementById('scheduleTableBody');
+            
+            times.forEach(time => {
+                const row = document.createElement('tr');
+                const timeCell = document.createElement('td');
+                timeCell.className = 'time-slot';
+                timeCell.textContent = time;
+                row.appendChild(timeCell);
+                
+                days.forEach(day => {
+                    const cell = document.createElement('td');
+                    cell.id = `${day}-${time}`;
+                    cell.className = 'empty-slot';
+                    row.appendChild(cell);
+                });
+                
+                tableBody.appendChild(row);
             });
-            activeBtn.classList.add(...activeMenuClasses);
-            activeBtn.classList.remove(...inactiveMenuClasses);
         }
 
-        function showSection(sectionToShow) {
-             [usersSection, salarySection, statisticsSection].forEach(sec => sec.classList.add('hidden'));
-             sectionToShow.classList.remove('hidden');
+        // 강의 데이터 로드 (수정된 버전)
+        async function loadCourseData() {
+            try {
+                showNotification('강의 데이터를 불러오는 중입니다...');
+                
+                const response = await window.fs.readFile('2025학년도 2학기 개설교과목 정보.xlsx');
+                
+                const workbook = XLSX.read(response, {
+                    cellStyles: true,
+                    cellFormulas: true,
+                    cellDates: true,
+                    cellNF: true,
+                    sheetStubs: true
+                });
+
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                
+                // 헤더는 3번째 행 (인덱스 2)
+                const headers = jsonData[2];
+                
+                // 데이터 파싱
+                allCourses = [];
+                for (let i = 3; i < jsonData.length; i++) {
+                    const row = jsonData[i];
+                    if (row && row.length > 0 && row[0]) {
+                        const course = {};
+                        headers.forEach((header, index) => {
+                            if (header) {
+                                course[header.replace(/\r?\n/g, ' ')] = row[index] || '';
+                            }
+                        });
+                        
+                        // 시간 정보 파싱
+                        course.parsedTime = parseTimeInfo(course['개설시간 및 강의실']);
+                        course.id = course['과목-분반'];
+                        allCourses.push(course);
+                    }
+                }
+                
+                filteredCourses = [...allCourses];
+                populateFilters();
+                displayCourses();
+                
+                document.getElementById('loadingIndicator').style.display = 'none';
+                document.getElementById('courseGrid').style.display = 'block';
+                
+                showNotification(`${allCourses.length}개의 강의가 로드되었습니다!`);
+                
+            } catch (error) {
+                console.error('데이터 로드 중 오류:', error);
+                document.getElementById('loadingIndicator').innerHTML = `
+                    <div style="color: var(--burgundy);">
+                        ❌ 데이터 로드 중 오류가 발생했습니다.<br>
+                        파일이 올바른지 확인해주세요.
+                    </div>
+                `;
+                showNotification('데이터 로드에 실패했습니다.');
+            }
         }
 
-        // --- 사용자 관리 패널(사이드바) 관리 ---
-        function openUserPanel(user = null) {
-            userForm.reset();
-            document.querySelectorAll('.work-time-input').forEach(input => input.classList.add('hidden'));
-
-            if (user && user.id) {
-                userFormTitle.textContent = '사용자 수정';
-                document.getElementById('userId').value = user.id;
-                document.getElementById('name').value = user.name || '';
-                document.getElementById('rrn').value = user.rrn || '';
-                document.getElementById('affiliation').value = user.affiliation || '';
-                document.getElementById('phone').value = user.phone || '';
-                document.getElementById('hourlyWage').value = user.hourlyWage || '';
-                document.getElementById('weeklyRestDay').value = user.weeklyRestDay || '일';
-
-                if (user.workSchedule) {
-                    Object.entries(user.workSchedule).forEach(([day, time]) => {
-                        const checkbox = document.querySelector(`.day-checkbox[data-day="${day}"]`);
-                        const timeInput = document.querySelector(`.work-time-input[data-day-input="${day}"]`);
-                        if (checkbox && timeInput) {
-                            checkbox.checked = true;
-                            timeInput.value = time;
-                            timeInput.classList.remove('hidden');
-                        }
+        // 시간 정보 파싱 (개선된 버전)
+        function parseTimeInfo(timeString) {
+            if (!timeString) return null;
+            
+            // 다양한 시간 형식 지원
+            const patterns = [
+                /([월화수목금토])(\d+[A-Z]?)-(\d+[A-Z]?)\((\d{2}:\d{2})-(\d{2}:\d{2})\)/g,
+                /([월화수목금토])(\d+)-(\d+)\((\d{2}:\d{2})-(\d{2}:\d{2})\)/g,
+                /([월화수목금토])\s*(\d+)\s*-\s*(\d+)\s*\((\d{2}:\d{2})-(\d{2}:\d{2})\)/g
+            ];
+            
+            const matches = [];
+            
+            for (const pattern of patterns) {
+                let match;
+                while ((match = pattern.exec(timeString)) !== null) {
+                    matches.push({
+                        day: match[1],
+                        startPeriod: match[2],
+                        endPeriod: match[3],
+                        startTime: match[4],
+                        endTime: match[5],
+                        timeSlot: `${match[4]}-${match[5]}`
                     });
                 }
-                
-                if(user.taxType) {
-                    document.querySelector(`input[name="taxType"][value="${user.taxType}"]`).checked = true;
-                }
-
-            } else {
-                userFormTitle.textContent = '사용자 추가';
-                document.getElementById('userId').value = '';
             }
-            backdrop.classList.remove('hidden');
-            userFormPanel.classList.remove('translate-x-full');
-        }
-
-        function closeUserPanel() {
-            userFormPanel.classList.add('translate-x-full');
-            backdrop.classList.add('hidden');
-        }
-
-        // --- 로컬 스토리지 데이터 처리 ---
-        function getUsersFromStorage() {
-            const usersJSON = localStorage.getItem(USER_STORAGE_KEY);
-            return usersJSON ? JSON.parse(usersJSON) : [];
-        }
-
-        function saveUsersToStorage(users) {
-            localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(users));
-        }
-
-        function getPayrollHistory() {
-            const historyJSON = localStorage.getItem(PAYROLL_HISTORY_KEY);
-            return historyJSON ? JSON.parse(historyJSON) : [];
-        }
-
-        function savePayrollToHistory(newPayroll) {
-            let history = getPayrollHistory();
-            // 동일 연/월 데이터가 있으면 덮어쓰기, 없으면 추가
-            const existingIndex = history.findIndex(p => p.year === newPayroll.year && p.month === newPayroll.month);
-            if (existingIndex > -1) {
-                history[existingIndex] = newPayroll;
-            } else {
-                history.push(newPayroll);
-            }
-            localStorage.setItem(PAYROLL_HISTORY_KEY, JSON.stringify(history));
-        }
-
-        function fetchAndRenderUsers() {
-            const users = getUsersFromStorage();
-            renderUserList(users);
-        }
-
-        function renderUserList(users) {
-            if (users.length === 0) {
-                userListContainer.innerHTML = `<div class="text-center py-10 px-6 bg-gray-50 dark:bg-gray-700 rounded-md">
-                    <p class="text-gray-500 dark:text-gray-400">등록된 사용자가 없습니다.</p>
-                    <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">'사용자 추가' 버튼을 눌러 새로운 조교를 등록하세요.</p>
-                </div>`;
-                return;
-            }
-
-            userListContainer.innerHTML = `
-                <table class="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
-                    <thead class="bg-gray-50 dark:bg-gray-700">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">이름</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">소속</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">시급</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">관리</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        ${users.map(user => `
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">${user.name}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">${user.affiliation}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">${(user.hourlyWage || 0).toLocaleString()}원</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                                    <button class="edit-btn text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-200" data-id="${user.id}">수정</button>
-                                    <button class="delete-btn text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-200" data-id="${user.id}">삭제</button>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-        }
-
-        function handleFormSubmit(e) {
-            e.preventDefault();
             
-            const workSchedule = {};
-            document.querySelectorAll('input.day-checkbox:checked').forEach(checkbox => {
-                const day = checkbox.dataset.day;
-                const timeInput = document.querySelector(`.work-time-input[data-day-input="${day}"]`);
-                if (timeInput && timeInput.value.trim() !== '') {
-                    workSchedule[day] = timeInput.value.trim();
-                }
-            });
+            return matches.length > 0 ? matches : null;
+        }
 
-            const userData = {
-                name: document.getElementById('name').value,
-                rrn: document.getElementById('rrn').value,
-                affiliation: document.getElementById('affiliation').value,
-                phone: document.getElementById('phone').value,
-                hourlyWage: parseFloat(document.getElementById('hourlyWage').value) || 0,
-                weeklyRestDay: document.getElementById('weeklyRestDay').value,
-                workSchedule: workSchedule,
-                taxType: document.querySelector('input[name="taxType"]:checked')?.value || null,
+        // 필터 옵션 생성
+        function populateFilters() {
+            const departments = [...new Set(allCourses.map(c => c['개설학과(전공)']).filter(d => d))].sort();
+            const deptSelect = document.getElementById('departmentFilter');
+            
+            departments.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept;
+                option.textContent = dept;
+                deptSelect.appendChild(option);
+            });
+        }
+
+        // 고급 필터 적용
+        function applyAdvancedFilters(courses) {
+            if (currentTab !== 'advanced') return courses;
+            
+            const timePreferences = {
+                morning: document.getElementById('morning').checked,
+                afternoon: document.getElementById('afternoon').checked,
+                evening: document.getElementById('evening').checked
             };
-
-            const id = document.getElementById('userId').value;
-            let users = getUsersFromStorage();
-
-            if (id) {
-                users = users.map(user => user.id === id ? { ...user, ...userData, id: id } : user);
-            } else {
-                userData.id = `user_${Date.now()}`;
-                users.push(userData);
-            }
             
-            saveUsersToStorage(users);
-            fetchAndRenderUsers();
-            closeUserPanel();
-        }
-
-        function handleUserListClick(e) {
-            const target = e.target;
-            const id = target.dataset.id;
-            if (!id) return;
-
-            if (target.classList.contains('edit-btn')) {
-                const users = getUsersFromStorage();
-                const userToEdit = users.find(user => user.id === id);
-                if (userToEdit) {
-                    openUserPanel(userToEdit);
-                }
-            }
-
-            if (target.classList.contains('delete-btn')) {
-                let users = getUsersFromStorage();
-                users = users.filter(user => user.id !== id);
-                saveUsersToStorage(users);
-                fetchAndRenderUsers();
-            }
-        }
-
-        // --- 급여 관리 로직 ---
-        function initializeSalaryPage() {
-            const users = getUsersFromStorage();
-            const affiliations = [...new Set(users.map(u => u.affiliation).filter(Boolean))];
-            affiliationSelect.innerHTML = '<option value="">소속을 선택하세요</option>';
-            affiliations.forEach(aff => {
-                affiliationSelect.innerHTML += `<option value="${aff}">${aff}</option>`;
-            });
-            resetSalarySteps();
-        }
-        
-        function resetSalarySteps() {
-            salaryStep1.classList.remove('hidden');
-            salaryStep2.classList.add('hidden');
-            salaryStep3.classList.add('hidden');
-            salaryStep4.classList.add('hidden');
-            userSelectionContainer.classList.add('hidden');
-            affiliationSelect.value = '';
-            goToStep2Btn.disabled = true;
-            salaryCalculationState = {};
-        }
-        
-        function timeToMinutes(timeStr) {
-            if (!timeStr || !timeStr.includes(':')) return 0;
-            const [hours, minutes] = timeStr.split(':').map(Number);
-            return hours * 60 + minutes;
-        }
-
-        function calculateWorkHours(start, end) {
-            let startMinutes = timeToMinutes(start);
-            let endMinutes = timeToMinutes(end);
-            if (endMinutes < startMinutes) endMinutes += 24 * 60; // 야간 근무 처리
-            return (endMinutes - startMinutes) / 60;
-        }
-
-        function getContractedWeeklyHours(user) {
-            if (!user.workSchedule) return { totalHours: 0, workDays: 0 };
-            let totalHours = 0;
-            const workDays = Object.keys(user.workSchedule).length;
-            for (const time of Object.values(user.workSchedule)) {
-                const [start, end] = time.split('~');
-                totalHours += calculateWorkHours(start, end);
-            }
-            return { totalHours, workDays };
-        }
-
-        affiliationSelect.addEventListener('change', () => {
-            const selectedAffiliation = affiliationSelect.value;
-            if (!selectedAffiliation) {
-                userSelectionContainer.classList.add('hidden');
-                return;
-            }
-            const users = getUsersFromStorage().filter(u => u.affiliation === selectedAffiliation);
-            userCheckboxList.innerHTML = users.map(user => `
-                <label class="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600">
-                    <input type="checkbox" name="selectedUsers" value="${user.id}" class="rounded text-indigo-600 focus:ring-indigo-500">
-                    <span>${user.name}</span>
-                </label>
-            `).join('');
-            userSelectionContainer.classList.remove('hidden');
-        });
-
-        userCheckboxList.addEventListener('change', () => {
-            goToStep2Btn.disabled = document.querySelectorAll('input[name="selectedUsers"]:checked').length === 0;
-        });
-
-        goToStep2Btn.addEventListener('click', () => {
-            salaryCalculationState.selectedUserIds = Array.from(document.querySelectorAll('input[name="selectedUsers"]:checked')).map(cb => cb.value);
-            
-            const currentYear = new Date().getFullYear();
-            yearSelect.innerHTML = '';
-            for (let i = currentYear + 1; i >= currentYear - 5; i--) yearSelect.innerHTML += `<option value="${i}">${i}년</option>`;
-            yearSelect.value = currentYear;
-
-            monthSelect.innerHTML = '';
-            for (let i = 1; i <= 12; i++) monthSelect.innerHTML += `<option value="${i}">${i}월</option>`;
-            monthSelect.value = new Date().getMonth() + 1;
-
-            salaryStep1.classList.add('hidden');
-            salaryStep2.classList.remove('hidden');
-        });
-        
-        backToStep1Btn.addEventListener('click', () => {
-            salaryStep2.classList.add('hidden');
-            salaryStep1.classList.remove('hidden');
-        });
-
-        generateRecordBtn.addEventListener('click', () => {
-            salaryCalculationState.year = parseInt(yearSelect.value);
-            salaryCalculationState.month = parseInt(monthSelect.value);
-            generateAttendanceTable();
-            salaryStep2.classList.add('hidden');
-            salaryStep3.classList.remove('hidden');
-        });
-
-        backToStep2Btn.addEventListener('click', () => {
-            salaryStep3.classList.add('hidden');
-            salaryStep2.classList.remove('hidden');
-        });
-        
-        calculateSalaryBtn.addEventListener('click', () => {
-            calculateAndShowResults();
-            salaryStep3.classList.add('hidden');
-            salaryStep4.classList.remove('hidden');
-        });
-
-        backToStep3Btn.addEventListener('click', () => {
-            salaryStep4.classList.add('hidden');
-            salaryStep3.classList.remove('hidden');
-        });
-
-        function generateAttendanceTable() {
-            const { selectedUserIds, year, month } = salaryCalculationState;
-            const allUsers = getUsersFromStorage();
-            const selectedUsers = allUsers.filter(u => selectedUserIds.includes(u.id));
-            const daysInMonth = new Date(year, month, 0).getDate();
-            const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
-
-            let tableHTML = `
-                <table class="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm">
-                    <thead class="bg-gray-50 dark:bg-gray-700">
-                        <tr>
-                            <th class="p-2 text-left text-xs font-medium uppercase">날짜</th>
-                            <th class="p-2 text-left text-xs font-medium uppercase">이름</th>
-                            <th class="p-2 text-left text-xs font-medium uppercase">상태</th>
-                            <th class="p-2 text-left text-xs font-medium uppercase">수당적용</th>
-                            <th class="p-2 text-left text-xs font-medium uppercase">조기적용</th>
-                            <th class="p-2 text-left text-xs font-medium uppercase">계약상 출근</th>
-                            <th class="p-2 text-left text-xs font-medium uppercase">계약상 퇴근</th>
-                            <th class="p-2 text-left text-xs font-medium uppercase">계산출근</th>
-                            <th class="p-2 text-left text-xs font-medium uppercase">계산퇴근</th>
-                            <th class="p-2 text-left text-xs font-medium uppercase">일일급여</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">`;
-            
-            for (let day = 1; day <= daysInMonth; day++) {
-                for (const user of selectedUsers) {
-                    const date = new Date(year, month - 1, day);
-                    const dayName = dayNames[date.getDay()];
-                    const isWorkDay = user.workSchedule && user.workSchedule[dayName];
-                    const rowId = `row-${user.id}-${day}`;
-                    
-                    const [startTime, endTime] = isWorkDay ? user.workSchedule[dayName].split('~') : ['', ''];
-
-                    tableHTML += `
-                        <tr id="${rowId}" data-user-id="${user.id}" data-day="${day}" data-day-name="${dayName}">
-                            <td class="p-2 whitespace-nowrap">${month}/${day} (${dayName})</td>
-                            <td class="p-2 whitespace-nowrap">${user.name}</td>
-                            <td class="p-2">
-                                <select class="status-select w-full rounded-md border-gray-300 dark:bg-gray-600">
-                                    <option value="normal" ${isWorkDay ? 'selected' : ''}>정상</option>
-                                    <option value="extra-work">계약 외 출근</option>
-                                    <option value="off-day" ${!isWorkDay ? 'selected' : ''}>미출근</option>
-                                    <option value="absence">결근</option>
-                                </select>
-                            </td>
-                            <td class="p-2 space-x-2">
-                                <label><input type="checkbox" class="allowance-checkbox" value="paid-leave"> 유급</label>
-                                <label><input type="checkbox" class="allowance-checkbox" value="holiday-work"> 공휴일</label>
-                            </td>
-                            <td class="p-2 space-x-2">
-                                <label><input type="checkbox" class="early-checkbox" value="early-in"> 조기출근</label>
-                                <label><input type="checkbox" class="early-checkbox" value="early-out"> 조기퇴근</label>
-                            </td>
-                            <td class="p-2 whitespace-nowrap contract-start">${startTime || '-'}</td>
-                            <td class="p-2 whitespace-nowrap contract-end">${endTime || '-'}</td>
-                            <td class="p-2"><input type="time" class="calc-start w-full rounded-md border-gray-300 dark:bg-gray-600" value="${startTime || ''}"></td>
-                            <td class="p-2"><input type="time" class="calc-end w-full rounded-md border-gray-300 dark:bg-gray-600" value="${endTime || ''}"></td>
-                            <td class="p-2 font-medium text-right"><span class="daily-pay-val">0</span> 원</td>
-                        </tr>
-                    `;
-
-                    // 주휴일인 경우, 주휴수당 요약 행 추가
-                    if (dayName === user.weeklyRestDay || day === daysInMonth) {
-                         const weekNumber = Math.ceil((date.getDate() + (new Date(year, month - 1, 1).getDay() || 7) - 1) / 7);
-                         tableHTML += `
-                            <tr class="weekly-summary-row" data-user-id="${user.id}" data-week-number="${weekNumber}">
-                                <td colspan="2" class="p-2 font-bold text-indigo-700 dark:text-indigo-300">${weekNumber}주차 요약 (${user.name})</td>
-                                <td colspan="3" class="p-2">총 근무: <span class="weekly-hours">0</span>시간</td>
-                                <td colspan="4" class="p-2">
-                                    <label class="flex items-center space-x-2">
-                                        <input type="checkbox" class="weekly-allowance-cb" data-allowance="0">
-                                        <span>주휴수당 지급 (<span class="weekly-allowance-amount">0</span>원)</span>
-                                    </label>
-                                    <span class="weekly-allowance-warning text-red-500 text-xs ml-2 hidden">
-                                        <svg class="inline w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                                        결근 시 주휴수당 미지급
-                                    </span>
-                                </td>
-                            </tr>
-                         `;
-                    }
-                }
-            }
-
-
-            tableHTML += `</tbody></table>`;
-            attendanceRecordContainer.innerHTML = tableHTML;
-            
-            attendanceRecordContainer.querySelectorAll('.status-select, .allowance-checkbox, .early-checkbox, .calc-start, .calc-end').forEach(el => {
-                el.addEventListener('change', (e) => {
-                    const row = e.target.closest('tr');
-                    updateRowAppearanceAndState(row);
-                    updateWeeklySummaries();
-                });
-            });
-            
-            // 초기 상태 업데이트
-            attendanceRecordContainer.querySelectorAll('tr[data-day]').forEach(row => {
-                updateRowAppearanceAndState(row);
-            });
-            updateWeeklySummaries();
-        }
-
-        function updateRowAppearanceAndState(row) {
-            if (!row || !row.matches('tr[data-day]')) return;
-
-            const statusSelect = row.querySelector('.status-select');
-            const startInput = row.querySelector('.calc-start');
-            const endInput = row.querySelector('.calc-end');
-            
-            row.classList.remove('status-absence', 'allowance-paid-leave', 'allowance-holiday-work', 'status-off-day');
-            
-            const status = statusSelect.value;
-            const isPaidLeave = row.querySelector('.allowance-checkbox[value="paid-leave"]').checked;
-            const isHolidayWork = row.querySelector('.allowance-checkbox[value="holiday-work"]').checked;
-            
-            if (status === 'absence' || status === 'off-day') {
-                startInput.disabled = true;
-                endInput.disabled = true;
-            } else {
-                startInput.disabled = false;
-                endInput.disabled = false;
-            }
-
-            if (status === 'absence') row.classList.add('status-absence');
-            if (status === 'off-day') row.classList.add('status-off-day');
-            if (isPaidLeave) row.classList.add('allowance-paid-leave');
-            if (isHolidayWork) row.classList.add('allowance-holiday-work');
-            
-            // 일일 급여 실시간 계산
-            calculateDailyPay(row);
-        }
-        
-        function calculateDailyPay(row) {
-            const userId = row.dataset.userId;
-            const user = getUsersFromStorage().find(u => u.id === userId);
-            if (!user) return;
-
-            let dailyPay = 0;
-            const hourlyWage = user.hourlyWage || 0;
-            const status = row.querySelector('.status-select')?.value;
-            if (status === 'absence' || status === 'off-day') {
-                row.querySelector('.daily-pay-val').textContent = '0';
-                return;
-            }
-
-            const isPaidLeave = row.querySelector('.allowance-checkbox[value="paid-leave"]').checked;
-            const isHolidayWork = row.querySelector('.allowance-checkbox[value="holiday-work"]').checked;
-            const isEarlyIn = row.querySelector('.early-checkbox[value="early-in"]').checked;
-            const isEarlyOut = row.querySelector('.early-checkbox[value="early-out"]').checked;
-            
-            const contractStart = row.querySelector('.contract-start').textContent;
-            const contractEnd = row.querySelector('.contract-end').textContent;
-            const scheduledHours = calculateWorkHours(contractStart, contractEnd);
-            
-            const actualStart = row.querySelector('.calc-start').value;
-            const actualEnd = row.querySelector('.calc-end').value;
-
-            const payStart = isEarlyIn ? actualStart : contractStart;
-            const payEnd = isEarlyOut ? actualEnd : actualStart;
-            const payHours = calculateWorkHours(payStart, payEnd);
-
-            // 야간 시간 계산 (22:00 ~ 06:00)
-            const nightStartMinutes = 22 * 60;
-            const nightEndMinutes = (24 + 6) * 60;
-            let startMinutes = timeToMinutes(payStart);
-            let endMinutes = timeToMinutes(payEnd);
-            if (endMinutes < startMinutes) endMinutes += 24 * 60;
-
-            const nightHours = (Math.max(0, Math.min(endMinutes, nightEndMinutes) - Math.max(startMinutes, nightStartMinutes))) / 60;
-            const nightAllowance = nightHours * hourlyWage * 0.5;
-
-            if (isPaidLeave) {
-                dailyPay = scheduledHours * hourlyWage;
-            } else {
-                let basePay = payHours * hourlyWage;
-                let holidayPay = 0;
-
-                if (isHolidayWork) {
-                    holidayPay = payHours * hourlyWage * 0.5; // 1.5배 중 0.5배만 가산
-                }
-
-                dailyPay = basePay + holidayPay + nightAllowance;
-            }
-            
-            row.querySelector('.daily-pay-val').textContent = Math.round(dailyPay).toLocaleString();
-        }
-        
-        function updateWeeklySummaries() {
-            const allUsers = getUsersFromStorage();
-            const { selectedUserIds, year, month } = salaryCalculationState;
-            const selectedUsers = allUsers.filter(u => selectedUserIds.includes(u.id));
-
-            selectedUsers.forEach(user => {
-                const weeklyData = {};
-                const rows = attendanceRecordContainer.querySelectorAll(`tr[data-user-id="${user.id}"][data-day]`);
-                
-                rows.forEach(row => {
-                    const day = parseInt(row.dataset.day);
-                    const date = new Date(year, month - 1, day);
-                    const weekNumber = Math.ceil((date.getDate() + (new Date(year, month - 1, 1).getDay() || 7) - 1) / 7);
-                    if (!weeklyData[weekNumber]) weeklyData[weekNumber] = { hours: 0, hasAbsence: false };
-
-                    const status = row.querySelector('.status-select')?.value;
-                    if (status === 'absence') weeklyData[weekNumber].hasAbsence = true;
-                    if (status === 'absence' || status === 'off-day') return;
-
-                    const isPaidLeave = row.querySelector('.allowance-checkbox[value="paid-leave"]')?.checked;
-                    const scheduledTime = row.cells[4].textContent;
-                    const [scheduledStart, scheduledEnd] = scheduledTime.split('~');
-                    const scheduledHours = calculateWorkHours(scheduledStart, scheduledEnd);
-                    
-                    const actualStart = row.querySelector('.calc-start')?.value;
-                    const actualEnd = row.querySelector('.calc-end')?.value;
-                    const actualHours = calculateWorkHours(actualStart, actualEnd);
-
-                    weeklyData[weekNumber].hours += isPaidLeave ? scheduledHours : actualHours;
-                });
-
-                Object.entries(weeklyData).forEach(([week, data]) => {
-                    const summaryRow = attendanceRecordContainer.querySelector(`.weekly-summary-row[data-user-id="${user.id}"][data-week-number="${week}"]`);
-                    if (summaryRow) {
-                        summaryRow.querySelector('.weekly-hours').textContent = data.hours.toFixed(1);
-                        const isEligible = data.hours >= 15 && !data.hasAbsence;
-                        
-                        const { totalHours, workDays } = getContractedWeeklyHours(user);
-                        const dailyAverageHours = workDays > 0 ? totalHours / workDays : 0;
-                        const allowance = isEligible ? dailyAverageHours * user.hourlyWage : 0;
-                        
-                        const checkbox = summaryRow.querySelector('.weekly-allowance-cb');
-                        const warning = summaryRow.querySelector('.weekly-allowance-warning');
-                        
-                        summaryRow.querySelector('.weekly-allowance-amount').textContent = Math.round(allowance).toLocaleString();
-                        checkbox.dataset.allowance = allowance;
-                        checkbox.disabled = !isEligible;
-                        checkbox.checked = isEligible;
-
-                        if (data.hasAbsence) {
-                            warning.classList.remove('hidden');
-                        } else {
-                            warning.classList.add('hidden');
-                        }
-                    }
-                });
-            });
-        }
-        
-        function calculateDeductions(totalPay) {
-            const deductions = {
-                nationalPension: 0, healthInsurance: 0, longTermCareInsurance: 0,
-                employmentInsurance: 0, incomeTax: 0, localIncomeTax: 0, total: 0
+            const dayPreferences = {
+                weekdays: document.getElementById('weekdays').checked,
+                saturday: document.getElementById('saturday').checked
             };
-
-            deductions.employmentInsurance = totalPay * 0.009;
-
-            if (totalPay >= 1050000) {
-                deductions.nationalPension = totalPay * 0.045;
-                deductions.healthInsurance = totalPay * 0.03545;
-                deductions.longTermCareInsurance = deductions.healthInsurance * 0.1295;
-            }
-
-            if (totalPay > 1060000) {
-                 deductions.incomeTax = (totalPay * 0.03); // 단순 예시 세율
-            }
-            deductions.localIncomeTax = deductions.incomeTax * 0.1;
-
-            deductions.total = Object.values(deductions).reduce((acc, val) => acc + val, 0);
-            return deductions;
+            
+            const maxCredits = parseInt(document.getElementById('maxCredits').value) || Infinity;
+            
+            return courses.filter(course => {
+                // 시간대 필터
+                if (course.parsedTime && (timePreferences.morning || timePreferences.afternoon || timePreferences.evening)) {
+                    const matchesTime = course.parsedTime.some(time => {
+                        const hour = parseInt(time.startTime.split(':')[0]);
+                        return (
+                            (timePreferences.morning && hour >= 9 && hour < 12) ||
+                            (timePreferences.afternoon && hour >= 13 && hour < 17) ||
+                            (timePreferences.evening && hour >= 18 && hour <= 21)
+                        );
+                    });
+                    if (!matchesTime) return false;
+                }
+                
+                // 요일 필터
+                if (course.parsedTime && (!dayPreferences.weekdays && !dayPreferences.saturday)) {
+                    return false;
+                }
+                
+                if (course.parsedTime && !dayPreferences.saturday) {
+                    const hasSaturday = course.parsedTime.some(time => time.day === '토');
+                    if (hasSaturday) return false;
+                }
+                
+                // 학점 제한
+                const credits = parseInt(course['학점'] || 0);
+                if (credits > maxCredits) return false;
+                
+                return true;
+            });
         }
-        
-        function calculateAndShowResults() {
-            const allUsers = getUsersFromStorage();
-            const { selectedUserIds } = salaryCalculationState;
-            const selectedUsers = allUsers.filter(u => selectedUserIds.includes(u.id));
-            let resultsHTML = '';
-            salaryCalculationState.results = []; // 결과 저장 초기화
 
-            selectedUsers.forEach(user => {
-                const hourlyWage = user.hourlyWage || 0;
-                let totalBasePay = 0, totalHolidayPay = 0, totalPaidLeavePay = 0, totalNightAllowance = 0;
+        // 필터 적용
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const department = document.getElementById('departmentFilter').value;
+            const grade = document.getElementById('gradeFilter').value;
+            const type = document.getElementById('typeFilter').value;
+            const credits = document.getElementById('creditsFilter').value;
+
+            filteredCourses = allCourses.filter(course => {
+                const matchesSearch = !searchTerm || 
+                    course['과 목 명'].toLowerCase().includes(searchTerm) ||
+                    course['교수명'].toLowerCase().includes(searchTerm) ||
+                    course['과목-분반'].toLowerCase().includes(searchTerm);
                 
-                const rows = attendanceRecordContainer.querySelectorAll(`tr[data-user-id="${user.id}"][data-day]`);
-                rows.forEach(row => {
-                    const status = row.querySelector('.status-select')?.value;
-                    if (status === 'absence' || status === 'off-day') return;
+                const matchesDepartment = !department || course['개설학과(전공)'] === department;
+                const matchesGrade = !grade || course['개설학년'].toString() === grade;
+                const matchesType = !type || course['교과구분'] === type;
+                const matchesCredits = !credits || course['학점'].toString() === credits;
 
-                    const isPaidLeave = row.querySelector('.allowance-checkbox[value="paid-leave"]').checked;
-                    const isHolidayWork = row.querySelector('.allowance-checkbox[value="holiday-work"]').checked;
-                    const isEarlyIn = row.querySelector('.early-checkbox[value="early-in"]').checked;
-                    const isEarlyOut = row.querySelector('.early-checkbox[value="early-out"]').checked;
-                    
-                    const contractStart = row.querySelector('.contract-start').textContent;
-                    const contractEnd = row.querySelector('.contract-end').textContent;
-                    const scheduledHours = calculateWorkHours(contractStart, contractEnd);
-                    
-                    const actualStart = row.querySelector('.calc-start').value;
-                    const actualEnd = row.querySelector('.calc-end').value;
+                return matchesSearch && matchesDepartment && matchesGrade && matchesType && matchesCredits;
+            });
 
-                    const payStart = isEarlyIn ? actualStart : contractStart;
-                    const payEnd = isEarlyOut ? actualEnd : contractEnd;
-                    const payHours = calculateWorkHours(payStart, payEnd);
+            // 고급 필터 적용
+            filteredCourses = applyAdvancedFilters(filteredCourses);
 
-                    const nightStartMinutes = 22 * 60;
-                    const nightEndMinutes = (24 + 6) * 60;
-                    let startMinutes = timeToMinutes(payStart);
-                    let endMinutes = timeToMinutes(payEnd);
-                    if (endMinutes < startMinutes) endMinutes += 24 * 60;
-                    const nightHours = (Math.max(0, Math.min(endMinutes, nightEndMinutes) - Math.max(startMinutes, nightStartMinutes))) / 60;
-                    totalNightAllowance += nightHours * hourlyWage * 0.5;
+            displayCourses();
+            showNotification(`${filteredCourses.length}개의 강의가 검색되었습니다.`);
+        }
 
-                    if (isPaidLeave) {
-                        totalPaidLeavePay += scheduledHours * hourlyWage;
-                        return;
-                    }
+        // 강의 목록 표시
+        function displayCourses() {
+            const courseGrid = document.getElementById('courseGrid');
+            courseGrid.innerHTML = '';
 
-                    let basePay = payHours * hourlyWage;
+            if (filteredCourses.length === 0) {
+                courseGrid.innerHTML = '<div class="loading">검색 결과가 없습니다. 다른 조건으로 검색해보세요.</div>';
+                return;
+            }
 
-                    if (isHolidayWork) {
-                        totalHolidayPay += basePay * 0.5;
-                    }
-                    totalBasePay += basePay;
-                });
+            const displayCount = Math.min(100, filteredCourses.length); // 성능을 위해 100개씩 제한
+            
+            for (let i = 0; i < displayCount; i++) {
+                const course = filteredCourses[i];
+                const courseCard = document.createElement('div');
+                courseCard.className = 'course-card';
+                courseCard.onclick = () => toggleCourse(course);
                 
-                let totalWeeklyAllowance = 0;
-                attendanceRecordContainer.querySelectorAll(`.weekly-summary-row[data-user-id="${user.id}"] .weekly-allowance-cb:checked`).forEach(cb => {
-                    totalWeeklyAllowance += parseFloat(cb.dataset.allowance);
-                });
-
-                const totalPay = totalBasePay + totalHolidayPay + totalPaidLeavePay + totalWeeklyAllowance + totalNightAllowance;
-                let deductions = { total: 0 };
-                let deductionDetailsHTML = '';
-
-                if (user.taxType === '4대보험') {
-                    deductions = calculateDeductions(totalPay);
-                    deductionDetailsHTML = `
-                        <h4 class="col-span-2 text-md font-semibold mt-4 mb-2 text-gray-700 dark:text-gray-300">4대보험 공제 내역</h4>
-                        <div><span class="font-medium text-gray-600 dark:text-gray-400">국민연금:</span> ${Math.round(deductions.nationalPension).toLocaleString()} 원</div>
-                        <div><span class="font-medium text-gray-600 dark:text-gray-400">건강보험:</span> ${Math.round(deductions.healthInsurance).toLocaleString()} 원</div>
-                        <div><span class="font-medium text-gray-600 dark:text-gray-400">장기요양:</span> ${Math.round(deductions.longTermCareInsurance).toLocaleString()} 원</div>
-                        <div><span class="font-medium text-gray-600 dark:text-gray-400">고용보험:</span> ${Math.round(deductions.employmentInsurance).toLocaleString()} 원</div>
-                        <div><span class="font-medium text-gray-600 dark:text-gray-400">소득세:</span> ${Math.round(deductions.incomeTax).toLocaleString()} 원</div>
-                        <div><span class="font-medium text-gray-600 dark:text-gray-400">지방소득세:</span> ${Math.round(deductions.localIncomeTax).toLocaleString()} 원</div>
-                    `;
-                } else if (user.taxType === '3.3%') {
-                    deductions.total = totalPay * 0.033;
-                    deductionDetailsHTML = `<div><span class="font-medium text-gray-600 dark:text-gray-400">사업소득세 (3.3%):</span> ${Math.round(deductions.total).toLocaleString()} 원</div>`;
+                if (selectedCourses.some(sc => sc.id === course.id)) {
+                    courseCard.classList.add('selected');
                 }
 
-                const netPay = totalPay - deductions.total;
+                const timeDisplay = course['개설시간 및 강의실'] || '시간 미정';
+                const roomMatch = timeDisplay.match(/\(([^)]+)\)$/);
+                const room = roomMatch ? roomMatch[1] : '';
+                const timeOnly = timeDisplay.replace(/\([^)]+\)$/, '');
 
-                resultsHTML += `
-                    <div class="user-salary-card bg-gray-50 dark:bg-gray-700 p-6 rounded-lg mb-4">
-                        <h3 class="text-xl font-bold text-indigo-600 dark:text-indigo-400 mb-4">${user.name} (${user.affiliation})</h3>
-                        <div class="grid grid-cols-2 gap-4 text-sm">
-                            <h4 class="col-span-2 text-md font-semibold mb-2 text-gray-700 dark:text-gray-300">급여 항목</h4>
-                            <div><span class="font-medium text-gray-600 dark:text-gray-400">기본급여:</span> ${Math.round(totalBasePay).toLocaleString()} 원</div>
-                            <div><span class="font-medium text-gray-600 dark:text-gray-400">야간수당:</span> ${Math.round(totalNightAllowance).toLocaleString()} 원</div>
-                            <div><span class="font-medium text-gray-600 dark:text-gray-400">유급수당:</span> ${Math.round(totalPaidLeavePay).toLocaleString()} 원</div>
-                            <div><span class="font-medium text-gray-600 dark:text-gray-400">공휴일수당:</span> ${Math.round(totalHolidayPay).toLocaleString()} 원</div>
-                            <div><span class="font-medium text-gray-600 dark:text-gray-400">주휴수당:</span> ${Math.round(totalWeeklyAllowance).toLocaleString()} 원</div>
-                            
-                            <div class="col-span-2 border-t pt-4 mt-2 dark:border-gray-600">
-                                <span class="font-semibold text-gray-700 dark:text-gray-300">총 지급액 (과세 대상):</span> ${Math.round(totalPay).toLocaleString()} 원
-                            </div>
-                            ${deductionDetailsHTML}
-                             <div class="col-span-2 border-t pt-4 mt-4 dark:border-gray-600"></div>
-                            <div><span class="font-semibold text-gray-700 dark:text-gray-300">총 공제액:</span> ${Math.round(deductions.total).toLocaleString()} 원</div>
-                            <div class="text-lg font-bold text-green-600 dark:text-green-400">실지급액: ${Math.round(netPay).toLocaleString()} 원</div>
-                        </div>
+                courseCard.innerHTML = `
+                    <div class="course-info">
+                        <h4>${course['과 목 명']}</h4>
+                        <p><span class="highlight">교수:</span> ${course['교수명']}</p>
+                        <p><span class="highlight">학점:</span> ${course['학점']}학점 | <span class="highlight">구분:</span> ${course['교과구분']}</p>
+                        <p><span class="highlight">시간:</span> ${timeOnly}</p>
+                        <p><span class="highlight">강의실:</span> ${room}</p>
+                        <p><span class="highlight">정원:</span> ${course['정원']}명 | <span class="highlight">과목코드:</span> ${course['과목-분반']}</p>
                     </div>
                 `;
                 
-                // 엑셀 내보내기 및 통계용 결과 저장
-                const resultData = {
-                    userName: user.name,
-                    affiliation: user.affiliation,
-                    totalPay: Math.round(totalPay),
-                    deductions: {
-                        nationalPension: Math.round(deductions.nationalPension || 0),
-                        healthInsurance: Math.round(deductions.healthInsurance || 0),
-                        longTermCareInsurance: Math.round(deductions.longTermCareInsurance || 0),
-                        employmentInsurance: Math.round(deductions.employmentInsurance || 0),
-                        incomeTax: Math.round(deductions.incomeTax || 0),
-                        localIncomeTax: Math.round(deductions.localIncomeTax || 0),
-                    },
-                    netPay: Math.round(netPay)
-                };
-                salaryCalculationState.results.push(resultData);
-            });
-            
-            // 급여 계산 결과를 히스토리에 저장
-            savePayrollToHistory({
-                year: salaryCalculationState.year,
-                month: salaryCalculationState.month,
-                results: salaryCalculationState.results
-            });
-
-            salaryResultContainer.innerHTML = resultsHTML;
-        }
-
-        function handleExcelExport() {
-            const results = salaryCalculationState.results;
-            if (!results || results.length === 0) {
-                alert("내보낼 데이터가 없습니다.");
-                return;
-            }
-
-            const exportData = results.map(res => ({
-                '이름': res.userName,
-                '소속': res.affiliation,
-                '세전금액': res.totalPay,
-                '국민연금': res.deductions.nationalPension,
-                '건강보험': res.deductions.healthInsurance,
-                '장기요양보험': res.deductions.longTermCareInsurance,
-                '고용보험': res.deductions.employmentInsurance,
-                '소득세': res.deductions.incomeTax,
-                '지방소득세': res.deductions.localIncomeTax,
-                '세후금액': res.netPay
-            }));
-
-            const ws = XLSX.utils.json_to_sheet(exportData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "급여명세서");
-
-            const headerStyle = {
-                font: { bold: true, color: { rgb: "FFFFFF" } },
-                fill: { fgColor: { rgb: "4F46E5" } }, // Indigo-600
-                alignment: { horizontal: "center", vertical: "center" }
-            };
-
-            const headers = Object.keys(exportData[0]);
-            for (let i = 0; i < headers.length; i++) {
-                const cellRef = XLSX.utils.encode_cell({ c: i, r: 0 });
-                if (ws[cellRef]) ws[cellRef].s = headerStyle;
+                courseGrid.appendChild(courseCard);
             }
             
-            ws['!cols'] = [
-                { wch: 15 }, { wch: 20 }, { wch: 15 }, { wch: 15 },
-                { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
-                { wch: 15 }, { wch: 15 }
-            ];
-
-            const { year, month } = salaryCalculationState;
-            XLSX.writeFile(wb, `${year}년 ${month}월 조교급여명세서.xlsx`);
-        }
-
-        // --- 통계 로직 ---
-        function initializeStatisticsPage() {
-            const history = getPayrollHistory();
-            const affiliations = ['전체', ...new Set(history.flatMap(p => p.results.map(r => r.affiliation)))];
-            const years = ['전체', ...new Set(history.map(p => p.year))].sort((a,b) => b-a);
-            
-            statsAffiliationSelect.innerHTML = affiliations.map(a => `<option value="${a}">${a}</option>`).join('');
-            statsYearSelect.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
-
-            renderChart();
-        }
-
-        function renderChart() {
-            const history = getPayrollHistory();
-            const selectedAffiliation = statsAffiliationSelect.value;
-            const selectedYear = statsYearSelect.value;
-            const chartType = document.querySelector('input[name="statsType"]:checked').value;
-
-            const filteredHistory = history.filter(p => selectedYear === '전체' || p.year == selectedYear);
-            
-            const monthlyData = {};
-            for (let i = 1; i <= 12; i++) {
-                monthlyData[i] = { totalSalary: 0, employees: new Set() };
+            if (filteredCourses.length > displayCount) {
+                const moreDiv = document.createElement('div');
+                moreDiv.className = 'loading';
+                moreDiv.innerHTML = `더 많은 결과가 있습니다. (${filteredCourses.length - displayCount}개 더)`;
+                courseGrid.appendChild(moreDiv);
             }
+        }
 
-            filteredHistory.forEach(payroll => {
-                payroll.results.forEach(res => {
-                    if (selectedAffiliation === '전체' || res.affiliation === selectedAffiliation) {
-                        monthlyData[payroll.month].totalSalary += res.totalPay;
-                        monthlyData[payroll.month].employees.add(res.userName);
+        // 강의 선택/취소
+        function toggleCourse(course) {
+            const index = selectedCourses.findIndex(sc => sc.id === course.id);
+            
+            if (index === -1) {
+                // 시간 충돌 검사
+                if (hasTimeConflict(course)) {
+                    if (!confirm('선택한 강의와 시간이 겹칩니다. 그래도 추가하시겠습니까?')) {
+                        return;
                     }
+                }
+                
+                selectedCourses.push(course);
+                scheduleHistory.push({action: 'add', course: course, timestamp: Date.now()});
+                showNotification(`"${course['과 목 명']}" 강의가 추가되었습니다.`);
+            } else {
+                selectedCourses.splice(index, 1);
+                scheduleHistory.push({action: 'remove', course: course, timestamp: Date.now()});
+                showNotification(`"${course['과 목 명']}" 강의가 제거되었습니다.`);
+            }
+            
+            updateScheduleDisplay();
+            updateStats();
+            displayCourses();
+            displaySelectedCourses();
+        }
+
+        // 시간 충돌 검사 (개별 강의)
+        function hasTimeConflict(newCourse) {
+            if (!newCourse.parsedTime) return false;
+            
+            return selectedCourses.some(existingCourse => {
+                if (!existingCourse.parsedTime) return false;
+                
+                return newCourse.parsedTime.some(newTime => {
+                    return existingCourse.parsedTime.some(existingTime => {
+                        if (newTime.day !== existingTime.day) return false;
+                        
+                        const newStart = timeToMinutes(newTime.startTime);
+                        const newEnd = timeToMinutes(newTime.endTime);
+                        const existingStart = timeToMinutes(existingTime.startTime);
+                        const existingEnd = timeToMinutes(existingTime.endTime);
+                        
+                        return (newStart < existingEnd && newEnd > existingStart);
+                    });
                 });
             });
-
-            const labels = [];
-            const salaryData = [];
-            const employeeData = [];
-
-            for (let i = 1; i <= 12; i++) {
-                labels.push(`${i}월`);
-                salaryData.push(monthlyData[i].totalSalary);
-                employeeData.push(monthlyData[i].employees.size);
-            }
-
-            if (salaryChart) {
-                salaryChart.destroy();
-            }
-
-            let chartConfig;
-            if (chartType === 'salary') {
-                chartConfig = {
-                    type: 'bar',
-                    data: {
-                        labels,
-                        datasets: [{
-                            label: '월별 총 급여액',
-                            data: salaryData,
-                            backgroundColor: 'rgba(79, 70, 229, 0.6)',
-                            borderColor: 'rgba(79, 70, 229, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: { y: { beginAtZero: true, title: { display: true, text: '급여액 (원)' } } }
-                    }
-                };
-            } else { // employees
-                chartConfig = {
-                    type: 'bar',
-                    data: {
-                        labels,
-                        datasets: [{
-                            label: '월별 근무자 수',
-                            data: employeeData,
-                            backgroundColor: 'rgba(219, 39, 119, 0.6)',
-                            borderColor: 'rgba(219, 39, 119, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: { y: { beginAtZero: true, title: { display: true, text: '근무자 수 (명)' }, ticks: { stepSize: 1 } } }
-                    }
-                };
-            }
-            salaryChart = new Chart(salaryChartCanvas, chartConfig);
         }
 
-
-        // --- 페이지 동적 컨텐츠 생성 ---
-        function createWorkScheduleInputs() {
-            const days = ['월', '화', '수', '목', '금', '토', '일'];
-            workScheduleContainer.innerHTML = days.map(day => `
-                <div class="flex items-center justify-between p-2 border rounded-md dark:border-gray-600">
-                    <label class="flex items-center space-x-3 cursor-pointer">
-                        <input type="checkbox" data-day="${day}" class="day-checkbox rounded text-indigo-600 focus:ring-indigo-500">
-                        <span class="font-medium">${day}</span>
-                    </label>
-                    <input type="text" data-day-input="${day}" placeholder="09:00~18:00" class="work-time-input hidden w-36 text-center px-2 py-1 border border-gray-300 rounded-md text-sm dark:bg-gray-600 dark:border-gray-500">
-                </div>
-            `).join('');
+        // 시간을 분으로 변환
+        function timeToMinutes(timeString) {
+            const [hours, minutes] = timeString.split(':').map(Number);
+            return hours * 60 + minutes;
         }
 
-        // --- 이벤트 리스너 설정 ---
-        function setupEventListeners() {
-            themeToggleBtn.addEventListener('click', toggleTheme);
-            usersMenuBtn.addEventListener('click', () => {
-                showSection(usersSection);
-                updateMenuStyles(usersMenuBtn);
+        // 시간표 표시 업데이트
+        function updateScheduleDisplay() {
+            // 모든 셀 초기화
+            const cells = document.querySelectorAll('.schedule-table td:not(.time-slot)');
+            cells.forEach(cell => {
+                cell.innerHTML = '';
+                cell.className = 'empty-slot';
             });
-            salaryMenuBtn.addEventListener('click', () => {
-                showSection(salarySection);
-                updateMenuStyles(salaryMenuBtn);
-                initializeSalaryPage();
-            });
-            statsMenuBtn.addEventListener('click', () => {
-                showSection(statisticsSection);
-                updateMenuStyles(statsMenuBtn);
-                initializeStatisticsPage();
-            });
-            addUserBtn.addEventListener('click', () => openUserPanel());
-            closePanelBtn.addEventListener('click', closeUserPanel);
-            backdrop.addEventListener('click', closeUserPanel);
-            userForm.addEventListener('submit', handleFormSubmit);
-            userListContainer.addEventListener('click', handleUserListClick);
-            exportToExcelBtn.addEventListener('click', handleExcelExport);
-            statsAffiliationSelect.addEventListener('change', renderChart);
-            statsYearSelect.addEventListener('change', renderChart);
-            document.querySelectorAll('input[name="statsType"]').forEach(radio => {
-                radio.addEventListener('change', renderChart);
-            });
-            
-            userForm.addEventListener('change', (e) => {
-                if (e.target.classList.contains('day-checkbox')) {
-                    const day = e.target.dataset.day;
-                    const timeInput = document.querySelector(`input[data-day-input="${day}"]`);
-                    if (e.target.checked) {
-                        timeInput.classList.remove('hidden');
-                    } else {
-                        timeInput.classList.add('hidden');
-                        timeInput.value = '';
-                    }
+
+            // 선택된 강의 표시
+            selectedCourses.forEach(course => {
+                if (course.parsedTime) {
+                    course.parsedTime.forEach(timeSlot => {
+                        const startHour = parseInt(timeSlot.startTime.split(':')[0]);
+                        const endHour = parseInt(timeSlot.endTime.split(':')[0]);
+                        
+                        for (let hour = startHour; hour < endHour; hour++) {
+                            const cellId = `${timeSlot.day}-${hour.toString().padStart(2, '0')}:00-${(hour + 1).toString().padStart(2, '0')}:00`;
+                            const cell = document.getElementById(cellId);
+                            
+                            if (cell) {
+                                cell.innerHTML = `
+                                    <div style="font-size: 10px; line-height: 1.2;">
+                                        <strong>${course['과 목 명']}</strong><br>
+                                        ${course['교수명']}
+                                    </div>
+                                `;
+                                cell.className = 'course-slot';
+                                cell.onclick = () => removeCourse(course.id);
+                            }
+                        }
+                    });
                 }
             });
         }
 
-        // --- 페이지 초기화 ---
-        function initializePage() {
-            const savedTheme = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            applyTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+        // 통계 업데이트
+        function updateStats() {
+            document.getElementById('selectedCount').textContent = selectedCourses.length;
             
-            createWorkScheduleInputs();
-            setupEventListeners();
-            updateMenuStyles(usersMenuBtn);
-            fetchAndRenderUsers();
+            const totalCredits = selectedCourses.reduce((sum, course) => {
+                return sum + parseInt(course['학점'] || 0);
+            }, 0);
+            document.getElementById('totalCredits').textContent = totalCredits;
+            
+            // 시간 충돌 검사
+            const conflicts = checkTimeConflicts();
+            document.getElementById('conflicts').textContent = conflicts;
+            
+            // 공강시간 계산
+            const freeTime = calculateFreeTime();
+            document.getElementById('freeTime').textContent = freeTime;
         }
 
-        window.addEventListener('load', initializePage);
+        // 시간 충돌 검사 (전체)
+        function checkTimeConflicts() {
+            const timeSlots = {};
+            let conflicts = 0;
+            
+            selectedCourses.forEach(course => {
+                if (course.parsedTime) {
+                    course.parsedTime.forEach(timeSlot => {
+                        const startHour = parseInt(timeSlot.startTime.split(':')[0]);
+                        const endHour = parseInt(timeSlot.endTime.split(':')[0]);
+                        
+                        for (let hour = startHour; hour < endHour; hour++) {
+                            const key = `${timeSlot.day}-${hour}`;
+                            if (timeSlots[key]) {
+                                conflicts++;
+                            } else {
+                                timeSlots[key] = course;
+                            }
+                        }
+                    });
+                }
+            });
+            
+            return conflicts;
+        }
+
+        // 공강시간 계산
+        function calculateFreeTime() {
+            const occupiedSlots = new Set();
+            
+            selectedCourses.forEach(course => {
+                if (course.parsedTime) {
+                    course.parsedTime.forEach(timeSlot => {
+                        const startHour = parseInt(timeSlot.startTime.split(':')[0]);
+                        const endHour = parseInt(timeSlot.endTime.split(':')[0]);
+                        
+                        for (let hour = startHour; hour < endHour; hour++) {
+                            occupiedSlots.add(`${timeSlot.day}-${hour}`);
+                        }
+                    });
+                }
+            });
+            
+            const totalSlots = 6 * 12; // 6일 * 12시간
+            return totalSlots - occupiedSlots.size;
+        }
+
+        // 선택된 강의 목록 표시
+        function displaySelectedCourses() {
+            const selectedList = document.getElementById('selectedCoursesList');
+            selectedList.innerHTML = '';
+            
+            if (selectedCourses.length === 0) {
+                selectedList.innerHTML = '<div style="text-align: center; color: var(--warm-grey); padding: 40px;">선택된 강의가 없습니다.</div>';
+                return;
+            }
+            
+            selectedCourses.forEach(course => {
+                const courseItem = document.createElement('div');
+                courseItem.className = 'selected-course-item';
+                
+                const timeDisplay = course['개설시간 및 강의실'] || '시간 미정';
+                
+                courseItem.innerHTML = `
+                    <div>
+                        <strong style="font-size: 1.1em;">${course['과 목 명']}</strong> 
+                        <span style="color: var(--accent-gold); font-weight: 600;">(${course['학점']}학점)</span><br>
+                        <small style="color: var(--warm-grey);">
+                            ${course['교수명']} | ${timeDisplay}
+                        </small>
+                    </div>
+                    <button class="remove-btn" onclick="removeCourse('${course.id}')">삭제</button>
+                `;
+                selectedList.appendChild(courseItem);
+            });
+        }
+
+        // 강의 삭제
+        function removeCourse(courseId) {
+            const course = selectedCourses.find(c => c.id === courseId);
+            if (course) {
+                selectedCourses = selectedCourses.filter(c => c.id !== courseId);
+                scheduleHistory.push({action: 'remove', course: course, timestamp: Date.now()});
+                updateScheduleDisplay();
+                updateStats();
+                displayCourses();
+                displaySelectedCourses();
+                showNotification(`"${course['과 목 명']}" 강의가 제거되었습니다.`);
+            }
+        }
+
+        // 시간표 최적화
+        function optimizeSchedule() {
+            if (selectedCourses.length === 0) {
+                showNotification('먼저 강의를 선택해주세요.');
+                return;
+            }
+            
+            const conflicts = checkTimeConflicts();
+            if (conflicts > 0) {
+                if (confirm(`${conflicts}개의 시간 충돌이 발견되었습니다. 충돌하는 강의를 자동으로 제거하시겠습니까?`)) {
+                    resolveConflicts();
+                }
+            }
+            
+            suggestOptimizations();
+        }
+
+        // 충돌 해결
+        function resolveConflicts() {
+            const conflicts = [];
+            const timeSlots = {};
+            
+            selectedCourses.forEach((course, courseIndex) => {
+                if (course.parsedTime) {
+                    course.parsedTime.forEach(timeSlot => {
+                        const startHour = parseInt(timeSlot.startTime.split(':')[0]);
+                        const endHour = parseInt(timeSlot.endTime.split(':')[0]);
+                        
+                        for (let hour = startHour; hour < endHour; hour++) {
+                            const key = `${timeSlot.day}-${hour}`;
+                            if (timeSlots[key]) {
+                                conflicts.push({
+                                    existing: timeSlots[key],
+                                    conflicting: courseIndex
+                                });
+                            } else {
+                                timeSlots[key] = courseIndex;
+                            }
+                        }
+                    });
+                }
+            });
+            
+            // 충돌하는 강의 중 나중에 추가된 것들 제거
+            const toRemove = [...new Set(conflicts.map(c => c.conflicting))].sort((a, b) => b - a);
+            const removedCourses = [];
+            
+            toRemove.forEach(index => {
+                removedCourses.push(selectedCourses[index]['과 목 명']);
+                selectedCourses.splice(index, 1);
+            });
+            
+            updateScheduleDisplay();
+            updateStats();
+            displayCourses();
+            displaySelectedCourses();
+            
+            if (removedCourses.length > 0) {
+                showNotification(`충돌 해결 완료: ${removedCourses.join(', ')} 강의가 제거되었습니다.`);
+            }
+        }
+
+        // 최적화 제안
+        function suggestOptimizations() {
+            const suggestions = [];
+            
+            // 점심시간 확보 체크
+            const lunchConflict = selectedCourses.some(course => {
+                if (!course.parsedTime) return false;
+                return course.parsedTime.some(time => {
+                    const start = timeToMinutes(time.startTime);
+                    const end = timeToMinutes(time.endTime);
+                    return (start <= 720 && end >= 780); // 12:00-13:00
+                });
+            });
+            
+            if (lunchConflict) {
+                suggestions.push('🍽️ 점심시간(12:00-13:00)에 강의가 있습니다.');
+            }
+            
+            // 하루 최대 강의시간 체크
+            const dailyHours = {};
+            selectedCourses.forEach(course => {
+                if (course.parsedTime) {
+                    course.parsedTime.forEach(time => {
+                        const duration = (timeToMinutes(time.endTime) - timeToMinutes(time.startTime)) / 60;
+                        dailyHours[time.day] = (dailyHours[time.day] || 0) + duration;
+                    });
+                }
+            });
+            
+            Object.entries(dailyHours).forEach(([day, hours]) => {
+                if (hours > 6) {
+                    suggestions.push(`📚 ${day}요일에 ${hours}시간의 강의가 있어 부담이 클 수 있습니다.`);
+                }
+            });
+            
+            // 연속 강의 체크
+            const consecutiveClasses = checkConsecutiveClasses();
+            if (consecutiveClasses.length > 0) {
+                suggestions.push(`⏰ 연속 강의: ${consecutiveClasses.join(', ')}`);
+            }
+            
+            // 공강일 체크
+            const occupiedDays = [...new Set(selectedCourses.flatMap(course => 
+                course.parsedTime ? course.parsedTime.map(t => t.day) : []
+            ))];
+            
+            const freeDays = ['월', '화', '수', '목', '금'].filter(day => !occupiedDays.includes(day));
+            if (freeDays.length > 0) {
+                suggestions.push(`🎉 공강일: ${freeDays.join(', ')}요일`);
+            }
+            
+            // 총 학점 체크
+            const totalCredits = selectedCourses.reduce((sum, course) => sum + parseInt(course['학점'] || 0), 0);
+            if (totalCredits < 12) {
+                suggestions.push('⚠️ 총 학점이 12학점 미만입니다. 최소 이수 학점을 확인해주세요.');
+            } else if (totalCredits > 21) {
+                suggestions.push('⚠️ 총 학점이 21학점을 초과합니다. 학습 부담을 고려해주세요.');
+            }
+            
+            const message = suggestions.length > 0 ? 
+                '📊 시간표 분석 결과:\n\n' + suggestions.join('\n\n') : 
+                '✅ 현재 시간표가 잘 최적화되어 있습니다!';
+            
+            alert(message);
+        }
+
+        // 연속 강의 체크
+        function checkConsecutiveClasses() {
+            const consecutive = [];
+            const daySchedules = {};
+            
+            selectedCourses.forEach(course => {
+                if (course.parsedTime) {
+                    course.parsedTime.forEach(time => {
+                        if (!daySchedules[time.day]) daySchedules[time.day] = [];
+                        daySchedules[time.day].push({
+                            course: course['과 목 명'],
+                            start: timeToMinutes(time.startTime),
+                            end: timeToMinutes(time.endTime)
+                        });
+                    });
+                }
+            });
+            
+            Object.entries(daySchedules).forEach(([day, classes]) => {
+                classes.sort((a, b) => a.start - b.start);
+                let consecutiveCount = 1;
+                
+                for (let i = 1; i < classes.length; i++) {
+                    if (classes[i].start === classes[i-1].end) {
+                        consecutiveCount++;
+                    } else {
+                        if (consecutiveCount >= 3) {
+                            consecutive.push(`${day}요일 ${consecutiveCount}연강`);
+                        }
+                        consecutiveCount = 1;
+                    }
+                }
+                
+                if (consecutiveCount >= 3) {
+                    consecutive.push(`${day}요일 ${consecutiveCount}연강`);
+                }
+            });
+            
+            return consecutive;
+        }
+
+        // 추천 시간표 생성
+        function generateRecommendations() {
+            if (allCourses.length === 0) {
+                showNotification('강의 데이터를 먼저 로드해주세요.');
+                return;
+            }
+            
+            // 간단한 추천 알고리즘
+            const recommendations = [];
+            const preferences = {
+                maxCredits: 18,
+                preferMorning: false,
+                avoidFriday: true,
+                maxDailyHours: 6
+            };
+            
+            // 사용자 선호도를 고려한 추천 로직
+            const availableCourses = allCourses.filter(course => {
+                return course.parsedTime && course.parsedTime.length > 0;
+            });
+            
+            // 랜덤하게 시간표 조합 생성
+            for (let i = 0; i < 3; i++) {
+                const recommended = generateRandomSchedule(availableCourses, preferences);
+                if (recommended.length > 0) {
+                    recommendations.push(recommended);
+                }
+            }
+            
+            if (recommendations.length > 0) {
+                displayRecommendations(recommendations);
+            } else {
+                showNotification('추천 시간표를 생성할 수 없습니다.');
+            }
+        }
+
+        // 랜덤 시간표 생성
+        function generateRandomSchedule(courses, preferences) {
+            const schedule = [];
+            const occupiedSlots = new Set();
+            let totalCredits = 0;
+            
+            const shuffled = [...courses].sort(() => Math.random() - 0.5);
+            
+            for (const course of shuffled) {
+                if (totalCredits >= preferences.maxCredits) break;
+                
+                const credits = parseInt(course['학점'] || 0);
+                if (totalCredits + credits > preferences.maxCredits) continue;
+                
+                // 시간 충돌 체크
+                let hasConflict = false;
+                const courseSlots = [];
+                
+                if (course.parsedTime) {
+                    for (const time of course.parsedTime) {
+                        const startHour = parseInt(time.startTime.split(':')[0]);
+                        const endHour = parseInt(time.endTime.split(':')[0]);
+                        
+                        for (let hour = startHour; hour < endHour; hour++) {
+                            const slot = `${time.day}-${hour}`;
+                            if (occupiedSlots.has(slot)) {
+                                hasConflict = true;
+                                break;
+                            }
+                            courseSlots.push(slot);
+                        }
+                        if (hasConflict) break;
+                    }
+                }
+                
+                if (!hasConflict && courseSlots.length > 0) {
+                    schedule.push(course);
+                    courseSlots.forEach(slot => occupiedSlots.add(slot));
+                    totalCredits += credits;
+                }
+                
+                if (schedule.length >= 7) break; // 최대 7과목
+            }
+            
+            return schedule;
+        }
+
+        // 추천 시간표 표시
+        function displayRecommendations(recommendations) {
+            let message = '🎯 추천 시간표:\n\n';
+            
+            recommendations.forEach((schedule, index) => {
+                const totalCredits = schedule.reduce((sum, course) => sum + parseInt(course['학점'] || 0), 0);
+                message += `【추천 ${index + 1}】 (총 ${totalCredits}학점)\n`;
+                
+                schedule.forEach(course => {
+                    message += `• ${course['과 목 명']} (${course['학점']}학점) - ${course['교수명']}\n`;
+                });
+                message += '\n';
+            });
+            
+            if (confirm(message + '첫 번째 추천 시간표를 적용하시겠습니까?')) {
+                selectedCourses = [...recommendations[0]];
+                updateScheduleDisplay();
+                updateStats();
+                displayCourses();
+                displaySelectedCourses();
+                showNotification('추천 시간표가 적용되었습니다!');
+            }
+        }
+
+        // 내보내기 기능들
+        function exportToPDF() {
+            showNotification('PDF 내보내기 기능은 준비 중입니다.');
+        }
+
+        function exportToExcel() {
+            if (selectedCourses.length === 0) {
+                showNotification('선택된 강의가 없습니다.');
+                return;
+            }
+            
+            const data = selectedCourses.map(course => ({
+                '과목명': course['과 목 명'],
+                '교수명': course['교수명'],
+                '학점': course['학점'],
+                '교과구분': course['교과구분'],
+                '시간': course['개설시간 및 강의실'],
+                '과목코드': course['과목-분반']
+            }));
+            
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "내 시간표");
+            XLSX.writeFile(wb, "내_시간표.xlsx");
+            showNotification('Excel 파일이 다운로드되었습니다.');
+        }
+
+        function exportToImage() {
+            showNotification('이미지 내보내기 기능은 준비 중입니다.');
+        }
+
+        function shareSchedule() {
+            if (selectedCourses.length === 0) {
+                showNotification('선택된 강의가 없습니다.');
+                return;
+            }
+            
+            const scheduleText = selectedCourses.map(course => 
+                `${course['과 목 명']} (${course['학점']}학점) - ${course['교수명']}`
+            ).join('\n');
+            
+            const shareText = `📚 내 시간표 (총 ${selectedCourses.reduce((sum, c) => sum + parseInt(c['학점'] || 0), 0)}학점)\n\n${scheduleText}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '내 시간표',
+                    text: shareText
+                });
+            } else {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    showNotification('시간표가 클립보드에 복사되었습니다.');
+                });
+            }
+        }
+
+        // 실행 취소 기능
+        function undoLastAction() {
+            if (scheduleHistory.length === 0) {
+                showNotification('실행 취소할 작업이 없습니다.');
+                return;
+            }
+            
+            const lastAction = scheduleHistory.pop();
+            if (lastAction.action === 'add') {
+                selectedCourses = selectedCourses.filter(c => c.id !== lastAction.course.id);
+            } else if (lastAction.action === 'remove') {
+                selectedCourses.push(lastAction.course);
+            }
+            
+            updateScheduleDisplay();
+            updateStats();
+            displayCourses();
+            displaySelectedCourses();
+            showNotification('작업이 취소되었습니다.');
+        }
+
+        // 시간표 저장/불러오기
+        function saveSchedule() {
+            if (selectedCourses.length === 0) {
+                showNotification('저장할 강의가 없습니다.');
+                return;
+            }
+            
+            const scheduleData = {
+                courses: selectedCourses,
+                timestamp: Date.now(),
+                totalCredits: selectedCourses.reduce((sum, c) => sum + parseInt(c['학점'] || 0), 0)
+            };
+            
+            localStorage.setItem('saved_schedule', JSON.stringify(scheduleData));
+            showNotification('시간표가 저장되었습니다.');
+        }
+
+        function loadSchedule() {
+            const savedData = localStorage.getItem('saved_schedule');
+            if (!savedData) {
+                showNotification('저장된 시간표가 없습니다.');
+                return;
+            }
+            
+            try {
+                const scheduleData = JSON.parse(savedData);
+                selectedCourses = scheduleData.courses || [];
+                
+                updateScheduleDisplay();
+                updateStats();
+                displayCourses();
+                displaySelectedCourses();
+                showNotification('저장된 시간표를 불러왔습니다.');
+            } catch (error) {
+                showNotification('시간표 불러오기에 실패했습니다.');
+            }
+        }
+
+        // 검색 이벤트 리스너
+        document.getElementById('searchInput').addEventListener('input', function() {
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(applyFilters, 300);
+        });
+
+        // 필터 변경 이벤트 리스너
+        ['departmentFilter', 'gradeFilter', 'typeFilter', 'creditsFilter'].forEach(filterId => {
+            const element = document.getElementById(filterId);
+            if (element) {
+                element.addEventListener('change', applyFilters);
+            }
+        });
+
+        // 고급 필터 이벤트 리스너
+        ['morning', 'afternoon', 'evening', 'weekdays', 'saturday'].forEach(filterId => {
+            const element = document.getElementById(filterId);
+            if (element) {
+                element.addEventListener('change', applyFilters);
+            }
+        });
+
+        const maxCreditsElement = document.getElementById('maxCredits');
+        if (maxCreditsElement) {
+            maxCreditsElement.addEventListener('input', function() {
+                clearTimeout(this.filterTimeout);
+                this.filterTimeout = setTimeout(applyFilters, 500);
+            });
+        }
+
+        // 키보드 단축키
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'f':
+                        e.preventDefault();
+                        document.getElementById('searchInput').focus();
+                        break;
+                    case 'o':
+                        e.preventDefault();
+                        optimizeSchedule();
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        saveSchedule();
+                        break;
+                    case 'l':
+                        e.preventDefault();
+                        loadSchedule();
+                        break;
+                    case 'z':
+                        e.preventDefault();
+                        undoLastAction();
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        generateRecommendations();
+                        break;
+                }
+            }
+            
+            // ESC 키로 선택 초기화
+            if (e.key === 'Escape') {
+                if (selectedCourses.length > 0 && confirm('선택된 모든 강의를 초기화하시겠습니까?')) {
+                    selectedCourses = [];
+                    scheduleHistory = [];
+                    updateScheduleDisplay();
+                    updateStats();
+                    displayCourses();
+                    displaySelectedCourses();
+                    showNotification('시간표가 초기화되었습니다.');
+                }
+            }
+        });
+
+        // 도움말 표시
+        function showHelp() {
+            const helpText = `
+🎯 시간표 최적화 도구 사용법
+
+📌 기본 기능:
+• 강의 검색: 과목명, 교수명으로 검색
+• 강의 선택: 강의 카드 클릭으로 선택/해제
+• 시간표 보기: 실시간 시간표 업데이트
+
+🔍 필터 기능:
+• 기본 필터: 학과, 학년, 교과구분, 학점
+• 고급 필터: 시간대, 요일, 최대학점 설정
+
+⚡ 최적화 기능:
+• 시간 충돌 자동 감지 및 해결
+• 점심시간, 연강, 공강 분석
+• 맞춤형 시간표 추천
+
+⌨️ 단축키:
+• Ctrl+F: 검색
+• Ctrl+O: 최적화
+• Ctrl+S: 저장
+• Ctrl+L: 불러오기
+• Ctrl+Z: 실행취소
+• Ctrl+R: 추천시간표
+• ESC: 초기화
+
+💾 내보내기:
+• Excel, PDF, 이미지 내보내기
+• 시간표 공유 기능
+            `;
+            
+            alert(helpText);
+        }
+
+        // 통계 애니메이션
+        function animateStats() {
+            const statValues = document.querySelectorAll('.stat-card .value');
+            statValues.forEach(stat => {
+                stat.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    stat.style.transform = 'scale(1)';
+                }, 200);
+            });
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSchedule();
+            loadCourseData();
+            
+            // 도움말 버튼 추가
+            const helpButton = document.createElement('button');
+            helpButton.innerHTML = '❓ 도움말';
+            helpButton.className = 'btn';
+            helpButton.style.position = 'fixed';
+            helpButton.style.bottom = '20px';
+            helpButton.style.right = '20px';
+            helpButton.style.width = 'auto';
+            helpButton.style.padding = '10px 20px';
+            helpButton.style.fontSize = '12px';
+            helpButton.style.zIndex = '1000';
+            helpButton.onclick = showHelp;
+            document.body.appendChild(helpButton);
+            
+            // 자동 저장 기능
+            setInterval(() => {
+                if (selectedCourses.length > 0) {
+                    const autoSaveData = {
+                        courses: selectedCourses,
+                        timestamp: Date.now(),
+                        autoSave: true
+                    };
+                    localStorage.setItem('auto_save_schedule', JSON.stringify(autoSaveData));
+                }
+            }, 30000); // 30초마다 자동 저장
+            
+            // 자동 저장된 데이터 복구 확인
+            const autoSaveData = localStorage.getItem('auto_save_schedule');
+            if (autoSaveData) {
+                try {
+                    const data = JSON.parse(autoSaveData);
+                    if (data.autoSave && Date.now() - data.timestamp < 24 * 60 * 60 * 1000) { // 24시간 이내
+                        if (confirm('이전에 작업하던 시간표가 있습니다. 복구하시겠습니까?')) {
+                            selectedCourses = data.courses || [];
+                            updateScheduleDisplay();
+                            updateStats();
+                            displayCourses();
+                            displaySelectedCourses();
+                        }
+                    }
+                } catch (error) {
+                    console.error('자동 저장 데이터 복구 실패:', error);
+                }
+            }
+            
+            // 환영 메시지
+            setTimeout(() => {
+                showNotification('시간표 최적화 도구에 오신 것을 환영합니다! 🎓', 5000);
+            }, 1000);
+        });
+
+        // 반응형 처리
+        function handleResize() {
+            const isMobile = window.innerWidth <= 768;
+            const courseGrid = document.getElementById('courseGrid');
+            
+            if (isMobile && courseGrid) {
+                courseGrid.style.maxHeight = '50vh';
+            } else if (courseGrid) {
+                courseGrid.style.maxHeight = '70vh';
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        
+        // 페이지 가시성 변경 시 자동 저장
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && selectedCourses.length > 0) {
+                saveSchedule();
+            }
+        });
+
+        // 서비스 워커 등록 (PWA 지원)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                // 서비스 워커 등록은 실제 배포 시에만 활성화
+                console.log('PWA 지원 준비됨');
+            });
+        }
     </script>
 </body>
 </html>
