@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Commit Message 작성 가이드 - Study Archive</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        .post-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            color: var(--accent-hover);
+        }
+        .post-header {
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .post-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        .post-body {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .post-body h2 {
+            font-size: 1.8rem;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+        .post-body h3 {
+            font-size: 1.4rem;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+        .post-body p {
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+        }
+        .post-body code {
+            background: var(--secondary-dark);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: var(--accent-color);
+            font-size: 0.95em;
+        }
+        .post-body pre {
+            background: var(--secondary-dark);
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid var(--border-color);
+        }
+        .post-body pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        .post-body ul, .post-body ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+        }
+        .post-body li {
+            margin-bottom: 10px;
+        }
+        .good-example {
+            border-left: 3px solid #4ade80;
+            padding-left: 15px;
+        }
+        .bad-example {
+            border-left: 3px solid #f87171;
+            padding-left: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="post-content">
+            <a href="../../index.html" class="back-link">← 목록으로 돌아가기</a>
+
+            <header class="post-header">
+                <h1>Git Commit Message 작성 가이드</h1>
+                <div class="post-meta">
+                    <span class="post-tag">소프트웨어영어</span> ·
+                    <time>2025.10.29</time>
+                </div>
+            </header>
+
+            <article class="post-body">
+                <h2>좋은 커밋 메시지의 중요성</h2>
+                <p>
+                    Git 커밋 메시지는 프로젝트의 히스토리를 기록하는 중요한 문서입니다.
+                    명확하고 일관된 커밋 메시지는 팀 협업과 코드 리뷰를 원활하게 만들며,
+                    나중에 코드 변경 사항을 추적할 때 매우 유용합니다.
+                </p>
+
+                <h2>기본 구조</h2>
+                <pre><code>&lt;type&gt;: &lt;subject&gt;
+
+&lt;body&gt;
+
+&lt;footer&gt;</code></pre>
+
+                <h3>1. Type (타입)</h3>
+                <p>커밋의 종류를 나타냅니다.</p>
+                <ul>
+                    <li><strong>feat:</strong> 새로운 기능 추가 (A new feature)</li>
+                    <li><strong>fix:</strong> 버그 수정 (A bug fix)</li>
+                    <li><strong>docs:</strong> 문서 변경 (Documentation only changes)</li>
+                    <li><strong>style:</strong> 코드 포맷팅, 세미콜론 누락 등 (Formatting, missing semi colons, etc)</li>
+                    <li><strong>refactor:</strong> 코드 리팩토링 (Code change that neither fixes a bug nor adds a feature)</li>
+                    <li><strong>test:</strong> 테스트 코드 추가/수정 (Adding or updating tests)</li>
+                    <li><strong>chore:</strong> 빌드 프로세스, 도구 설정 등 (Updating build tasks, package manager configs, etc)</li>
+                    <li><strong>perf:</strong> 성능 개선 (Performance improvements)</li>
+                </ul>
+
+                <h3>2. Subject (제목)</h3>
+                <p>변경 사항을 간결하게 요약합니다.</p>
+
+                <h4>규칙:</h4>
+                <ul>
+                    <li>50자 이내로 작성</li>
+                    <li>첫 글자는 대문자로</li>
+                    <li>명령형(imperative mood) 사용</li>
+                    <li>마침표 사용하지 않음</li>
+                </ul>
+
+                <div class="good-example">
+                    <p><strong>좋은 예:</strong></p>
+                    <pre><code>Add user authentication feature
+Fix login validation bug
+Update README installation guide</code></pre>
+                </div>
+
+                <div class="bad-example">
+                    <p><strong>나쁜 예:</strong></p>
+                    <pre><code>added user authentication feature.  (과거형, 마침표)
+fix bug  (너무 모호함)
+Updated the README file with new installation instructions that are more detailed  (너무 김)</code></pre>
+                </div>
+
+                <h3>3. Body (본문) - 선택사항</h3>
+                <p>상세한 변경 사항을 설명합니다.</p>
+                <ul>
+                    <li>무엇을, 왜 변경했는지 설명 (What and Why, not How)</li>
+                    <li>72자마다 줄바꿈</li>
+                    <li>제목과 본문 사이 빈 줄 추가</li>
+                </ul>
+
+                <h3>4. Footer (푸터) - 선택사항</h3>
+                <p>이슈 트래커 ID, Breaking Changes 등을 명시합니다.</p>
+                <pre><code>Closes #123
+Fixes #456
+BREAKING CHANGE: API endpoint /api/v1/users changed to /api/v2/users</code></pre>
+
+                <h2>자주 사용되는 동사</h2>
+
+                <h3>추가 (Adding)</h3>
+                <ul>
+                    <li><strong>Add</strong> - ~을 추가하다</li>
+                    <li><strong>Introduce</strong> - ~을 도입하다</li>
+                    <li><strong>Implement</strong> - ~을 구현하다</li>
+                    <li><strong>Create</strong> - ~을 생성하다</li>
+                </ul>
+                <pre><code>Add email validation to registration form
+Implement password reset functionality
+Create user profile page</code></pre>
+
+                <h3>수정 (Fixing)</h3>
+                <ul>
+                    <li><strong>Fix</strong> - ~을 수정하다</li>
+                    <li><strong>Correct</strong> - ~을 바로잡다</li>
+                    <li><strong>Resolve</strong> - ~을 해결하다</li>
+                    <li><strong>Patch</strong> - ~을 패치하다</li>
+                </ul>
+                <pre><code>Fix memory leak in data processing
+Correct typo in error message
+Resolve CORS issue on API endpoints</code></pre>
+
+                <h3>변경 (Changing)</h3>
+                <ul>
+                    <li><strong>Update</strong> - ~을 업데이트하다</li>
+                    <li><strong>Modify</strong> - ~을 수정하다</li>
+                    <li><strong>Change</strong> - ~을 변경하다</li>
+                    <li><strong>Refactor</strong> - ~을 리팩토링하다</li>
+                    <li><strong>Improve</strong> - ~을 개선하다</li>
+                </ul>
+                <pre><code>Update dependencies to latest versions
+Refactor authentication middleware
+Improve database query performance</code></pre>
+
+                <h3>제거 (Removing)</h3>
+                <ul>
+                    <li><strong>Remove</strong> - ~을 제거하다</li>
+                    <li><strong>Delete</strong> - ~을 삭제하다</li>
+                    <li><strong>Drop</strong> - ~을 제거하다</li>
+                </ul>
+                <pre><code>Remove deprecated API endpoints
+Delete unused CSS files
+Drop support for IE11</code></pre>
+
+                <h2>완전한 커밋 메시지 예제</h2>
+
+                <h3>예제 1: 간단한 커밋</h3>
+                <pre><code>feat: Add dark mode toggle button</code></pre>
+
+                <h3>예제 2: 본문이 있는 커밋</h3>
+                <pre><code>fix: Prevent race condition in user registration
+
+The registration process could fail when multiple requests
+were made simultaneously. Added mutex lock to ensure thread
+safety during user creation.
+
+Fixes #234</code></pre>
+
+                <h3>예제 3: Breaking Change</h3>
+                <pre><code>refactor: Change API response format
+
+Changed the user API to return a more consistent response
+structure across all endpoints.
+
+BREAKING CHANGE: The /api/users endpoint now returns
+{ data: [...], meta: {...} } instead of just [...]</code></pre>
+
+                <h2>유용한 표현들</h2>
+                <ul>
+                    <li><strong>Prevent</strong> - ~을 방지하다</li>
+                    <li><strong>Ensure</strong> - ~을 보장하다</li>
+                    <li><strong>Enable</strong> - ~을 가능하게 하다</li>
+                    <li><strong>Disable</strong> - ~을 비활성화하다</li>
+                    <li><strong>Allow</strong> - ~을 허용하다</li>
+                    <li><strong>Avoid</strong> - ~을 피하다</li>
+                </ul>
+
+                <h2>체크리스트</h2>
+                <ol>
+                    <li>적절한 type을 사용했는가?</li>
+                    <li>제목이 50자 이내인가?</li>
+                    <li>명령형 동사를 사용했는가?</li>
+                    <li>무엇을, 왜 변경했는지 명확한가?</li>
+                    <li>관련 이슈 번호를 포함했는가?</li>
+                </ol>
+
+                <h2>정리</h2>
+                <p>
+                    일관되고 명확한 커밋 메시지는 프로젝트의 히스토리를 이해하는 데 큰 도움이 됩니다.
+                    처음에는 어색할 수 있지만, 규칙을 따라 작성하다 보면 자연스럽게 좋은 커밋 메시지를
+                    작성할 수 있게 됩니다.
+                </p>
+            </article>
+        </div>
+    </div>
+</body>
+</html>

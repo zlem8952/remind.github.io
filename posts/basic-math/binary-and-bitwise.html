@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로그래머를 위한 이진수와 비트 연산 - Study Archive</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        .post-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            color: var(--accent-hover);
+        }
+        .post-header {
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .post-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        .post-body {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .post-body h2 {
+            font-size: 1.8rem;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+        .post-body h3 {
+            font-size: 1.4rem;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+        .post-body p {
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+        }
+        .post-body code {
+            background: var(--secondary-dark);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: var(--accent-color);
+            font-size: 0.95em;
+        }
+        .post-body pre {
+            background: var(--secondary-dark);
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid var(--border-color);
+        }
+        .post-body pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        .post-body ul, .post-body ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+        }
+        .post-body li {
+            margin-bottom: 10px;
+        }
+        .conversion-table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .conversion-table th,
+        .conversion-table td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: center;
+        }
+        .conversion-table th {
+            background: var(--secondary-dark);
+            color: var(--text-primary);
+        }
+        .conversion-table td {
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="post-content">
+            <a href="../../index.html" class="back-link">← 목록으로 돌아가기</a>
+
+            <header class="post-header">
+                <h1>프로그래머를 위한 이진수와 비트 연산</h1>
+                <div class="post-meta">
+                    <span class="post-tag">기초수학</span> ·
+                    <time>2025.10.26</time>
+                </div>
+            </header>
+
+            <article class="post-body">
+                <h2>이진수란?</h2>
+                <p>
+                    이진수(Binary)는 0과 1 두 개의 숫자만을 사용하는 수 체계입니다.
+                    컴퓨터는 전기 신호의 ON/OFF 상태로 데이터를 저장하므로, 모든 데이터를
+                    이진수로 표현합니다. 프로그래머가 이진수를 이해하는 것은 필수입니다.
+                </p>
+
+                <h2>진법 변환</h2>
+
+                <h3>10진수 → 2진수</h3>
+                <p>10진수 13을 2진수로 변환:</p>
+                <pre><code>13 ÷ 2 = 6 ... 나머지 1
+ 6 ÷ 2 = 3 ... 나머지 0
+ 3 ÷ 2 = 1 ... 나머지 1
+ 1 ÷ 2 = 0 ... 나머지 1
+
+아래에서 위로 읽기: 1101₂</code></pre>
+
+                <h3>2진수 → 10진수</h3>
+                <p>2진수 1101을 10진수로 변환:</p>
+                <pre><code>1101₂ = (1 × 2³) + (1 × 2²) + (0 × 2¹) + (1 × 2⁰)
+      = (1 × 8) + (1 × 4) + (0 × 2) + (1 × 1)
+      = 8 + 4 + 0 + 1
+      = 13₁₀</code></pre>
+
+                <h3>진법 변환 표</h3>
+                <table class="conversion-table">
+                    <thead>
+                        <tr>
+                            <th>10진수</th>
+                            <th>2진수</th>
+                            <th>8진수</th>
+                            <th>16진수</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>0</td><td>0000</td><td>0</td><td>0</td></tr>
+                        <tr><td>1</td><td>0001</td><td>1</td><td>1</td></tr>
+                        <tr><td>2</td><td>0010</td><td>2</td><td>2</td></tr>
+                        <tr><td>3</td><td>0011</td><td>3</td><td>3</td></tr>
+                        <tr><td>4</td><td>0100</td><td>4</td><td>4</td></tr>
+                        <tr><td>5</td><td>0101</td><td>5</td><td>5</td></tr>
+                        <tr><td>6</td><td>0110</td><td>6</td><td>6</td></tr>
+                        <tr><td>7</td><td>0111</td><td>7</td><td>7</td></tr>
+                        <tr><td>8</td><td>1000</td><td>10</td><td>8</td></tr>
+                        <tr><td>9</td><td>1001</td><td>11</td><td>9</td></tr>
+                        <tr><td>10</td><td>1010</td><td>12</td><td>A</td></tr>
+                        <tr><td>15</td><td>1111</td><td>17</td><td>F</td></tr>
+                    </tbody>
+                </table>
+
+                <h2>비트 연산자</h2>
+
+                <h3>1. AND 연산 (&amp;)</h3>
+                <p>두 비트가 모두 1일 때만 1을 반환</p>
+                <pre><code>  1101  (13)
+&amp; 1011  (11)
+------
+  1001  (9)
+
+파이썬: 13 &amp; 11 = 9
+C언어:  13 &amp; 11 = 9</code></pre>
+
+                <h3>2. OR 연산 (|)</h3>
+                <p>두 비트 중 하나라도 1이면 1을 반환</p>
+                <pre><code>  1101  (13)
+| 1011  (11)
+------
+  1111  (15)
+
+파이썬: 13 | 11 = 15
+C언어:  13 | 11 = 15</code></pre>
+
+                <h3>3. XOR 연산 (^)</h3>
+                <p>두 비트가 다르면 1, 같으면 0을 반환</p>
+                <pre><code>  1101  (13)
+^ 1011  (11)
+------
+  0110  (6)
+
+파이썬: 13 ^ 11 = 6
+C언어:  13 ^ 11 = 6</code></pre>
+
+                <h3>4. NOT 연산 (~)</h3>
+                <p>비트를 반전시킴 (0→1, 1→0)</p>
+                <pre><code>~1101 = 0010 (비트 반전)
+
+파이썬: ~13 = -14 (2의 보수 표현 때문)
+C언어:  ~13 = -14</code></pre>
+
+                <h3>5. 왼쪽 시프트 (&lt;&lt;)</h3>
+                <p>비트를 왼쪽으로 이동 (2를 곱하는 효과)</p>
+                <pre><code>13 &lt;&lt; 1 = 26
+  1101 &lt;&lt; 1 = 11010
+
+13 &lt;&lt; 2 = 52
+  1101 &lt;&lt; 2 = 110100</code></pre>
+
+                <h3>6. 오른쪽 시프트 (&gt;&gt;)</h3>
+                <p>비트를 오른쪽으로 이동 (2로 나누는 효과)</p>
+                <pre><code>13 &gt;&gt; 1 = 6
+  1101 &gt;&gt; 1 = 110
+
+13 &gt;&gt; 2 = 3
+  1101 &gt;&gt; 2 = 11</code></pre>
+
+                <h2>실전 활용 예제</h2>
+
+                <h3>1. 짝수/홀수 판별</h3>
+                <pre><code>def is_even(n):
+    return (n &amp; 1) == 0  # 마지막 비트가 0이면 짝수
+
+print(is_even(4))  # True
+print(is_even(5))  # False</code></pre>
+
+                <h3>2. 두 수 교환 (XOR 활용)</h3>
+                <pre><code>a = 5  # 0101
+b = 3  # 0011
+
+a = a ^ b  # a = 0110
+b = a ^ b  # b = 0101 (원래 a)
+a = a ^ b  # a = 0011 (원래 b)
+
+print(a, b)  # 3 5</code></pre>
+
+                <h3>3. 특정 비트 설정/해제/토글</h3>
+                <pre><code># n번째 비트 설정 (1로 만들기)
+def set_bit(num, n):
+    return num | (1 &lt;&lt; n)
+
+# n번째 비트 해제 (0으로 만들기)
+def clear_bit(num, n):
+    return num &amp; ~(1 &lt;&lt; n)
+
+# n번째 비트 토글 (반전)
+def toggle_bit(num, n):
+    return num ^ (1 &lt;&lt; n)
+
+# n번째 비트 확인
+def check_bit(num, n):
+    return (num &gt;&gt; n) &amp; 1
+
+num = 5  # 0101
+print(bin(set_bit(num, 1)))     # 0b111 (7)
+print(bin(clear_bit(num, 0)))   # 0b100 (4)
+print(bin(toggle_bit(num, 1)))  # 0b111 (7)</code></pre>
+
+                <h3>4. 2의 거듭제곱 판별</h3>
+                <pre><code>def is_power_of_two(n):
+    return n > 0 and (n &amp; (n - 1)) == 0
+
+print(is_power_of_two(16))  # True (10000)
+print(is_power_of_two(18))  # False</code></pre>
+
+                <h2>비트 마스크 (Bit Mask)</h2>
+                <p>
+                    여러 플래그를 하나의 정수로 관리할 때 사용합니다.
+                </p>
+                <pre><code>READ    = 1  # 0001
+WRITE   = 2  # 0010
+EXECUTE = 4  # 0100
+
+# 권한 설정
+permission = READ | WRITE  # 0011
+
+# 권한 확인
+if permission &amp; WRITE:
+    print("쓰기 권한 있음")
+
+# 권한 추가
+permission = permission | EXECUTE  # 0111
+
+# 권한 제거
+permission = permission &amp; ~WRITE   # 0101</code></pre>
+
+                <h2>정리</h2>
+                <p>
+                    이진수와 비트 연산은 프로그래밍의 기초이자 강력한 도구입니다.
+                    특히 시스템 프로그래밍, 알고리즘 최적화, 플래그 관리 등에서 필수적으로 사용됩니다.
+                    처음에는 어렵게 느껴질 수 있지만, 충분히 연습하면 효율적인 코드를 작성할 수 있게 됩니다.
+                </p>
+            </article>
+        </div>
+    </div>
+</body>
+</html>
