@@ -9,7 +9,7 @@
 
 
 ## GitHub 통계
-![GitHub 통계](https://github-readme-stats.vercel.app/api?username=zlem8952&show_icons=true&theme=radical)
+![GitHub 통계](https://github-readme-stats.vercel.app/api?username=homesweetlove&show_icons=true&theme=radical)
 
 ## 매일 업데이트되는 명언
 [![Readme Quotes](https://quotes-github-readme.vercel.app/api?type=horizontal&theme=dark)](https://github.com/piyushsuthar/github-readme-quotes)
@@ -36,10 +36,10 @@
 
 
 ## GitHub 트로피
-[![trophy](https://github-profile-trophy.vercel.app/?username=zlem8952)](https://github.com/ryo-ma/github-profile-trophy)
+[![trophy](https://github-profile-trophy.vercel.app/?username=homesweetlove)](https://github.com/ryo-ma/github-profile-trophy)
 
 ## 주요 사용 언어
-![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=zlem8952&layout=compact)
+![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=homesweetlove&layout=compact)
 
 
 ## 유머
